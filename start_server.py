@@ -317,8 +317,33 @@ def _read_api_key():
         return ''
 
 class GeoScopeHandler(SimpleHTTPRequestHandler):
+    # Canonical host. Any request arriving at the bare apex (skorpene.com) is
+    # 301-redirected to the www host so there is a single canonical origin and
+    # the SSL certificate (issued for www) always matches. localhost, the
+    # *.up.railway.app host and www itself are left untouched.
+    CANONICAL_HOST = 'www.skorpene.com'
+    APEX_HOSTS = ('skorpene.com',)
+
+    def _maybe_redirect_apex(self):
+        """If the Host header is the bare apex, send a 301 to the www host and
+        return True (caller should stop). Otherwise return False."""
+        host = (self.headers.get('Host') or '').strip().lower()
+        # Strip any :port suffix before comparing.
+        if ':' in host:
+            host = host.split(':', 1)[0]
+        if host in self.APEX_HOSTS:
+            location = 'https://' + self.CANONICAL_HOST + self.path
+            self.send_response(301)
+            self.send_header('Location', location)
+            self.send_header('Content-Length', '0')
+            self.end_headers()
+            return True
+        return False
+
     def do_POST(self):
         """Handle POST requests: /api/ollama and /api/claude proxying."""
+        if self._maybe_redirect_apex():
+            return
         if self.path == '/api/ollama':
             self.handle_ollama_proxy()
         elif self.path == '/api/claude':
@@ -336,6 +361,8 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         """Serve /api/outlets (RSS aggregation) or fall back to static files."""
+        if self._maybe_redirect_apex():
+            return
         if self.path == '/api/outlets' or self.path.startswith('/api/outlets?'):
             self.handle_outlets()
         elif self.path.startswith('/api/tg'):
