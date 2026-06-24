@@ -25,11 +25,41 @@ from html import unescape as _html_unescape
 # A small self-contained auth layer backed by SQLite. Passwords are stored only
 # as a salted PBKDF2-SHA256 hash (never plaintext). A login/registration issues a
 # random session token the browser keeps in localStorage and sends back as a
-# Bearer token. No external service needed — everything lives in auth.db next to
-# this script.
-_AUTH_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'auth.db')
+# Bearer token. No external service needed — everything lives in auth.db.
+
+def _resolve_db_path():
+    """Locate the auth database, preferring a PERSISTENT location so user
+    accounts (and their plan / Stripe links) survive container redeploys.
+
+    Railway and most PaaS use an EPHEMERAL container filesystem: anything written
+    next to the app is wiped on every deploy. Mounting a persistent volume (e.g.
+    at /data) and storing the DB there is what keeps registered users from
+    vanishing. Resolution order:
+      1. AUTH_DB_PATH env var — explicit override (set this on Railway).
+      2. A mounted, writable persistent volume at a conventional path.
+      3. A local file next to this script (dev / no-volume fallback).
+    """
+    override = os.environ.get('AUTH_DB_PATH', '').strip()
+    if override:
+        try:
+            os.makedirs(os.path.dirname(override) or '.', exist_ok=True)
+        except Exception:
+            pass
+        return override
+    # Auto-detect a mounted volume. These dirs only exist when a volume is
+    # actually mounted there, so we never pick an ephemeral path by mistake.
+    for vol in ('/data', '/var/data', '/mnt/data', '/persist'):
+        if os.path.isdir(vol) and os.access(vol, os.W_OK):
+            return os.path.join(vol, 'auth.db')
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), 'auth.db')
+
+
+_AUTH_DB = _resolve_db_path()
 _AUTH_LOCK = threading.Lock()
 _PBKDF2_ROUNDS = 200_000
+# Session lifetime. Tokens older than this are treated as expired (the browser
+# is asked to log in again). Keeps the sessions table from growing forever.
+_SESSION_TTL = 90 * 24 * 3600  # 90 days
 
 # Stripe price for the Pro plan ($9.99/mo). Recreate this id (and the secret
 # key in stripe_secret.txt) in Live mode when going to production.
@@ -67,13 +97,23 @@ def _ai_quota_consume(user_id):
 
 
 def _auth_db():
-    conn = sqlite3.connect(_AUTH_DB)
+    # busy_timeout lets a connection wait instead of instantly erroring with
+    # "database is locked" when another thread holds the write lock — important
+    # under ThreadingHTTPServer where several requests hit the DB at once.
+    conn = sqlite3.connect(_AUTH_DB, timeout=10)
     conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA busy_timeout=5000')
     return conn
 
 
 def _auth_init():
     with _AUTH_LOCK, _auth_db() as conn:
+        # WAL improves read/write concurrency for the threaded server and is
+        # durable across restarts. Set once; it's a persistent DB property.
+        try:
+            conn.execute('PRAGMA journal_mode=WAL')
+        except sqlite3.OperationalError:
+            pass
         conn.execute('''CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT UNIQUE NOT NULL,
@@ -145,8 +185,12 @@ def _hash_pw(password, salt):
 
 def _new_session(conn, user_id):
     token = secrets.token_urlsafe(32)
+    now = time.time()
     conn.execute('INSERT INTO sessions (token, user_id, created) VALUES (?,?,?)',
-                 (token, user_id, time.time()))
+                 (token, user_id, now))
+    # Opportunistic housekeeping: drop sessions past their TTL so the table
+    # doesn't grow without bound and stale tokens can't be replayed.
+    conn.execute('DELETE FROM sessions WHERE created < ?', (now - _SESSION_TTL,))
     conn.commit()
     return token
 
@@ -316,6 +360,156 @@ def _read_api_key():
     except Exception:
         return ''
 
+
+# Self-contained admin dashboard. Served at /admin; it asks for the admin token
+# once (kept in localStorage) and renders users + stats from /api/admin/users.
+# No build step, no framework — plain HTML/CSS/JS in Skorpene's dark/purple look.
+_ADMIN_PAGE_HTML = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Skorpene · Admin</title>
+<style>
+  :root{ --bg:#0b0710; --panel:#151021; --panel2:#1c1530; --line:#2a2140;
+         --text:#ece7fa; --muted:#9b93b8; --purple:#8b5cf6; --purple2:#6d28d9;
+         --green:#34d399; --amber:#f0b070; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:radial-gradient(1200px 600px at 50% -10%, #1a1030 0%, var(--bg) 60%);
+        color:var(--text); font:14px/1.5 Inter,system-ui,Segoe UI,Roboto,sans-serif;
+        min-height:100vh; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:28px 20px 60px; }
+  header{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; }
+  .brand{ display:flex; align-items:center; gap:12px; font-weight:700; font-size:20px; }
+  .brand .dot{ width:30px; height:30px; border-radius:9px;
+    background:linear-gradient(135deg,var(--purple),var(--purple2));
+    box-shadow:0 6px 18px rgba(139,92,246,.45); }
+  .muted{ color:var(--muted); }
+  button{ font:inherit; cursor:pointer; border-radius:10px; border:1px solid var(--line);
+    background:var(--panel2); color:var(--text); padding:9px 14px; transition:.15s; }
+  button:hover{ border-color:var(--purple); }
+  button.primary{ background:linear-gradient(135deg,var(--purple),var(--purple2));
+    border:none; color:#fff; box-shadow:0 6px 16px rgba(109,40,217,.4); }
+  input{ font:inherit; background:var(--panel); border:1px solid var(--line);
+    color:var(--text); border-radius:10px; padding:11px 13px; width:100%; }
+  input:focus{ outline:none; border-color:var(--purple); }
+  .gate{ max-width:380px; margin:12vh auto 0; background:var(--panel);
+    border:1px solid var(--line); border-radius:16px; padding:26px; }
+  .gate h1{ font-size:18px; margin:0 0 4px; }
+  .gate p{ margin:0 0 16px; }
+  .row{ display:flex; gap:10px; margin-top:12px; }
+  .cards{ display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:22px; }
+  .card{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; }
+  .card .n{ font-size:26px; font-weight:700; }
+  .card .l{ font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-top:2px; }
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:14px; }
+  .toolbar input{ flex:1; }
+  table{ width:100%; border-collapse:collapse; background:var(--panel);
+    border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  th,td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); }
+  th{ font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+  tr:last-child td{ border-bottom:none; }
+  tr:hover td{ background:rgba(139,92,246,.06); }
+  .badge{ display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+  .b-free{ background:#241c38; color:#b9b1d6; }
+  .b-pro{ background:rgba(139,92,246,.18); color:#c7b6ff; }
+  .b-team{ background:rgba(52,211,153,.16); color:var(--green); }
+  .pay{ color:var(--green); font-weight:600; }
+  .err{ color:#ff8da3; margin-top:10px; min-height:18px; }
+  .footer{ margin-top:18px; font-size:12px; }
+  code{ background:var(--panel2); padding:2px 6px; border-radius:6px; }
+  @media(max-width:760px){ .cards{ grid-template-columns:repeat(2,1fr); } .hide-sm{ display:none; } }
+</style>
+</head>
+<body>
+<div id="gate" class="gate" style="display:none">
+  <h1>Skorpene Admin</h1>
+  <p class="muted">Enter the admin token to view registered users.</p>
+  <input id="tok" type="password" placeholder="Admin token" autocomplete="off">
+  <div class="row"><button class="primary" style="flex:1" onclick="saveTok()">Enter</button></div>
+  <div id="gateErr" class="err"></div>
+</div>
+
+<div id="app" class="wrap" style="display:none">
+  <header>
+    <div class="brand"><span class="dot"></span> Skorpene · Admin</div>
+    <div class="row">
+      <button onclick="load()">↻ Refresh</button>
+      <button onclick="logout()">Sign out</button>
+    </div>
+  </header>
+  <div id="cards" class="cards"></div>
+  <div class="toolbar">
+    <input id="search" placeholder="Search email or name…" oninput="render()">
+    <span id="count" class="muted"></span>
+  </div>
+  <table>
+    <thead><tr>
+      <th>ID</th><th>Email</th><th class="hide-sm">Name</th><th>Plan</th>
+      <th>Paying</th><th class="hide-sm">Registered</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div class="footer muted">Data file: <code id="dbpath">—</code></div>
+  <div id="err" class="err"></div>
+</div>
+
+<script>
+const TK='skorpene_admin_token';
+let DATA=null;
+function tok(){ return localStorage.getItem(TK)||''; }
+function show(el){ document.getElementById('gate').style.display = el==='gate'?'block':'none';
+  document.getElementById('app').style.display = el==='app'?'block':'none'; }
+function saveTok(){ const v=document.getElementById('tok').value.trim();
+  if(!v){ return; } localStorage.setItem(TK,v); load(); }
+function logout(){ localStorage.removeItem(TK); show('gate');
+  document.getElementById('tok').value=''; }
+function fmtDate(ts){ if(!ts) return '—'; const d=new Date(ts*1000);
+  return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+function esc(s){ return (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function load(){
+  const t=tok(); if(!t){ show('gate'); return; }
+  try{
+    const r=await fetch('/api/admin/users',{headers:{'Authorization':'Bearer '+t}});
+    if(r.status===401){ document.getElementById('gateErr').textContent='Invalid token.'; show('gate'); return; }
+    if(r.status===503){ const j=await r.json();
+      document.getElementById('gateErr').textContent=j.detail||'Admin panel disabled.'; show('gate'); return; }
+    if(!r.ok){ throw new Error('HTTP '+r.status); }
+    DATA=await r.json(); show('app'); paintCards(); render();
+    document.getElementById('dbpath').textContent=DATA.db_path||'—';
+  }catch(e){ document.getElementById('err').textContent='Error: '+e.message; }
+}
+function paintCards(){
+  const p=DATA.by_plan||{};
+  const c=[['Total users',DATA.total],['Free',p.free||0],['Pro',p.pro||0],
+           ['Team',p.team||0],['Active sessions',DATA.active_sessions||0]];
+  document.getElementById('cards').innerHTML=c.map(x=>
+    `<div class="card"><div class="n">${x[1]}</div><div class="l">${x[0]}</div></div>`).join('');
+}
+function render(){
+  if(!DATA) return;
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const list=DATA.users.filter(u=>!q || (u.email||'').toLowerCase().includes(q) || (u.name||'').toLowerCase().includes(q));
+  document.getElementById('count').textContent=list.length+' / '+DATA.users.length;
+  document.getElementById('rows').innerHTML=list.map(u=>{
+    const b=u.plan==='team'?'b-team':u.plan==='pro'?'b-pro':'b-free';
+    return `<tr>
+      <td>${u.id}</td>
+      <td>${esc(u.email)}</td>
+      <td class="hide-sm">${esc(u.name)||'<span class=muted>—</span>'}</td>
+      <td><span class="badge ${b}">${u.plan}</span></td>
+      <td>${u.paying?'<span class=pay>✓ yes</span>':'<span class=muted>no</span>'}</td>
+      <td class="hide-sm muted">${fmtDate(u.created)}</td>
+    </tr>`; }).join('') || '<tr><td colspan=6 class=muted style="padding:24px;text-align:center">No users found.</td></tr>';
+}
+if(tok()){ load(); } else { show('gate'); }
+</script>
+</body>
+</html>'''
+
+
 class GeoScopeHandler(SimpleHTTPRequestHandler):
     # Canonical host. Any request arriving at the bare apex (skorpene.com) is
     # 301-redirected to the www host so there is a single canonical origin and
@@ -373,6 +567,10 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_auth_me()
         elif self.path.startswith('/api/billing/verify-session'):
             self.handle_billing_verify_session()
+        elif self.path == '/api/admin/users' or self.path.startswith('/api/admin/users?'):
+            self.handle_admin_users()
+        elif self.path == '/admin' or self.path.startswith('/admin?'):
+            self.handle_admin_page()
         else:
             super().do_GET()
 
@@ -430,10 +628,12 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         token = self._bearer_token()
         if not token:
             self._json_response(401, {'error': 'no_token'}); return
+        min_created = time.time() - _SESSION_TTL
         with _auth_db() as conn:
             row = conn.execute(
-                'SELECT u.email, u.name, u.plan FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=?',
-                (token,)).fetchone()
+                'SELECT u.email, u.name, u.plan FROM sessions s JOIN users u ON u.id=s.user_id '
+                'WHERE s.token=? AND s.created > ?',
+                (token, min_created)).fetchone()
         if not row:
             self._json_response(401, {'error': 'invalid_token'}); return
         self._json_response(200, {'user': {
@@ -446,10 +646,12 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         token = self._bearer_token()
         if not token:
             return None
+        min_created = time.time() - _SESSION_TTL
         with _auth_db() as conn:
             return conn.execute(
-                'SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=?',
-                (token,)).fetchone()
+                'SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id '
+                'WHERE s.token=? AND s.created > ?',
+                (token, min_created)).fetchone()
 
     def handle_billing_create_session(self):
         """Create a Stripe Checkout session for the Pro plan."""
@@ -538,6 +740,75 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
                 conn.execute('DELETE FROM sessions WHERE token=?', (token,))
                 conn.commit()
         self._json_response(200, {'ok': True})
+
+    # ── Admin (read-only user dashboard) ──
+    def _admin_check(self):
+        """Authorize an admin request.
+
+        Returns one of: 'ok' (valid token), 'disabled' (ADMIN_TOKEN env var not
+        set — the panel is OFF by default so it's never wide-open), or 'denied'
+        (token missing/wrong). The token may arrive as an `Authorization: Bearer`
+        header or a `?key=` query param (so the dashboard page can pass it).
+        """
+        expected = os.environ.get('ADMIN_TOKEN', '').strip()
+        if not expected:
+            return 'disabled'
+        from urllib.parse import urlparse, parse_qs
+        supplied = self._bearer_token()
+        if not supplied:
+            supplied = (parse_qs(urlparse(self.path).query).get('key', [''])[0] or '').strip()
+        if supplied and hmac.compare_digest(supplied, expected):
+            return 'ok'
+        return 'denied'
+
+    def handle_admin_users(self):
+        """Return registered users + summary stats as JSON. NEVER includes the
+        password hash or salt. Gated by ADMIN_TOKEN."""
+        status = self._admin_check()
+        if status == 'disabled':
+            self._json_response(503, {'error': 'admin_disabled',
+                'detail': 'Set the ADMIN_TOKEN environment variable to enable the admin panel.'})
+            return
+        if status != 'ok':
+            self._json_response(401, {'error': 'unauthorized'}); return
+        min_created = time.time() - _SESSION_TTL
+        with _auth_db() as conn:
+            rows = conn.execute(
+                "SELECT id, email, name, COALESCE(plan,'free') AS plan, created, "
+                "stripe_subscription_id, stripe_customer_id "
+                "FROM users ORDER BY id DESC").fetchall()
+            active = conn.execute(
+                'SELECT COUNT(DISTINCT user_id) AS n FROM sessions WHERE created > ?',
+                (min_created,)).fetchone()['n']
+        users, by_plan = [], {}
+        for r in rows:
+            plan = r['plan'] or 'free'
+            by_plan[plan] = by_plan.get(plan, 0) + 1
+            users.append({
+                'id': r['id'],
+                'email': r['email'],
+                'name': r['name'] or '',
+                'plan': plan,
+                'created': r['created'],
+                'paying': bool(r['stripe_subscription_id']),
+            })
+        self._json_response(200, {
+            'total': len(users),
+            'by_plan': by_plan,
+            'active_sessions': int(active),
+            'db_path': _AUTH_DB,
+            'users': users,
+        })
+
+    def handle_admin_page(self):
+        """Serve the self-contained admin dashboard HTML (the data itself is
+        fetched from the gated /api/admin/users endpoint)."""
+        html = _ADMIN_PAGE_HTML.encode('utf-8')
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.send_header('Content-Length', str(len(html)))
+        self.end_headers()
+        self.wfile.write(html)
 
     def handle_telegram_channel(self):
         """Scrape a PUBLIC Telegram channel's web preview (https://t.me/s/<channel>).
@@ -985,6 +1256,11 @@ def run_server(port=8000, directory='.'):
     server.daemon_threads = True
     print(f'Skorpene server on http://localhost:{port}', file=sys.stderr)
     print('Auth at /api/auth/{register,login,logout,me} (SQLite: auth.db)', file=sys.stderr)
+    _persistent = any(_AUTH_DB.startswith(v) for v in ('/data', '/var/data', '/mnt/data', '/persist')) \
+        or bool(os.environ.get('AUTH_DB_PATH', '').strip())
+    print(f'  DB → {_AUTH_DB}  [{"PERSISTENT" if _persistent else "EPHEMERAL — add a volume so users survive redeploys"}]', file=sys.stderr)
+    _admin = 'ENABLED at /admin' if os.environ.get('ADMIN_TOKEN', '').strip() else 'OFF — set ADMIN_TOKEN to enable /admin'
+    print(f'  Admin dashboard: {_admin}', file=sys.stderr)
     print(f'Ollama proxy at /api/ollama (forwards to {OLLAMA_HOST})', file=sys.stderr)
     _has_key = 'set' if _read_api_key() else 'NOT set — put it in mikey.txt or export ANTHROPIC_API_KEY'
     print(f'Claude proxy at /api/claude (model={ANTHROPIC_MODEL}, key {_has_key})', file=sys.stderr)
