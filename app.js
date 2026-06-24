@@ -1081,8 +1081,8 @@
     Object.keys(SIM_I18N_CARD).forEach(lng => { if (T[lng]) Object.assign(T[lng], SIM_I18N_CARD[lng]); });
     // AI assistant strings — all 9 languages.
     const AI_I18N = {
-        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos' },
-        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less' },
+        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',logoutLabel:'Cerrar sesión' },
+        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',logoutLabel:'Log out' },
         fr:{ aiTitle:'Assistant IA',aiWelcome:'Bonjour 👋 Posez-moi des questions sur les événements de la carte.',aiPlaceholder:'Question sur la carte…',aiAskPh:'Demandez à l\'IA…',aiThinking:'Réflexion…',aiError:'Impossible de contacter l\'IA. Vérifiez que le serveur (start_server.py) est en marche.',srcTelegram:'Telegram',srcOutlets:'Médias',outletsLoading:'Chargement…',outletsError:'Impossible de charger les médias.',outletsEmpty:'Aucun article disponible.',newsTitle:'ACTUALITÉS EN DIRECT',translatingNews:'Traduction…',translateDone:'Actualités traduites',showMore:'Afficher plus',showLess:'Afficher moins' },
         ru:{ aiTitle:'ИИ Ассистент',aiWelcome:'Привет 👋 Задайте мне вопросы о событиях на карте.',aiPlaceholder:'Вопрос о карте…',aiAskPh:'Спросите ИИ…',aiThinking:'Думаю…',aiError:'Не удалось связаться с ИИ. Проверьте, что сервер (start_server.py) запущен.',srcTelegram:'Телеграм',srcOutlets:'СМИ',outletsLoading:'Загрузка…',outletsError:'Не удалось загрузить СМИ.',outletsEmpty:'Нет доступных статей.',newsTitle:'НОВОСТИ В ПРЯМОМ ЭФИРЕ',translatingNews:'Перевод…',translateDone:'Новости переведены',showMore:'Показать больше',showLess:'Показать меньше' },
         zh:{ aiTitle:'AI 助手',aiWelcome:'你好 👋 随时可以问我地图上的事件。',aiPlaceholder:'询问地图…',aiAskPh:'询问 AI…',aiThinking:'思考中…',aiError:'无法联系 AI。请确认服务器 (start_server.py) 正在运行。',srcTelegram:'Telegram',srcOutlets:'新闻媒体',outletsLoading:'加载中…',outletsError:'无法加载新闻媒体。',outletsEmpty:'暂无文章。',newsTitle:'实时新闻',translatingNews:'翻译中…',translateDone:'新闻已翻译',showMore:'显示更多',showLess:'显示更少' },
@@ -1300,7 +1300,7 @@
     };
     Object.keys(NEW_LANG_I18N).forEach(lng => { if (T[lng]) Object.assign(T[lng], NEW_LANG_I18N[lng]); });
     let map, baseLayer, labelsLayer;
-    let currentLayer = 'satellite', currentLang = 'es', currentUnit = 'km';
+    let currentLayer = 'satellite', currentLang = 'en', currentUnit = 'km';
     let labelState = { countries:false, cities:false, regions:false, roads:false, water:false };
     let measureMode = null;
     let measureActive = false;
@@ -4854,6 +4854,77 @@
         convo.appendChild(card);
         convo.scrollTop = 0;
     }
+    // ── Plan-based UI gating ──
+    // Free accounts get the live map LOCKED behind a blurred upgrade veil; they
+    // keep the Feed (up to 5 sources). Pro/Team see the full map. Idempotent —
+    // safe to call on app entry and whenever the plan changes.
+    let _mapLockWired = false;
+    function applyPlanGating() {
+        const locked = !isPaidPlan();
+        document.body.classList.toggle('plan-locked', locked);
+        const lock = document.getElementById('map-lock');
+        if (lock) lock.setAttribute('aria-hidden', locked ? 'false' : 'true');
+        if (!_mapLockWired) {
+            const cta = document.getElementById('map-lock-cta');
+            if (cta) { cta.addEventListener('click', () => { try { auth.showPlans(); } catch (_) {} }); _mapLockWired = true; }
+        }
+        try { renderProfileChip(); } catch (_) {}
+    }
+    window.applyPlanGating = applyPlanGating;
+
+    // ── Profile chip (top-right) ──
+    // Shows the signed-in user + their current plan. Free users get a "Choose
+    // plan" pill that opens the plans view. Idempotent.
+    let _profileWired = false;
+    function renderProfileChip() {
+        const chip = document.getElementById('profile-chip');
+        if (!chip) return;
+        let user = {};
+        try { user = JSON.parse(localStorage.getItem('geoscope_auth_user') || '{}') || {}; } catch (_) {}
+        const tok = (() => { try { return localStorage.getItem('geoscope_auth_token') || ''; } catch (_) { return ''; } })();
+        if (!tok || !user.email) { chip.hidden = true; return; }
+        chip.hidden = false;
+        const tr = T[currentLang] || T.en;
+        const name = user.name || (user.email ? user.email.split('@')[0] : 'Skorpene');
+        const plan = (user.plan || 'free').toLowerCase();
+        const avatar = document.getElementById('profile-avatar');
+        const nameEl = document.getElementById('profile-name');
+        const planEl = document.getElementById('profile-plan');
+        if (avatar) avatar.textContent = (name[0] || 'S').toUpperCase();
+        if (nameEl) nameEl.textContent = name;
+        if (planEl) {
+            planEl.classList.remove('is-free', 'is-choose');
+            if (plan === 'pro' || plan === 'team') {
+                planEl.textContent = plan === 'team' ? 'Team' : 'Pro';
+            } else {
+                planEl.textContent = tr.planChoose || 'Choose plan';
+                planEl.classList.add('is-choose');
+            }
+        }
+        const plansBtn = document.getElementById('profile-plans-btn');
+        if (plansBtn) plansBtn.style.display = isPaidPlan() ? 'none' : '';
+        const logoutBtn = document.getElementById('profile-logout-btn');
+        if (logoutBtn) logoutBtn.textContent = tr.logoutLabel || 'Log out';
+        if (!_profileWired) {
+            _profileWired = true;
+            const btn = document.getElementById('profile-chip-btn');
+            const menu = document.getElementById('profile-menu');
+            const setOpen = (open) => {
+                if (!menu) return;
+                if (open) menu.removeAttribute('hidden'); else menu.setAttribute('hidden', '');
+                if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+            if (btn) btn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(menu && menu.hasAttribute('hidden')); });
+            document.addEventListener('click', () => setOpen(false));
+            if (menu) menu.addEventListener('click', e => e.stopPropagation());
+            if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); try { auth.showPlans(); } catch (_) {} });
+            if (logoutBtn) logoutBtn.addEventListener('click', async () => { setOpen(false); try { await auth.logout(); } catch (_) {} location.reload(); });
+            const closeBtn = document.getElementById('landing-close');
+            if (closeBtn) closeBtn.addEventListener('click', () => { try { auth.hidePlans(); } catch (_) {} });
+            if (planEl) planEl.addEventListener('click', (e) => { if (!isPaidPlan()) { e.stopPropagation(); try { auth.showPlans(); } catch (_) {} } });
+        }
+    }
+    window.renderProfileChip = renderProfileChip;
     // Flag that prevents the WS onclose handler from auto-reconnecting.
     let _wsSuppressReconnect = false;
 
@@ -6307,9 +6378,11 @@ ${this.buildContext()}`;
 
             const setErr = (msg) => { if (status) { status.textContent = msg || tr.srcInvalid; status.classList.add('usp-status-err'); } };
             // Free plan: hard cap at FREE_MAX_SOURCES sources. Block before the
-            // loading veil / probe so the user gets an immediate upgrade nudge.
+            // loading veil / probe and send the user straight to the plans view
+            // so the only way past the limit is upgrading.
             if (!isPaidPlan() && geoFeed.sources.length >= FREE_MAX_SOURCES) {
                 setErr((tr.srcLimitFree || 'Has alcanzado el límite de 5 fuentes del plan Free. Mejora a Pro para fuentes ilimitadas.'));
+                try { auth.showPlans(); } catch (_) {}
                 return;
             }
             const probeRss = async (url) => {
@@ -6883,6 +6956,11 @@ ${this.buildContext()}`;
             const topics  = this._resolveTopics(profile);
             const regions = this._resolveRegions(profile);
             if (!topics.length && !regions.length) return;
+            // Letting the AI pick your sources is a Pro feature. Free accounts
+            // get the plans view instead of a veil that finds nothing (this is
+            // why the blurred "finding sources" screen stopped appearing once
+            // AI was gated — now Free is routed to upgrade, Pro/Team search).
+            if (!isPaidPlan()) { try { auth.showPlans(); } catch (_) {} return; }
             showSourceLoading();
             try { await this._run(profile, topics, regions); }
             finally { hideSourceLoading(); }
@@ -7069,10 +7147,34 @@ ${this.buildContext()}`;
             document.body.classList.add('onb-active');
         },
         _enterApp() {
+            this.el.removeAttribute('data-view');
             this.el.setAttribute('aria-hidden', 'true');
             document.body.classList.remove('onb-active');
+            // Apply plan gating (locks the live map for Free) + render the
+            // profile chip now that we know who the user is.
+            try { applyPlanGating(); } catch (_) {}
             // Continue the normal first-run flow (wizard shows only if no profile).
             onboarding.init();
+        },
+        // Re-open the landing overlay in PLANS-ONLY mode (logged-in users who
+        // need to pick a plan: Free trying to use the map, the "Choose plan"
+        // chip, or the 6th-source nudge). Hides the hero/auth, shows only the
+        // pricing cards + a close button.
+        showPlans() {
+            if (!this.el) return;
+            this.el.setAttribute('data-view', 'plans');
+            this.el.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('onb-active');
+            try { this._wirePricing(); } catch (_) {}
+            const pricing = document.getElementById('landing-pricing');
+            try { this.el.scrollTo({ top: 0 }); } catch (_) {}
+            if (pricing) try { pricing.scrollIntoView({ block: 'start' }); } catch (_) {}
+        },
+        hidePlans() {
+            if (!this.el) return;
+            this.el.removeAttribute('data-view');
+            this.el.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('onb-active');
         },
         _setMode(mode) {
             this.mode = mode;
@@ -7123,7 +7225,11 @@ ${this.buildContext()}`;
                 b.dataset.wired = '1';
                 const plan = b.getAttribute('data-plan') || 'free';
                 b.addEventListener('click', () => {
-                    if (plan === 'pro' || plan === 'team') this._startCheckout(plan);
+                    if (plan === 'pro' || plan === 'team') { this._startCheckout(plan); return; }
+                    // Free CTA: if the user is already logged in (plans-only
+                    // mode), they're already on Free → just close. Otherwise
+                    // route them to register.
+                    if (this.token()) this.hidePlans();
                     else this._gotoRegister();
                 });
             });
@@ -7249,12 +7355,12 @@ ${this.buildContext()}`;
     // above don't grow unreadably long. Merged into LANDING_I18N below.
     const PRICING_I18N = {
         es: { prTitle:'Elige tu plan', prSub:'Empieza gratis. Pásate a Pro cuando lo necesites.', prBadge:'Popular', prPeriod:'/mes',
-              prFreeName:'Free', prFreeTag:'Para empezar.', prFreeF1:'Hasta 5 fuentes personalizadas', prFreeF2:'Feed personalizado', prFreeF3:'Mapa en vivo', prFreeF4:'13 idiomas', prFreeF5:'Sin asistente IA', prFreeCta:'Empezar gratis',
-              prProName:'Pro', prProTag:'Todo lo que necesitas.', prProF1:'Fuentes ilimitadas', prProF2:'Mapa en vivo + todas las capas', prProF3:'Asistente IA (20 consultas/día)', prProF4:'13 idiomas', prProF5:'Soporte prioritario', prProCta:'Empezar Pro',
+              prFreeName:'Free', prFreeTag:'Para empezar.', prFreeF1:'Hasta 5 fuentes personalizadas', prFreeF2:'Feed personalizado', prFreeF3:'Sin mapa en vivo', prFreeF4:'13 idiomas', prFreeF5:'Sin asistente IA', prFreeCta:'Empezar gratis',
+              prProName:'Pro', prProTag:'Todo lo que necesitas.', prProF1:'Fuentes ilimitadas', prProF2:'Mapa en vivo', prProF3:'Asistente IA (20 consultas/día)', prProF4:'13 idiomas', prProF5:'Soporte prioritario', prProCta:'Empezar Pro',
               prTeamName:'Team', prTeamTag:'Para los más exigentes.', prTeamF1:'Todo lo de Pro', prTeamF2:'Asistente IA ilimitado', prTeamF3:'Fuentes ilimitadas', prTeamF4:'13 idiomas', prTeamF5:'Soporte prioritario', prTeamCta:'Empezar Team' },
         en: { prTitle:'Choose your plan', prSub:'Start free. Move up to Pro whenever you need more.', prBadge:'Popular', prPeriod:'/mo',
-              prFreeName:'Free', prFreeTag:'To get started.', prFreeF1:'Up to 5 custom sources', prFreeF2:'Personalized feed', prFreeF3:'Live map', prFreeF4:'13 languages', prFreeF5:'No AI assistant', prFreeCta:'Start free',
-              prProName:'Pro', prProTag:'Everything you need.', prProF1:'Unlimited sources', prProF2:'Live map + all layers', prProF3:'AI assistant (20 queries/day)', prProF4:'13 languages', prProF5:'Priority support', prProCta:'Get Pro',
+              prFreeName:'Free', prFreeTag:'To get started.', prFreeF1:'Up to 5 custom sources', prFreeF2:'Personalized feed', prFreeF3:'No live map', prFreeF4:'13 languages', prFreeF5:'No AI assistant', prFreeCta:'Start free',
+              prProName:'Pro', prProTag:'Everything you need.', prProF1:'Unlimited sources', prProF2:'Live map', prProF3:'AI assistant (20 queries/day)', prProF4:'13 languages', prProF5:'Priority support', prProCta:'Get Pro',
               prTeamName:'Team', prTeamTag:'For power users.', prTeamF1:'Everything in Pro', prTeamF2:'Unlimited AI assistant', prTeamF3:'Unlimited sources', prTeamF4:'13 languages', prTeamF5:'Priority support', prTeamCta:'Get Team' },
         fr: { prTitle:'Choisis ton plan', prSub:'Commence gratuitement. Passe à Pro quand tu en as besoin.', prBadge:'Populaire', prPeriod:'/mois',
               prFreeName:'Free', prFreeTag:'Pour démarrer.', prFreeF1:'Jusqu\'à 5 sources personnalisées', prFreeF2:'Flux personnalisé', prFreeF3:'Carte en direct', prFreeF4:'13 langues', prFreeF5:'Pas d\'assistant IA', prFreeCta:'Commencer gratuitement',
@@ -7351,8 +7457,10 @@ ${this.buildContext()}`;
             // Update submit button label too (mode-dependent).
             try { auth._setMode(auth.mode); } catch (_) {}
         },
-        // Resolve the initial language: saved profile > saved auth-user lang >
-        // a previously-picked landing lang > browser language > Spanish.
+        // Resolve the initial language: saved profile > a previously-picked
+        // landing lang > English (the default). We intentionally do NOT use the
+        // browser language so the default is always English; the user can pick
+        // any of the 13 languages from the picker and their choice is saved.
         resolve() {
             try {
                 const p = JSON.parse(localStorage.getItem('geoscope_profile') || 'null');
@@ -7362,8 +7470,7 @@ ${this.buildContext()}`;
                 const saved = localStorage.getItem('geoscope_landing_lang');
                 if (saved && LANDING_I18N[saved]) return saved;
             } catch (_) {}
-            const b = (navigator.language || 'es').slice(0, 2);
-            return LANDING_I18N[b] ? b : 'es';
+            return 'en';
         },
         save(lng) {
             try { localStorage.setItem('geoscope_landing_lang', lng); } catch (_) {}

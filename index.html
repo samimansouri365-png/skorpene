@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="styles.css?v=20260624h">
+    <link rel="stylesheet" href="styles.css?v=20260624i">
 </head>
 <body>
 
@@ -59,6 +59,22 @@
         </div>
     </div>
     <div class="tb-right">
+        <!-- Skorpene profile chip: shows the signed-in user + current plan.
+             If the user has no paid plan it shows a "Choose plan" pill that
+             opens the plans view. Populated by renderProfileChip(). -->
+        <div id="profile-chip" class="profile-chip" hidden>
+            <button type="button" id="profile-chip-btn" class="profile-chip-btn" aria-haspopup="true" aria-expanded="false">
+                <span class="profile-avatar" id="profile-avatar">S</span>
+                <span class="profile-meta">
+                    <span class="profile-name" id="profile-name">—</span>
+                    <span class="profile-plan" id="profile-plan">—</span>
+                </span>
+            </button>
+            <div id="profile-menu" class="profile-menu" hidden>
+                <button type="button" id="profile-plans-btn" class="profile-menu-item" data-i18n="planChoose">Elegir plan</button>
+                <button type="button" id="profile-logout-btn" class="profile-menu-item profile-menu-logout">Cerrar sesión</button>
+            </div>
+        </div>
         <!-- Feed: a no-map tab to read all your sources' news + ask the AI -->
         <button id="fav-fab" class="fav-fab" title="Feed"
                 aria-label="Feed">
@@ -93,7 +109,7 @@
     <div class="panel-body">
         <div class="p-section">
             <div class="p-section-title" data-i18n="language">IDIOMA</div>
-            <div id="lang-dropdown" class="cs-dropdown" data-value="es"></div>
+            <div id="lang-dropdown" class="cs-dropdown" data-value="en"></div>
         </div>
 
         <div class="p-section">
@@ -147,6 +163,9 @@
      registers. Minimalist black + purple. After auth → onboarding → app. -->
 <div id="landing-overlay" class="landing" aria-hidden="false">
     <div class="landing-bg" aria-hidden="true"></div>
+    <!-- Close button — only visible in plans-only mode (logged-in user picking
+         a plan). Returns to the app without logging out. -->
+    <button type="button" id="landing-close" class="landing-close" aria-label="Close">✕</button>
 
     <!-- Top bar: brand on the left, language selector on the right. Lets the
          user pick the landing language BEFORE registering (saved as currentLang
@@ -188,8 +207,8 @@
 
         <div class="landing-lang">
             <button id="landing-lang-btn" class="landing-lang-btn" aria-haspopup="listbox" aria-expanded="false">
-                <span id="landing-lang-flag">🇪🇸</span>
-                <span id="landing-lang-name">Español</span>
+                <span id="landing-lang-flag">🇬🇧</span>
+                <span id="landing-lang-name">English</span>
                 <svg viewBox="0 0 12 8" width="10" height="6" aria-hidden="true">
                     <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -268,8 +287,8 @@
                     <ul class="lpr-feats">
                         <li data-i18n-landing="prFreeF1">Hasta 5 fuentes personalizadas</li>
                         <li data-i18n-landing="prFreeF2">Feed personalizado</li>
-                        <li data-i18n-landing="prFreeF3">Mapa en vivo</li>
                         <li data-i18n-landing="prFreeF4">13 idiomas</li>
+                        <li class="lpr-feat-off" data-i18n-landing="prFreeF3">Sin mapa en vivo</li>
                         <li class="lpr-feat-off" data-i18n-landing="prFreeF5">Sin asistente IA</li>
                     </ul>
                     <button class="lpr-cta lpr-cta-free" data-plan="free" type="button" data-i18n-landing="prFreeCta">Empezar gratis</button>
@@ -287,7 +306,7 @@
                     </header>
                     <ul class="lpr-feats">
                         <li data-i18n-landing="prProF1">Fuentes ilimitadas</li>
-                        <li data-i18n-landing="prProF2">Mapa en vivo + todas las capas</li>
+                        <li data-i18n-landing="prProF2">Mapa en vivo</li>
                         <li data-i18n-landing="prProF3">Asistente IA (20 consultas/día)</li>
                         <li data-i18n-landing="prProF4">13 idiomas</li>
                         <li data-i18n-landing="prProF5">Soporte prioritario</li>
@@ -330,6 +349,17 @@
 <!-- Map -->
 <div id="map-wrapper">
     <div id="map"></div>
+    <!-- Free-plan lock: blurs the live map and invites the user to upgrade.
+         Shown only while body has the .plan-locked class (set for Free users).
+         The CTA opens the plans view. -->
+    <div id="map-lock" class="map-lock" aria-hidden="true">
+        <div class="map-lock-card">
+            <div class="map-lock-icon">🗺️🔒</div>
+            <div class="map-lock-title" id="map-lock-title" data-i18n="mapLockTitle">El mapa en vivo es Pro</div>
+            <div class="map-lock-body" id="map-lock-body" data-i18n="mapLockBody">Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.</div>
+            <button type="button" id="map-lock-cta" class="map-lock-cta" data-i18n="mapLockCta">Obtener Pro</button>
+        </div>
+    </div>
 </div>
 
 <!-- Range Context Menu (right-click on a range circle or origin marker) -->
@@ -465,6 +495,6 @@
      is ready when the base layer is created. -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYi2ig-ZkmwkXv_dt-0glm0o17BxKTCJk&v=quarterly&language=es" data-gmaps-loader="1" data-lang="es"></script>
 <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.14.1/dist/Leaflet.GoogleMutant.js"></script>
-<script src="app.js?v=20260624h"></script>
+<script src="app.js?v=20260624i"></script>
 </body>
 </html>

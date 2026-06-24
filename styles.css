@@ -272,6 +272,51 @@ body {
     gap: 12px;
 }
 
+/* ── Skorpene profile chip (top-right) ── */
+.profile-chip { position: relative; }
+.profile-chip[hidden] { display: none; }
+.profile-chip-btn {
+    display: flex; align-items: center; gap: 9px;
+    padding: 5px 12px 5px 6px; border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(139,92,246,0.28);
+    color: #f4f2fb; cursor: pointer; font-family: var(--font);
+    transition: background .15s, border-color .15s;
+}
+.profile-chip-btn:hover { background: rgba(139,92,246,0.16); border-color: rgba(139,92,246,0.5); }
+.profile-avatar {
+    width: 26px; height: 26px; border-radius: 50%; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+}
+.profile-meta { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; }
+.profile-name { font-size: 12.5px; font-weight: 600; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-plan {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: #b9a8f0;
+}
+.profile-plan.is-free { color: #f0a8a8; }
+.profile-plan.is-choose {
+    color: #fff; background: linear-gradient(135deg,#8b5cf6,#6d28d9);
+    padding: 1px 7px; border-radius: 999px; margin-top: 1px;
+}
+.profile-menu {
+    position: absolute; top: calc(100% + 8px); right: 0; z-index: 50;
+    min-width: 180px; padding: 6px;
+    background: rgba(24,18,42,0.97); border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 12px; box-shadow: 0 16px 44px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; gap: 2px;
+}
+.profile-menu[hidden] { display: none; }
+.profile-menu-item {
+    text-align: left; border: 0; background: transparent; cursor: pointer;
+    color: #e9e4fb; font-family: var(--font); font-size: 13px; font-weight: 500;
+    padding: 9px 11px; border-radius: 8px; transition: background .12s;
+}
+.profile-menu-item:hover { background: rgba(139,92,246,0.2); }
+.profile-menu-logout { color: #f0a8a8; }
+
 .zoom-pill {
     display: flex;
     align-items: center;
@@ -336,6 +381,48 @@ body {
     inset: 0;
     background: var(--bg);
 }
+
+/* ── Free-plan map lock ──
+   Blurs the live map and shows an upgrade card. Only visible while the body
+   carries .plan-locked (set by applyPlanGating() for Free accounts). Pro/Team
+   never see it. It sits over the map but BELOW the top bar and the Feed panel,
+   so those stay usable on Free. */
+.map-lock {
+    position: absolute; inset: 0; z-index: 600;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(10, 8, 20, 0.55);
+    backdrop-filter: blur(14px) saturate(0.8);
+    -webkit-backdrop-filter: blur(14px) saturate(0.8);
+}
+body.plan-locked .map-lock { display: flex; }
+.map-lock-card {
+    max-width: 420px; width: 100%;
+    text-align: center;
+    background: rgba(24, 18, 42, 0.82);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    border-radius: 18px;
+    padding: 30px 28px 26px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+}
+.map-lock-icon { font-size: 30px; margin-bottom: 12px; }
+.map-lock-title {
+    font-size: 20px; font-weight: 700; color: #f4f2fb; margin-bottom: 10px;
+    letter-spacing: -0.01em;
+}
+.map-lock-body {
+    font-size: 13.5px; line-height: 1.55; color: #cbc5e0; margin-bottom: 20px;
+}
+.map-lock-cta {
+    display: inline-block; border: 0; cursor: pointer;
+    font-family: var(--font); font-size: 14px; font-weight: 600; color: #fff;
+    padding: 12px 30px; border-radius: 11px;
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    box-shadow: 0 8px 24px rgba(109, 40, 217, 0.45);
+    transition: transform .15s, box-shadow .15s;
+}
+.map-lock-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(109, 40, 217, 0.6); }
 
 /* #12 — Force pointer/default cursor on the map. Never show the zoom cursor. */
 .leaflet-container {
@@ -6461,9 +6548,12 @@ body.onb-active { overflow: hidden; }
     -webkit-font-smoothing: antialiased;
 }
 .landing[aria-hidden="true"] { display: none; }
-/* Soft purple glow backdrop */
+/* Soft purple glow backdrop. position:fixed (not absolute) so the SAME glow
+   stays behind the whole landing — hero AND pricing — as the user scrolls,
+   instead of only covering the first viewport (which left the pricing section
+   looking like a flat black band with a different background). */
 .landing-bg {
-    position: absolute; inset: 0; pointer-events: none;
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
     background:
         radial-gradient(900px 600px at 18% 12%, rgba(139,92,246,0.22), transparent 60%),
         radial-gradient(800px 700px at 92% 88%, rgba(109,40,217,0.20), transparent 60%),
@@ -6479,6 +6569,25 @@ body.onb-active { overflow: hidden; }
     /* Top padding leaves room for the .landing-top header. */
     padding: 100px 0 48px;
 }
+
+/* ── Plans-only mode ──
+   When a logged-in user re-opens the landing just to pick a plan, hide the
+   hero/auth and the language top bar, and show only the pricing + a close ✕. */
+.landing[data-view="plans"] .landing-inner,
+.landing[data-view="plans"] .landing-top { display: none; }
+.landing[data-view="plans"] .landing-pricing { border-top: 0; padding-top: 92px; }
+.landing-close {
+    display: none;
+    position: fixed; top: 18px; right: 24px; z-index: 3;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(24,18,42,0.7); color: #f4f2fb;
+    font-size: 17px; line-height: 1; cursor: pointer;
+    align-items: center; justify-content: center;
+    transition: background .15s, border-color .15s;
+}
+.landing-close:hover { background: rgba(139,92,246,0.28); border-color: rgba(139,92,246,0.5); }
+.landing[data-view="plans"] .landing-close { display: flex; }
 
 /* ── Top bar (brand + language picker) ── */
 .landing-top {
