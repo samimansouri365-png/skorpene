@@ -6563,12 +6563,16 @@ body.onb-active { overflow: hidden; }
     position: relative; z-index: 1;
     width: min(1080px, 92vw);
     margin: 0 auto;
-    min-height: 100vh; box-sizing: border-box;
-    display: grid; grid-template-columns: 1.05fr 0.95fr;
-    gap: 56px; align-items: center;
+    min-height: 78vh; box-sizing: border-box;
+    /* Hero is now a single centered column (the auth card moved to its own
+       dedicated view, reached from the top-bar buttons). */
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
     /* Top padding leaves room for the .landing-top header. */
-    padding: 100px 0 48px;
+    padding: 120px 0 30px;
 }
+.landing-inner .landing-hero { max-width: 720px; }
+.landing-inner .landing-feats { max-width: 480px; margin: 22px auto 0; text-align: left; }
 
 /* ── Plans-only mode ──
    When a logged-in user re-opens the landing just to pick a plan, hide the
@@ -6588,6 +6592,66 @@ body.onb-active { overflow: hidden; }
 }
 .landing-close:hover { background: rgba(139,92,246,0.28); border-color: rgba(139,92,246,0.5); }
 .landing[data-view="plans"] .landing-close { display: flex; }
+.landing[data-view="plans"] .landing-showcase,
+.landing[data-view="plans"] .landing-authview { display: none; }
+
+/* ── Top-bar auth actions (Log in / Create account / Back) ── */
+.landing-top-actions { display: flex; align-items: center; gap: 10px; }
+.lt-btn {
+    font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 9px 16px; border-radius: 10px; transition: background .15s, border-color .15s, transform .15s;
+}
+.lt-btn-ghost { background: transparent; color: #e9e4fb; border: 1px solid rgba(255,255,255,0.18); }
+.lt-btn-ghost:hover { background: rgba(255,255,255,0.08); border-color: rgba(139,92,246,0.5); }
+.lt-btn-solid { background: linear-gradient(135deg,#8b5cf6,#6d28d9); color: #fff; border: 0; box-shadow: 0 6px 18px rgba(109,40,217,0.4); }
+.lt-btn-solid:hover { transform: translateY(-1px); }
+.lt-back { display: none; background: transparent; border: 0; color: #cbc5e0; font-family: var(--font); font-size: 13px; cursor: pointer; padding: 9px 10px; }
+.lt-back:hover { color: #fff; }
+
+/* ── Dedicated auth view ──
+   The auth card lives in its own centered view, shown only when data-view=auth.
+   On the home view the card is hidden (auth is reached from the top buttons). */
+.landing-authview { display: none; }
+.landing[data-view="auth"] .landing-authview {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; z-index: 1;
+    min-height: 100vh; box-sizing: border-box;
+    padding: 120px 24px 60px; gap: 14px;
+}
+.landing-authview .landing-auth { width: min(440px, 92vw); }
+.landing[data-view="auth"] .landing-inner,
+.landing[data-view="auth"] .landing-showcase,
+.landing[data-view="auth"] #landing-pricing { display: none; }
+.landing[data-view="auth"] #landing-login-btn,
+.landing[data-view="auth"] #landing-register-btn { display: none; }
+.landing[data-view="auth"] .lt-back { display: inline-flex; }
+
+/* ── Showcase (home view) ── */
+.landing-showcase { position: relative; z-index: 1; padding: 30px 24px 10px; }
+.landing-showcase-inner { max-width: 1000px; margin: 0 auto; }
+.lsc-title { text-align: center; font-size: 30px; font-weight: 700; margin: 0 0 8px; color: #f4f2fb; letter-spacing: -0.01em; }
+.lsc-sub { text-align: center; font-size: 15px; color: #cbc5e0; margin: 0 0 42px; }
+.lsc-row { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 38px; align-items: center; margin-bottom: 44px; }
+.lsc-row .lsc-shot { order: 1; } .lsc-row .lsc-copy { order: 2; }
+.lsc-row-rev .lsc-shot { order: 2; } .lsc-row-rev .lsc-copy { order: 1; }
+.lsc-shot {
+    margin: 0; border-radius: 14px; overflow: hidden; position: relative;
+    aspect-ratio: 16 / 10;
+    border: 1px solid rgba(139,92,246,0.25); background: rgba(255,255,255,0.03);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+}
+.lsc-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lsc-shot-ph { display: none; margin: 0; }
+.lsc-shot-empty { display: flex; align-items: center; justify-content: center; min-height: 200px; }
+.lsc-shot-empty .lsc-shot-ph { display: flex; align-items: center; justify-content: center; font-size: 54px; opacity: 0.5; }
+.lsc-copy h3 { font-size: 19px; font-weight: 700; color: #f4f2fb; margin: 0 0 8px; }
+.lsc-copy p { font-size: 14px; line-height: 1.6; color: #cbc5e0; margin: 0; }
+.lsc-cases { text-align: center; font-size: 14px; color: #b9b2d0; max-width: 760px; margin: 6px auto 0; font-style: italic; }
+@media (max-width: 760px) {
+    .lsc-row { grid-template-columns: 1fr; gap: 16px; margin-bottom: 32px; }
+    .lsc-row .lsc-shot, .lsc-row-rev .lsc-shot,
+    .lsc-row .lsc-copy, .lsc-row-rev .lsc-copy { order: initial; }
+}
 
 /* ── Top bar (brand + language picker) ── */
 .landing-top {
