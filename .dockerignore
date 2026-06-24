@@ -1,0 +1,8 @@
+.git
+__pycache__
+*.pyc
+.DS_Store
+.claude
+auth.db
+telegram_monitor.pid
+web_server.pid

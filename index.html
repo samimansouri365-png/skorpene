@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skorpene — Mapa Geopolítico Mundial</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+
+    <!-- Fonts. Source Serif 4 is the serif used for the AI assistant's answers —
+         the same warm, readable serif family Claude's chat uses. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css?v=20260624h">
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading-screen">
+    <div class="loading-content">
+        <div class="loading-globe">
+            <div class="globe-ring"></div>
+            <div class="globe-ring ring-2"></div>
+            <div class="globe-ring ring-3"></div>
+        </div>
+        <h1 class="loading-title">SKORPENE</h1>
+        <p class="loading-sub" id="loading-text">Inicializando sistema...</p>
+        <div class="loading-bar"><div class="loading-fill"></div></div>
+    </div>
+</div>
+
+<!-- Top Bar -->
+<header id="top-bar">
+    <div class="tb-left">
+        <div class="logo">
+            <span class="logo-diamond">◆</span>
+            <span class="logo-text">SKORPENE</span>
+        </div>
+        <div class="tb-sep"></div>
+        <!-- Search bar (Nominatim autocomplete) -->
+        <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+            <input type="text" id="search-input" class="search-input"
+                   data-i18n-ph="searchPh" placeholder="Buscar lugar…"
+                   autocomplete="off" spellcheck="false">
+            <div id="search-results" class="search-results"></div>
+        </div>
+        <div class="tb-sep"></div>
+        <div class="coord-display">
+            <span class="coord-item"><span class="coord-lbl" data-i18n="latLbl">LAT</span><span class="coord-val" id="coord-lat">---.----</span></span>
+            <span class="coord-dot">·</span>
+            <span class="coord-item"><span class="coord-lbl" data-i18n="lngLbl">LNG</span><span class="coord-val" id="coord-lng">---.----</span></span>
+        </div>
+    </div>
+    <div class="tb-right">
+        <!-- Feed: a no-map tab to read all your sources' news + ask the AI -->
+        <button id="fav-fab" class="fav-fab" title="Feed"
+                aria-label="Feed">
+            <span class="fav-fab-lbl" data-i18n="favTab">Feed</span>
+        </button>
+        <!-- PROVISIONAL (dev only): replays the onboarding as a brand-new user -->
+        <button id="onb-reset-btn" class="onb-reset-btn" title="DEV: reiniciar onboarding"
+                aria-label="Reset onboarding">↻ Reset</button>
+        <button id="settings-fab" class="settings-fab" title="Ajustes" data-i18n-title="settings"
+                aria-label="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+        </button>
+    </div>
+</header>
+
+<!-- Settings Panel -->
+<div id="settings-panel">
+    <div class="panel-hdr">
+        <span class="panel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+        </span>
+        <span class="panel-title" data-i18n="settings">AJUSTES</span>
+    </div>
+    <div class="panel-body">
+        <div class="p-section">
+            <div class="p-section-title" data-i18n="language">IDIOMA</div>
+            <div id="lang-dropdown" class="cs-dropdown" data-value="es"></div>
+        </div>
+
+        <div class="p-section">
+            <div class="p-section-title" data-i18n="uiTheme">TEMA DE INTERFAZ</div>
+            <div class="theme-switcher">
+                <button class="theme-btn active" id="theme-btn-dark" data-theme-val="dark" data-i18n="themeDark">🌙 Oscuro</button>
+                <button class="theme-btn" id="theme-btn-light" data-theme-val="light" data-i18n="themeLight">☀️ Claro</button>
+            </div>
+        </div>
+
+        <div class="p-section">
+            <div class="p-section-title" data-i18n="iconsPerSource">ICONOS POR FUENTE</div>
+            <div class="range-row">
+                <input type="range" id="icons-per-source" class="range-input" min="1" max="20" step="1" value="6">
+                <span class="range-val" id="icons-per-source-val">6</span>
+            </div>
+            <div class="p-section-hint" data-i18n="iconsPerSourceHint">Máximo de iconos que cada fuente coloca en el mapa.</div>
+        </div>
+
+        <!-- Map layers — moved here from the old "Map layers" dropdown. -->
+        <div class="p-section">
+            <div class="p-section-title" data-i18n="mapLayer">CAPA BASE</div>
+            <label class="radio-opt active" data-layer="satellite"><span class="r-dot"></span><span data-i18n="satellite">Satélite</span></label>
+            <label class="radio-opt" data-layer="satellite-esri"><span class="r-dot"></span><span data-i18n="satelliteClassic">Satélite clásico</span></label>
+            <label class="radio-opt" data-layer="dark"><span class="r-dot"></span><span data-i18n="dark">Modo Oscuro</span></label>
+            <label class="radio-opt" data-layer="light"><span class="r-dot"></span><span data-i18n="light">Modo Claro</span></label>
+        </div>
+
+        <div class="p-section" id="borders-section">
+            <div class="p-section-title" data-i18n="extraLayers">CAPAS ADICIONALES</div>
+            <label class="chk-opt active" id="tog-events"><span class="chk on"></span><span data-i18n="eventsLayer">Iconos de eventos</span></label>
+            <label class="chk-opt" id="tog-nolabels"><span class="chk"></span><span data-i18n="noLabels">Sin etiquetas</span></label>
+        </div>
+
+        <!-- Per-category label toggles stay hidden (Google base tiles label for us). -->
+        <div class="p-section" id="labels-section" style="display:none">
+            <div class="p-section-title" data-i18n="labels">ETIQUETAS</div>
+            <label class="chk-opt" id="tog-countries"><span class="chk"></span><span data-i18n="lblCountries">Países</span></label>
+            <label class="chk-opt" id="tog-cities"><span class="chk"></span><span data-i18n="lblCities">Ciudades</span></label>
+            <label class="chk-opt" id="tog-regions"><span class="chk"></span><span data-i18n="lblRegions">Regiones / CC.AA.</span></label>
+            <label class="chk-opt" id="tog-roads"><span class="chk"></span><span data-i18n="lblRoads">Carreteras</span></label>
+            <label class="chk-opt" id="tog-water"><span class="chk"></span><span data-i18n="lblWater">Mares / Estrechos / Golfos</span></label>
+        </div>
+    </div>
+</div>
+
+<!-- Onboarding overlay (first-run setup wizard; populated by app.js) -->
+<div id="onboarding-overlay" class="onb-overlay" aria-hidden="true" style="display:none"></div>
+
+<!-- Landing + auth gate. Shown first (full-screen) until the user logs in or
+     registers. Minimalist black + purple. After auth → onboarding → app. -->
+<div id="landing-overlay" class="landing" aria-hidden="false">
+    <div class="landing-bg" aria-hidden="true"></div>
+
+    <!-- Top bar: brand on the left, language selector on the right. Lets the
+         user pick the landing language BEFORE registering (saved as currentLang
+         and re-applies all data-i18n-landing texts). -->
+    <header class="landing-top">
+        <div class="landing-brand">
+            <!-- Skorpene logo. Loads /logo.png if the user has dropped the
+                 brand PNG into the project root; otherwise falls back to the
+                 inline SVG below (a stylised scorpion-tail S). The <img>'s
+                 onerror swap is what makes the fallback automatic — no JS. -->
+            <img class="landing-logo landing-logo-img"
+                 src="logo.png"
+                 alt="Skorpene"
+                 onerror="this.style.display='none';
+                          var s=this.nextElementSibling;
+                          if(s) s.style.display='block';">
+            <svg class="landing-logo landing-logo-svg"
+                 viewBox="0 0 110 155" xmlns="http://www.w3.org/2000/svg"
+                 aria-hidden="true" focusable="false" style="display:none">
+                <g fill="none" stroke-linecap="round">
+                    <!-- 1. Top of the S: short horizontal segment. -->
+                    <path d="M 50 20 Q 68 12 80 22" stroke="#a78bfa" stroke-width="20"/>
+                    <!-- 2. Top hook curving down toward the upper bulge. -->
+                    <path d="M 86 32 Q 94 50 78 58" stroke="#9061f9" stroke-width="18"/>
+                    <!-- 3. Upper big bulge of the S (right → left). -->
+                    <path d="M 70 64 Q 38 68 46 90" stroke="#8b5cf6" stroke-width="22"/>
+                    <!-- 4. Middle bridge between the two bulges. -->
+                    <path d="M 52 97 Q 66 102 64 112" stroke="#9061f9" stroke-width="17"/>
+                    <!-- 5. Lower big bulge of the S (left → right). -->
+                    <path d="M 66 120 Q 86 124 72 140" stroke="#8b5cf6" stroke-width="22"/>
+                    <!-- 6. Bottom of the S: short horizontal segment. -->
+                    <path d="M 60 146 Q 40 144 32 134" stroke="#a78bfa" stroke-width="20"/>
+                    <!-- 7. Stinger: small curl pointing up-left. -->
+                    <path d="M 26 124 Q 12 112 22 96" stroke="#c4b5fd" stroke-width="14"/>
+                </g>
+            </svg>
+            <span class="landing-name">skorpene</span>
+        </div>
+
+        <div class="landing-lang">
+            <button id="landing-lang-btn" class="landing-lang-btn" aria-haspopup="listbox" aria-expanded="false">
+                <span id="landing-lang-flag">🇪🇸</span>
+                <span id="landing-lang-name">Español</span>
+                <svg viewBox="0 0 12 8" width="10" height="6" aria-hidden="true">
+                    <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <ul id="landing-lang-menu" class="landing-lang-menu" role="listbox" hidden></ul>
+        </div>
+    </header>
+
+    <div class="landing-inner">
+        <section class="landing-hero">
+            <h1 class="landing-title" data-i18n-landing="lpTitle">Tu feed, tu mundo.</h1>
+            <p class="landing-sub" data-i18n-landing="lpSub">
+                Reúne las fuentes que te importan —canales, webs, foros, RSS— y
+                obsérvalas en el mapa en vivo. Tienes a tu alcance una IA para
+                ayudarte con cualquier duda sobre tus temas favoritos, todo desde
+                tu propio feed personalizado.
+            </p>
+            <ul class="landing-feats">
+                <li><span class="lf-ic">🗺️</span><div><strong data-i18n-landing="lpF1T">Mapa en vivo</strong><span data-i18n-landing="lpF1S">Cada noticia, geolocalizada en tiempo real.</span></div></li>
+                <li><span class="lf-ic">🧠</span><div><strong data-i18n-landing="lpF2T">Asistente IA</strong><span data-i18n-landing="lpF2S">Pregunta y obtén respuestas sobre tus fuentes.</span></div></li>
+                <li><span class="lf-ic">📡</span><div><strong data-i18n-landing="lpF3T">Tus fuentes</strong><span data-i18n-landing="lpF3S">Añade tus fuentes; nosotros lo unimos.</span></div></li>
+                <li><span class="lf-ic">🌍</span><div><strong data-i18n-landing="lpF4T">13 idiomas</strong><span data-i18n-landing="lpF4S">Toda la interfaz, en el idioma que elijas.</span></div></li>
+            </ul>
+        </section>
+
+        <section class="landing-auth">
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-auth-tab="login" data-i18n-landing="lpLogin">Iniciar sesión</button>
+                    <button class="auth-tab" data-auth-tab="register" data-i18n-landing="lpRegister">Crear cuenta</button>
+                </div>
+
+                <form id="auth-form" class="auth-form" autocomplete="on">
+                    <label class="auth-field auth-only-register" data-field="name">
+                        <span data-i18n-landing="lpName">Nombre</span>
+                        <input type="text" id="auth-name" name="name" data-i18n-landing-ph="lpNamePh" placeholder="Tu nombre" autocomplete="name">
+                    </label>
+                    <label class="auth-field">
+                        <span data-i18n-landing="lpEmail">Email</span>
+                        <input type="email" id="auth-email" name="email" data-i18n-landing-ph="lpEmailPh" placeholder="tucorreo@ejemplo.com" autocomplete="email" required>
+                    </label>
+                    <label class="auth-field">
+                        <span data-i18n-landing="lpPwd">Contraseña</span>
+                        <input type="password" id="auth-password" name="password" data-i18n-landing-ph="lpPwdPh" placeholder="Mínimo 6 caracteres" autocomplete="current-password" required>
+                    </label>
+                    <div id="auth-error" class="auth-error" role="alert"></div>
+                    <button type="submit" id="auth-submit" class="auth-submit" data-i18n-landing="lpEnter">Entrar</button>
+                </form>
+
+                <p class="auth-switch">
+                    <span data-auth-switch="login" data-i18n-landing-html="lpHaveAccountNo">¿No tienes cuenta? <button type="button" class="auth-link" data-auth-tab="register">Crea una</button></span>
+                    <span data-auth-switch="register" hidden data-i18n-landing-html="lpHaveAccountYes">¿Ya tienes cuenta? <button type="button" class="auth-link" data-auth-tab="login">Inicia sesión</button></span>
+                </p>
+            </div>
+            <p class="landing-foot" data-i18n-landing="lpFoot">Tus datos se guardan solo en tu propio servidor.</p>
+        </section>
+    </div>
+
+    <!-- Pricing section. Sits below the hero/auth so users scroll down to see
+         the plans. Two cards (Free + Pro). The "Choose Pro" CTA triggers the
+         auth flow if not logged in, then redirects to Stripe Checkout. -->
+    <section id="landing-pricing" class="landing-pricing">
+        <div class="landing-pricing-inner">
+            <h2 class="lpr-title" data-i18n-landing="prTitle">Elige tu plan</h2>
+            <p class="lpr-sub" data-i18n-landing="prSub">Empieza gratis. Pásate a Pro cuando lo necesites.</p>
+            <div class="lpr-cards lpr-cards-3">
+                <article class="lpr-card lpr-card-free">
+                    <header class="lpr-card-hdr">
+                        <span class="lpr-plan" data-i18n-landing="prFreeName">Free</span>
+                        <span class="lpr-price">
+                            <span class="lpr-price-amt">€0</span>
+                            <span class="lpr-price-period" data-i18n-landing="prPeriod">/mes</span>
+                        </span>
+                        <p class="lpr-tag" data-i18n-landing="prFreeTag">Para empezar.</p>
+                    </header>
+                    <ul class="lpr-feats">
+                        <li data-i18n-landing="prFreeF1">Hasta 5 fuentes personalizadas</li>
+                        <li data-i18n-landing="prFreeF2">Feed personalizado</li>
+                        <li data-i18n-landing="prFreeF3">Mapa en vivo</li>
+                        <li data-i18n-landing="prFreeF4">13 idiomas</li>
+                        <li class="lpr-feat-off" data-i18n-landing="prFreeF5">Sin asistente IA</li>
+                    </ul>
+                    <button class="lpr-cta lpr-cta-free" data-plan="free" type="button" data-i18n-landing="prFreeCta">Empezar gratis</button>
+                </article>
+
+                <article class="lpr-card lpr-card-pro">
+                    <span class="lpr-badge" data-i18n-landing="prBadge">Popular</span>
+                    <header class="lpr-card-hdr">
+                        <span class="lpr-plan" data-i18n-landing="prProName">Pro</span>
+                        <span class="lpr-price">
+                            <span class="lpr-price-amt">€9,99</span>
+                            <span class="lpr-price-period" data-i18n-landing="prPeriod">/mes</span>
+                        </span>
+                        <p class="lpr-tag" data-i18n-landing="prProTag">Todo lo que necesitas.</p>
+                    </header>
+                    <ul class="lpr-feats">
+                        <li data-i18n-landing="prProF1">Fuentes ilimitadas</li>
+                        <li data-i18n-landing="prProF2">Mapa en vivo + todas las capas</li>
+                        <li data-i18n-landing="prProF3">Asistente IA (20 consultas/día)</li>
+                        <li data-i18n-landing="prProF4">13 idiomas</li>
+                        <li data-i18n-landing="prProF5">Soporte prioritario</li>
+                    </ul>
+                    <button class="lpr-cta lpr-cta-pro" data-plan="pro" type="button" data-i18n-landing="prProCta">Empezar Pro</button>
+                </article>
+
+                <article class="lpr-card lpr-card-team">
+                    <header class="lpr-card-hdr">
+                        <span class="lpr-plan" data-i18n-landing="prTeamName">Team</span>
+                        <span class="lpr-price">
+                            <span class="lpr-price-amt">€39,99</span>
+                            <span class="lpr-price-period" data-i18n-landing="prPeriod">/mes</span>
+                        </span>
+                        <p class="lpr-tag" data-i18n-landing="prTeamTag">Para los más exigentes.</p>
+                    </header>
+                    <ul class="lpr-feats">
+                        <li data-i18n-landing="prTeamF1">Todo lo de Pro</li>
+                        <li data-i18n-landing="prTeamF2">Asistente IA ilimitado</li>
+                        <li data-i18n-landing="prTeamF3">Fuentes ilimitadas</li>
+                        <li data-i18n-landing="prTeamF4">13 idiomas</li>
+                        <li data-i18n-landing="prTeamF5">Soporte prioritario</li>
+                    </ul>
+                    <button class="lpr-cta lpr-cta-team" data-plan="team" type="button" data-i18n-landing="prTeamCta">Empezar Team</button>
+                </article>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Source-loading overlay — a blurred, minimalist veil with a centered message,
+     shown while the AI finds sources OR while the user's own sources are loading. -->
+<div id="src-loading-overlay" class="src-loading-overlay" aria-hidden="true" style="display:none">
+    <div class="src-loading-inner">
+        <div class="src-loading-spinner"></div>
+        <div class="src-loading-msg" id="src-loading-msg" data-i18n="loadingSources">Cargando fuentes de información…</div>
+    </div>
+</div>
+
+<!-- Map -->
+<div id="map-wrapper">
+    <div id="map"></div>
+</div>
+
+<!-- Range Context Menu (right-click on a range circle or origin marker) -->
+<div id="range-cm" class="range-cm">
+    <div class="range-cm-hdr">
+        <span class="range-cm-icon">🎯</span>
+        <span class="range-cm-label">—</span>
+    </div>
+    <button class="range-cm-delete">
+        <span class="cm-icon">✕</span>
+        <span data-i18n="deleteRange">Eliminar este rango</span>
+    </button>
+</div>
+
+<!-- News Panel (Right side) -->
+<div id="news-panel">
+    <div class="news-hdr">
+        <span class="news-title" data-i18n="newsTitle">NOTICIAS EN VIVO</span>
+        <button class="news-toggle" id="news-toggle">━</button>
+    </div>
+    <div class="news-src-tabs">
+        <button class="news-src-tab active" data-src="news" data-i18n="srcAllNews">Noticias</button>
+        <button class="news-src-tab news-src-tab-sources" data-src="sources" data-i18n="sourcesTab">➕ Fuentes</button>
+    </div>
+    <div class="news-body" id="news-body">
+        <div class="news-status" id="news-status"></div>
+        <div id="news-list" class="news-list"></div>
+    </div>
+    <div class="user-src-panel" id="user-src-panel" style="display:none">
+        <div class="usp-title-row">
+            <span class="usp-title" data-i18n="srcAll">Todas las fuentes</span>
+            <button type="button" id="usp-help-btn" class="usp-help-btn" data-i18n="srcHelp">ayuda</button>
+        </div>
+        <div class="usp-add-row">
+            <input type="text" id="usp-input" class="usp-input" data-i18n-ph="addSourcePh"
+                   placeholder="Pega el enlace del sitio (URL)" autocomplete="off">
+            <button id="usp-add-btn" class="usp-add-btn" data-i18n="addBtn">Añadir</button>
+        </div>
+        <div class="usp-status" id="usp-status"></div>
+        <div class="usp-list" id="usp-list"></div>
+    </div>
+</div>
+
+<!-- Source-types help modal — opens from the "ayuda" link in the Sources panel -->
+<div id="src-help-overlay" class="src-help-overlay" aria-hidden="true" style="display:none"></div>
+
+<!-- Location Popup -->
+<div id="loc-popup">
+    <div class="lp-hdr">
+        <img class="lp-flag" id="lp-flag" alt="" src="">
+        <div class="lp-names">
+            <span class="lp-name" id="lp-name">—</span>
+            <span class="lp-name-sub" id="lp-name-sub"></span>
+        </div>
+        <button class="lp-close" id="lp-close">×</button>
+    </div>
+    <div class="lp-body">
+        <div class="lp-row"><span class="lp-lbl" data-i18n="lpType">Tipo</span><span class="lp-val" id="lp-type">—</span></div>
+        <div class="lp-row"><span class="lp-lbl" data-i18n="lpCountry">País</span><span class="lp-val" id="lp-country">—</span></div>
+        <div class="lp-row"><span class="lp-lbl" data-i18n="lpPop">Habitantes</span><span class="lp-val" id="lp-pop">—</span></div>
+        <div class="lp-row"><span class="lp-lbl" data-i18n="lpArea">Superficie</span><span class="lp-val" id="lp-area">—</span></div>
+        <div class="lp-row"><span class="lp-lbl" data-i18n="lpCoords">Coords</span><span class="lp-val" id="lp-coords">—</span></div>
+    </div>
+    <div class="lp-footer" id="lp-footer">
+        <button class="lp-clear-btn" id="lp-clear-btn" style="display:none">✗ Limpiar medición</button>
+    </div>
+</div>
+
+<!-- Media Lightbox (image / video full-screen viewer) -->
+<div id="media-viewer" class="mv-backdrop" aria-hidden="true">
+    <button class="mv-close" id="mv-close" aria-label="Close">×</button>
+    <div class="mv-stage" id="mv-stage"></div>
+</div>
+
+<!-- Favorite Topics Box (no map): a news reader of ALL your sources' news,
+     with a small Dynamic-Island-style AI box to ask about them. -->
+<div id="fav-overlay" class="fav-overlay" aria-hidden="true" style="display:none">
+    <div class="fav-panel">
+        <header class="fav-hdr">
+            <div class="fav-hdr-titles">
+                <span class="fav-hdr-title" data-i18n="favTitle">Feed</span>
+                <span class="fav-hdr-sub" id="fav-count"></span>
+            </div>
+            <button class="fav-close" id="fav-close" aria-label="Cerrar">×</button>
+        </header>
+
+        <!-- News reader: every article from the user's added sources -->
+        <div class="fav-feed" id="fav-feed"></div>
+
+        <!-- Dynamic Island: minimalist AI consult about your news, foldable. -->
+        <div class="fav-island" id="fav-island">
+            <div class="fav-island-convo" id="fav-island-convo"></div>
+            <div class="fav-island-bar" id="fav-island-bar">
+                <button id="fav-island-toggle" class="fav-island-toggle" aria-label="Plegar / desplegar"
+                        title="Plegar / desplegar conversación">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                         stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <input type="text" id="fav-island-input" class="fav-island-input"
+                       data-i18n-ph="favAskPh" placeholder="Pregunta a la IA sobre tus noticias…"
+                       autocomplete="off">
+                <button id="fav-island-send" class="fav-island-send" aria-label="Enviar">➤</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI assistant — a floating Dynamic Island at the bottom of the map. Ask
+     anything; the answer streams in above the bar. The conversation can be
+     folded/unfolded so it doesn't cover the map. -->
+<div id="ai-island" class="ai-island" aria-hidden="false">
+    <div class="ai-island-convo" id="ai-island-convo"></div>
+    <div class="ai-island-bar" id="ai-island-bar">
+        <button id="ai-island-toggle" class="ai-island-toggle" aria-label="Plegar / desplegar"
+                title="Plegar / desplegar conversación">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                 stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <input type="text" id="ai-island-input" class="ai-island-input"
+               data-i18n-ph="aiAskPh" placeholder="Pregunta a la IA…" autocomplete="off">
+        <button id="ai-island-send" class="ai-island-send" aria-label="Enviar">➤</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<!-- ── Google Maps Platform base map (exact Google imagery + zoom-dependent labels) ──
+     Replace YOUR_GOOGLE_MAPS_API_KEY below with a Maps JavaScript API key from
+     Google Cloud Console (billing must be enabled). Until a valid key is present,
+     app.js falls back to the previous Esri/CARTO tiles so the map still works.
+     The key is loaded synchronously (before GoogleMutant + app.js) so google.maps
+     is ready when the base layer is created. -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYi2ig-ZkmwkXv_dt-0glm0o17BxKTCJk&v=quarterly&language=es" data-gmaps-loader="1" data-lang="es"></script>
+<script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.14.1/dist/Leaflet.GoogleMutant.js"></script>
+<script src="app.js?v=20260624h"></script>
+</body>
+</html>

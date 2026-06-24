@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "geoscope",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["start_server.py", "8000"],
+      "port": 8000,
+      "autoPort": false
+    }
+  ]
+}
