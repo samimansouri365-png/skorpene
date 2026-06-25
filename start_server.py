@@ -77,6 +77,15 @@ DEV_EMAILS = set(
 def _is_dev_email(email):
     return bool(email) and email.strip().lower() in DEV_EMAILS
 
+def _safe_json(blob):
+    """Parse a stored JSON column to a Python object, or None on empty/garbage."""
+    if not blob:
+        return None
+    try:
+        return json.loads(blob)
+    except Exception:
+        return None
+
 # Plan limits enforced server-side (the client mirrors these for UX only).
 #   free → no AI at all          pro → PRO_AI_DAILY assistant queries/day
 #   team → unlimited AI
@@ -152,6 +161,9 @@ def _auth_init():
             # Onboarding profile (JSON). Bound to the account so the wizard runs
             # once and is never asked again, on any device.
             "ALTER TABLE users ADD COLUMN profile TEXT",
+            # The user's news sources (JSON array). Bound to the account so the
+            # web "doesn't forget" the user's feed across devices/logins.
+            "ALTER TABLE users ADD COLUMN sources TEXT",
         ):
             try:
                 conn.execute(col_sql)
@@ -564,6 +576,10 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_auth_logout()
         elif self.path == '/api/auth/profile':
             self.handle_auth_profile()
+        elif self.path == '/api/auth/sources':
+            self.handle_auth_sources()
+        elif self.path == '/api/auth/dev-reset':
+            self.handle_auth_dev_reset()
         elif self.path == '/api/billing/create-checkout-session':
             self.handle_billing_create_session()
         elif self.path == '/api/billing/dev-upgrade':
@@ -626,7 +642,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
                 token = _new_session(conn, uid)
         except sqlite3.IntegrityError:
             self._json_response(409, {'error': 'email_taken'}); return
-        self._json_response(200, {'token': token, 'user': {'email': email, 'name': name, 'plan': 'free', 'profile': None, 'is_dev': _is_dev_email(email)}})
+        self._json_response(200, {'token': token, 'user': {'email': email, 'name': name, 'plan': 'free', 'profile': None, 'sources': None, 'is_dev': _is_dev_email(email)}})
 
     def handle_auth_login(self):
         data = self._read_json_body()
@@ -639,15 +655,11 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             if not row or not hmac.compare_digest(_hash_pw(password, row['pw_salt']), row['pw_hash']):
                 self._json_response(401, {'error': 'bad_credentials'}); return
             token = _new_session(conn, row['id'])
-        profile = None
-        try:
-            if row['profile']:
-                profile = json.loads(row['profile'])
-        except Exception:
-            profile = None
+        profile = _safe_json(row['profile'])
+        sources = _safe_json(row['sources'])
         self._json_response(200, {'token': token, 'user': {
             'email': row['email'], 'name': row['name'], 'plan': row['plan'] or 'free',
-            'profile': profile, 'is_dev': _is_dev_email(row['email'])}})
+            'profile': profile, 'sources': sources, 'is_dev': _is_dev_email(row['email'])}})
 
     def handle_auth_me(self):
         token = self._bearer_token()
@@ -656,22 +668,18 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         min_created = time.time() - _SESSION_TTL
         with _auth_db() as conn:
             row = conn.execute(
-                'SELECT u.email, u.name, u.plan, u.profile FROM sessions s JOIN users u ON u.id=s.user_id '
+                'SELECT u.email, u.name, u.plan, u.profile, u.sources FROM sessions s JOIN users u ON u.id=s.user_id '
                 'WHERE s.token=? AND s.created > ?',
                 (token, min_created)).fetchone()
         if not row:
             self._json_response(401, {'error': 'invalid_token'}); return
-        profile = None
-        try:
-            if row['profile']:
-                profile = json.loads(row['profile'])
-        except Exception:
-            profile = None
         self._json_response(200, {'user': {
             'email': row['email'], 'name': row['name'],
             'plan': row['plan'] or 'free',
             # Account-bound onboarding profile (null until the wizard is done).
-            'profile': profile,
+            'profile': _safe_json(row['profile']),
+            # Account-bound news sources (null until the user has any saved).
+            'sources': _safe_json(row['sources']),
             'is_dev': _is_dev_email(row['email']),
         }})
 
@@ -692,6 +700,40 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             conn.execute('UPDATE users SET profile=? WHERE id=?', (blob, user['id']))
             conn.commit()
         self._json_response(200, {'ok': True})
+
+    def handle_auth_sources(self):
+        """Persist the user's news sources (JSON array) onto their account so the
+        feed follows them across devices/logins. Auth'd via Bearer token."""
+        user = self._user_from_token()
+        if not user:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        data = self._read_json_body()
+        if not isinstance(data, list):
+            self._json_response(400, {'error': 'invalid_json'}); return
+        try:
+            blob = json.dumps(data)
+        except Exception:
+            self._json_response(400, {'error': 'invalid_json'}); return
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute('UPDATE users SET sources=? WHERE id=?', (blob, user['id']))
+            conn.commit()
+        self._json_response(200, {'ok': True})
+
+    def handle_auth_dev_reset(self):
+        """Developer-only hard reset: wipe the account's onboarding profile +
+        sources and drop the plan back to free, so the owner can replay the whole
+        first-run experience. DEV_EMAILS only; everyone else gets 403."""
+        user = self._user_from_token()
+        if not user:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        if not _is_dev_email(user['email']):
+            self._json_response(403, {'error': 'not_dev'}); return
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute("UPDATE users SET profile=NULL, sources=NULL, plan='free', "
+                         "stripe_customer_id=NULL, stripe_subscription_id=NULL WHERE id=?",
+                         (user['id'],))
+            conn.commit()
+        self._json_response(200, {'ok': True, 'plan': 'free'})
 
     def _user_from_token(self):
         """Resolve the bearer token to a users row, or None."""

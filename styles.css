@@ -6684,6 +6684,8 @@ body.onb-active { overflow: hidden; }
 .lpm-item:hover { background: rgba(139,92,246,0.14); }
 .lpm-enter { font-weight: 600; }
 .lpm-logout { color: #ff8da3; }
+.lpm-reset { color: #f0b070; font-size: 12px; }
+[data-theme="light"] #profile-chip .lpm-reset { color: #b4630e; }
 
 /* Light theme: the IN-APP profile chip sits in the (now light) top bar, so its
    near-white text + dark menu must flip to dark-on-light. Scoped to #profile-chip

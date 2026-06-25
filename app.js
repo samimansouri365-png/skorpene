@@ -1217,6 +1217,23 @@
         he:{ favItems:'חדשות', favLoading:'טוען חדשות מהמקורות שלך…' }
     };
     Object.keys(FAV_I18N2).forEach(lng => { if (T[lng]) Object.assign(T[lng], FAV_I18N2[lng]); });
+    // AI chat → "add sources" replies + the dev reset button, in every language.
+    const AISRC_I18N = {
+        es:{ aiSourcesAdded:'Listo: he añadido {n} fuentes a tu feed. Mira el mapa y el Feed.', aiSourcesNone:'No encontré fuentes nuevas para añadir (quizá ya las tenías).', devReset:'Reiniciar todo (dev)' },
+        en:{ aiSourcesAdded:'Done: I added {n} sources to your feed. Check the map and the Feed.', aiSourcesNone:'I couldn\'t find new sources to add (you may already have them).', devReset:'Reset everything (dev)' },
+        fr:{ aiSourcesAdded:'C\'est fait : j\'ai ajouté {n} sources à ton flux. Regarde la carte et le Feed.', aiSourcesNone:'Je n\'ai pas trouvé de nouvelles sources à ajouter (tu les as peut-être déjà).', devReset:'Tout réinitialiser (dev)' },
+        ru:{ aiSourcesAdded:'Готово: я добавил {n} источников в твою ленту. Посмотри на карту и Feed.', aiSourcesNone:'Не нашёл новых источников для добавления (возможно, они уже есть).', devReset:'Сбросить всё (dev)' },
+        zh:{ aiSourcesAdded:'完成：我已为你的资讯流添加了 {n} 个来源。看看地图和 Feed。', aiSourcesNone:'没有找到可添加的新来源（也许你已经有了）。', devReset:'重置全部（开发）' },
+        tr:{ aiSourcesAdded:'Tamam: akışına {n} kaynak ekledim. Haritaya ve Feed\'e bak.', aiSourcesNone:'Eklenecek yeni kaynak bulamadım (belki zaten var).', devReset:'Her şeyi sıfırla (dev)' },
+        ar:{ aiSourcesAdded:'تم: أضفت {n} مصادر إلى موجزك. ألقِ نظرة على الخريطة وعلى الـFeed.', aiSourcesNone:'لم أجد مصادر جديدة لإضافتها (ربما لديك بالفعل).', devReset:'إعادة ضبط كل شيء (مطوّر)' },
+        fa:{ aiSourcesAdded:'انجام شد: {n} منبع به فید تو افزودم. نقشه و Feed را ببین.', aiSourcesNone:'منبع جدیدی برای افزودن پیدا نکردم (شاید از قبل داری).', devReset:'بازنشانی همه‌چیز (توسعه)' },
+        he:{ aiSourcesAdded:'בוצע: הוספתי {n} מקורות לפיד שלך. הסתכל על המפה ועל ה-Feed.', aiSourcesNone:'לא מצאתי מקורות חדשים להוספה (ייתכן שכבר יש לך).', devReset:'אפס הכול (מפתח)' },
+        nl:{ aiSourcesAdded:'Klaar: ik heb {n} bronnen aan je feed toegevoegd. Bekijk de kaart en de Feed.', aiSourcesNone:'Ik kon geen nieuwe bronnen vinden om toe te voegen (je hebt ze misschien al).', devReset:'Alles resetten (dev)' },
+        it:{ aiSourcesAdded:'Fatto: ho aggiunto {n} fonti al tuo feed. Guarda la mappa e il Feed.', aiSourcesNone:'Non ho trovato nuove fonti da aggiungere (forse le hai già).', devReset:'Reimposta tutto (dev)' },
+        pt:{ aiSourcesAdded:'Pronto: adicionei {n} fontes ao teu feed. Vê o mapa e o Feed.', aiSourcesNone:'Não encontrei novas fontes para adicionar (talvez já as tenhas).', devReset:'Repor tudo (dev)' },
+        hi:{ aiSourcesAdded:'हो गया: मैंने तुम्हारे फ़ीड में {n} स्रोत जोड़े। मानचित्र और Feed देखो।', aiSourcesNone:'जोड़ने के लिए कोई नया स्रोत नहीं मिला (शायद पहले से हैं)।', devReset:'सब रीसेट करो (dev)' },
+    };
+    Object.keys(AISRC_I18N).forEach(lng => { if (T[lng]) Object.assign(T[lng], AISRC_I18N[lng]); });
     // Source-loading veil message, per language.
     const SRC_LOAD_I18N = {
         es:{ loadingSources:'Cargando fuentes de información…' },
@@ -4958,6 +4975,13 @@
         if (plansBtn) plansBtn.style.display = paid ? 'none' : '';
         const logoutBtn = document.getElementById('profile-logout-btn');
         if (logoutBtn) logoutBtn.textContent = tr.logoutLabel || 'Log out';
+        // Dev-only "Reset everything" — shown only for developer accounts.
+        const resetBtn = document.getElementById('profile-reset-btn');
+        if (resetBtn) {
+            const isDev = !!(auth && auth._isDevUser && auth._isDevUser());
+            resetBtn.hidden = !isDev;
+            resetBtn.textContent = tr.devReset || 'Reset everything (dev)';
+        }
         if (!_profileWired) {
             _profileWired = true;
             const btn = document.getElementById('profile-chip-btn');
@@ -4974,6 +4998,7 @@
             // landing chip's "Enter app").
             if (backBtn) backBtn.addEventListener('click', () => { setOpen(false); try { auth._showLanding(); } catch (_) {} });
             if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); try { auth.showPlans(); } catch (_) {} });
+            if (resetBtn) resetBtn.addEventListener('click', () => { setOpen(false); try { auth._devReset(); } catch (_) {} });
             if (logoutBtn) logoutBtn.addEventListener('click', async () => { setOpen(false); try { await auth.logout(); } catch (_) {} location.reload(); });
         }
     }
@@ -5348,6 +5373,27 @@ ${context}`;
             if (bubble) bubble.classList.add('ai-msg-pending');
             this._scrollConvo();
 
+            // Source-adding shortcut: if the user is asking to ADD sources, let
+            // Claude pick them and add them (icons appear on the map; the blur
+            // veil shows while news loads) instead of a normal answer. Falls
+            // through to a normal answer if it isn't actually a source request.
+            if (aiSourceFinder.looksLikeSourceRequest(q)) {
+                try {
+                    const res = await aiSourceFinder.runForChat(q);
+                    if (res.handled) {
+                        const msg = res.added > 0
+                            ? (t('aiSourcesAdded') || 'Listo: he añadido {n} fuentes a tu feed.').replace('{n}', res.added)
+                            : (t('aiSourcesNone') || 'No encontré fuentes nuevas para añadir.');
+                        this.history[this.history.length - 1].content = msg;
+                        bubble = this._renderConvo();
+                        if (bubble) bubble.classList.remove('ai-msg-pending');
+                        this._scrollConvo();
+                        this.busy = false;
+                        return;
+                    }
+                } catch (_) {}
+            }
+
             // Build the request from history WITHOUT the empty placeholder.
             const msgs = this.history.slice(0, -1).slice(-12);
             const system = _aiSystemPrompt(this.buildContext());
@@ -5554,6 +5600,26 @@ ${this.buildContext()}`;
             let bubble = this._renderConvo();
             if (bubble) bubble.classList.add('fav-island-pending');
             this._scrollConvo();
+
+            // Source-adding shortcut (same as the map assistant): ask the AI to
+            // add sources → it picks + adds them, icons appear, the veil shows.
+            if (aiSourceFinder.looksLikeSourceRequest(q)) {
+                try {
+                    const res = await aiSourceFinder.runForChat(q);
+                    if (res.handled) {
+                        const msg = res.added > 0
+                            ? (tr.aiSourcesAdded || 'Listo: he añadido {n} fuentes a tu feed.').replace('{n}', res.added)
+                            : (tr.aiSourcesNone || 'No encontré fuentes nuevas para añadir.');
+                        this.history[this.history.length - 1].content = msg;
+                        bubble = this._renderConvo();
+                        if (bubble) bubble.classList.remove('fav-island-pending');
+                        this._scrollConvo();
+                        try { this.renderFeed(); } catch (_) {}
+                        this.busy = false;
+                        return;
+                    }
+                } catch (_) {}
+            }
 
             const msgs = this.history.slice(0, -1).slice(-10);
             const fail = (msg) => {
@@ -5857,7 +5923,33 @@ ${this.buildContext()}`;
             try { this.geoCache = JSON.parse(localStorage.getItem(this.LS_GEO) || '{}') || {}; } catch (_) { this.geoCache = {}; }
             try { this.hidden = JSON.parse(localStorage.getItem(this.LS_HIDDEN) || '{}') || {}; } catch (_) { this.hidden = {}; }
         },
-        _saveSrc() { try { localStorage.setItem(this.LS_SRC, JSON.stringify(this.sources)); } catch (_) {} },
+        _saveSrc() {
+            try { localStorage.setItem(this.LS_SRC, JSON.stringify(this.sources)); } catch (_) {}
+            this._pushSrcToAccount();
+        },
+        // Mirror the sources onto the user's account (debounced) so the feed
+        // follows them across devices/logins — "the web doesn't forget".
+        _pushSrcToAccount() {
+            let tok = '';
+            try { tok = localStorage.getItem('geoscope_auth_token') || ''; } catch (_) {}
+            if (!tok) return;
+            clearTimeout(this._srcPushT);
+            this._srcPushT = setTimeout(() => {
+                try {
+                    fetch('/api/auth/sources', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok },
+                        body: JSON.stringify(this.sources),
+                    }).catch(() => {});
+                } catch (_) {}
+            }, 900);
+        },
+        // Write sources locally WITHOUT pushing back to the server (used when we
+        // just pulled them FROM the server, to avoid an echo round-trip).
+        _setSrcLocal(arr) {
+            this.sources = Array.isArray(arr) ? arr : [];
+            try { localStorage.setItem(this.LS_SRC, JSON.stringify(this.sources)); } catch (_) {}
+        },
         _saveGeo() { try { localStorage.setItem(this.LS_GEO, JSON.stringify(this.geoCache)); } catch (_) {} },
         _saveHidden() { try { localStorage.setItem(this.LS_HIDDEN, JSON.stringify(this.hidden)); } catch (_) {} },
         _saveRemovedDefaults() { try { localStorage.setItem(this.LS_REMOVED_DEFAULTS, JSON.stringify(this.removedDefaults)); } catch (_) {} },
@@ -7107,28 +7199,7 @@ ${this.buildContext()}`;
                 this._clearStatus(); return;
             }
 
-            // Feed each suggestion through geoFeed.addSource with deferRefresh
-            // so we add ALL sources in a tight loop then trigger ONE refresh
-            // at the end. Otherwise the `_busy` lock dropped every refresh
-            // after the first and most AI-recommended sources never got fetched.
-            let added = 0;
-            for (const item of arr) {
-                if (!item || !item.type || !item.value) continue;
-                const raw = item.type === 'telegram'
-                    ? (String(item.value).startsWith('@') ? item.value : '@' + String(item.value).replace(/^@/, ''))
-                    : String(item.value);
-                const r = geoFeed.addSource(raw, { deferRefresh: true });
-                if (r && r.ok && !r.dup) {
-                    added++;
-                    // Apply Claude's display name.
-                    if (item.name) {
-                        const id = (item.type === 'telegram' ? 'telegram:' : 'rss:') + String(item.value).replace(/^@/, '').toLowerCase();
-                        const src = geoFeed.sources.find(s => s.id === id);
-                        if (src) { src.name = String(item.name); geoFeed._saveSrc(); }
-                    }
-                }
-            }
-
+            const added = this._addItems(arr).added;
             try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
 
             if (added > 0) {
@@ -7142,6 +7213,81 @@ ${this.buildContext()}`;
                 this._setStatus('⚠️ No se añadió ninguna fuente nueva (ya las tenías).');
             }
             this._clearStatus(8000);
+        },
+
+        // Add a batch of {type,value,name} suggestions. Tight loop with
+        // deferRefresh so geoFeed's _busy lock doesn't drop fetches; the caller
+        // triggers ONE refresh afterwards. Returns { added, names }.
+        _addItems(arr) {
+            let added = 0; const names = [];
+            for (const item of (arr || [])) {
+                if (!item || !item.type || !item.value) continue;
+                const raw = item.type === 'telegram'
+                    ? (String(item.value).startsWith('@') ? item.value : '@' + String(item.value).replace(/^@/, ''))
+                    : String(item.value);
+                const r = geoFeed.addSource(raw, { deferRefresh: true });
+                if (r && r.ok && !r.dup) {
+                    added++;
+                    if (item.name) {
+                        const id = (item.type === 'telegram' ? 'telegram:' : 'rss:') + String(item.value).replace(/^@/, '').toLowerCase();
+                        const src = geoFeed.sources.find(s => s.id === id);
+                        if (src) { src.name = String(item.name); geoFeed._saveSrc(); }
+                        names.push(String(item.name));
+                    }
+                }
+            }
+            return { added, names };
+        },
+
+        // Broad, multilingual heuristic: does this chat message PLAUSIBLY ask to
+        // add sources? Only a gate — the AI then makes the precise decision in
+        // runForChat (so a false positive just costs one classify call).
+        looksLikeSourceRequest(q) {
+            // Strip diacritics so accented imperatives (añádeme, recomiéndame,
+            // suscríbeme…) match the accent-free latin patterns below.
+            const s = ' ' + String(q || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') + ' ';
+            const noun = /(fuente|source|canal|channel|feed|rss|telegram|noticier|medio|outlet|fonte|bron|kaynak|подписк|источник|来源|频道|قناة|مصدر|منبع|स्रोत)/i.test(s);
+            const verb = /(anad|agreg|adicion|\badd\b|incorpor|mete|\bpon|dame|\bgive|busca|encuentr|\bfind\b|recomien|recommend|suscr|sigue|\bfollow\b|quiero|necesito|\bwant\b|voeg|ekle|添加|加入|推荐|أضف|اضف|جोड़|اضافه)/i.test(s);
+            return noun && verb;
+        },
+        _parseObj(raw) {
+            const cleaned = String(raw).trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+            try { return JSON.parse(cleaned); } catch (_) {}
+            const m = cleaned.match(/\{[\s\S]*\}/);
+            if (m) { try { return JSON.parse(m[0]); } catch (_) {} }
+            return null;
+        },
+        // Chat shortcut: when the user asks the AI to add sources, let Claude pick
+        // them, add them (icons appear on the map; the blur veil shows while news
+        // loads) and report back. Returns { handled, added }. handled=false means
+        // "not a source request — answer normally".
+        async runForChat(q) {
+            const system = [
+                'You decide whether the user is asking to ADD information sources to their feed',
+                '(news channels, RSS/Atom feeds, Telegram channels, blogs, forums, subreddits…).',
+                'Output STRICT JSON ONLY — no prose, no markdown, no code fences.',
+                'If they are NOT asking to add sources, output exactly: {"add":false}',
+                'If they ARE, output: {"add":true,"items":[{"type":"telegram"|"rss","value":string,"name":string,"note":string}]}',
+                '  • type "telegram": value = the @handle (with or without @).',
+                '  • type "rss": value = the full RSS/Atom feed URL.',
+                '  • Honor an explicit count if the user named one; otherwise return 8–12 strong picks.',
+                '  • Prefer well-known sources you are confident exist and are active, matching the user\'s topic/region.',
+            ].join('\n');
+            const user = `User message: "${String(q || '').slice(0, 500)}"\nReturn the JSON now.`;
+            let raw = null;
+            try { raw = await claudeComplete({ system, max_tokens: 2048, messages: [{ role: 'user', content: user }] }); }
+            catch (_) { return { handled: false }; }
+            if (raw == null) return { handled: false };
+            const obj = this._parseObj(raw);
+            if (!obj || obj.add !== true || !Array.isArray(obj.items) || !obj.items.length) return { handled: false };
+            let added = 0;
+            showSourceLoading();
+            try {
+                added = this._addItems(obj.items).added;
+                try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
+                if (added > 0) await _refreshAndWait(35000);
+            } finally { hideSourceLoading(); }
+            return { handled: true, added };
         },
     };
 
@@ -7160,6 +7306,7 @@ ${this.buildContext()}`;
                 localStorage.setItem(LS_USER, JSON.stringify(user || {}));
             } catch (_) {}
             this._syncProfile(user);
+            this._syncSources(user);
         },
         // Mirror the account's server-side onboarding profile into localStorage so
         // hasProfile()/the wizard reflect THIS account. If the account has no
@@ -7171,6 +7318,18 @@ ${this.buildContext()}`;
             try {
                 if (user.profile) localStorage.setItem(LS_PROFILE, JSON.stringify(user.profile));
                 else localStorage.removeItem(LS_PROFILE);
+            } catch (_) {}
+        },
+        // Pull the account's saved sources into geoFeed (so the feed follows the
+        // user across devices). Only applies a non-empty server list; a brand-new
+        // account (null) keeps the local defaults, which get pushed up on change.
+        _syncSources(user) {
+            if (!user || !Array.isArray(user.sources) || !user.sources.length) return;
+            try {
+                if (typeof geoFeed === 'undefined' || !geoFeed._setSrcLocal) return;
+                geoFeed._setSrcLocal(user.sources);
+                if (typeof renderUserSourcesList === 'function') renderUserSourcesList();
+                if (geoFeed.refresh) geoFeed.refresh(true);
             } catch (_) {}
         },
         async init() {
@@ -7199,6 +7358,7 @@ ${this.buildContext()}`;
                                 // the wizard is skipped for a user who already did it
                                 // (and cleared for a fresh account).
                                 this._syncProfile(me.user);
+                                this._syncSources(me.user);
                             }
                         } catch (_) {}
                         // Returning from a Stripe Checkout success URL? Confirm
@@ -7359,6 +7519,11 @@ ${this.buildContext()}`;
             const logoutBtn = document.getElementById('landing-profile-logout');
             if (logoutBtn) logoutBtn.textContent = tr.logoutLabel || 'Log out';
             if (enterBtn) enterBtn.textContent = tr.enterApp || 'Enter app';
+            const resetBtn = document.getElementById('landing-profile-reset');
+            if (resetBtn) {
+                resetBtn.hidden = !this._isDevUser();
+                resetBtn.textContent = tr.devReset || 'Reset everything (dev)';
+            }
         },
         _enterApp() {
             // Play a brief minimalist intro OVER the landing, then (while it's
@@ -7522,6 +7687,8 @@ ${this.buildContext()}`;
             if (enterBtn) enterBtn.addEventListener('click', () => { setOpen(false); this._enterApp(); });
             const plansBtn = document.getElementById('landing-profile-plans');
             if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); this.showPlans(); });
+            const resetBtn = document.getElementById('landing-profile-reset');
+            if (resetBtn) resetBtn.addEventListener('click', () => { setOpen(false); try { this._devReset(); } catch (_) {} });
             const logoutBtn = document.getElementById('landing-profile-logout');
             if (logoutBtn) logoutBtn.addEventListener('click', async () => { setOpen(false); try { await this.logout(); } catch (_) {} location.reload(); });
         },
@@ -7636,6 +7803,23 @@ ${this.buildContext()}`;
         _isDevUser() {
             try { return !!(JSON.parse(localStorage.getItem(LS_USER) || '{}') || {}).is_dev; }
             catch (_) { return false; }
+        },
+        // Developer-only HARD reset: wipe the account's profile + sources + plan
+        // on the server, clear the matching local state, and reload → the whole
+        // first-run (onboarding included) replays. Dev accounts only.
+        async _devReset() {
+            const tok = this.token();
+            if (!tok) return;
+            try { if (typeof confirm === 'function' && !confirm('DEV: reset profile, sources and plan to first-run?')) return; } catch (_) {}
+            try { await fetch('/api/auth/dev-reset', { method: 'POST', headers: { Authorization: 'Bearer ' + tok } }); } catch (_) {}
+            ['geoscope_profile', 'geoscope_user_sources', 'geoscope_geofeed_geo', 'geoscope_hidden_channels', 'geoscope_removed_defaults']
+                .forEach(k => { try { localStorage.removeItem(k); } catch (_) {} });
+            try {
+                const u = JSON.parse(localStorage.getItem(LS_USER) || '{}') || {};
+                u.plan = 'free'; u.profile = null; u.sources = null;
+                localStorage.setItem(LS_USER, JSON.stringify(u));
+            } catch (_) {}
+            location.reload();
         },
         // Switch a developer account's plan with no payment, then unlock the UI
         // in place (no reload). Returns true if the upgrade happened.
