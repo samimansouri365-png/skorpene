@@ -1081,8 +1081,8 @@
     Object.keys(SIM_I18N_CARD).forEach(lng => { if (T[lng]) Object.assign(T[lng], SIM_I18N_CARD[lng]); });
     // AI assistant strings — all 9 languages.
     const AI_I18N = {
-        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app' },
-        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',logoutLabel:'Log out',enterApp:'Enter app' },
+        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app',backHome:'Volver a inicio' },
+        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',logoutLabel:'Log out',enterApp:'Enter app',backHome:'Back to home' },
         fr:{ aiTitle:'Assistant IA',aiWelcome:'Bonjour 👋 Posez-moi des questions sur les événements de la carte.',aiPlaceholder:'Question sur la carte…',aiAskPh:'Demandez à l\'IA…',aiThinking:'Réflexion…',aiError:'Impossible de contacter l\'IA. Vérifiez que le serveur (start_server.py) est en marche.',srcTelegram:'Telegram',srcOutlets:'Médias',outletsLoading:'Chargement…',outletsError:'Impossible de charger les médias.',outletsEmpty:'Aucun article disponible.',newsTitle:'ACTUALITÉS EN DIRECT',translatingNews:'Traduction…',translateDone:'Actualités traduites',showMore:'Afficher plus',showLess:'Afficher moins' },
         ru:{ aiTitle:'ИИ Ассистент',aiWelcome:'Привет 👋 Задайте мне вопросы о событиях на карте.',aiPlaceholder:'Вопрос о карте…',aiAskPh:'Спросите ИИ…',aiThinking:'Думаю…',aiError:'Не удалось связаться с ИИ. Проверьте, что сервер (start_server.py) запущен.',srcTelegram:'Телеграм',srcOutlets:'СМИ',outletsLoading:'Загрузка…',outletsError:'Не удалось загрузить СМИ.',outletsEmpty:'Нет доступных статей.',newsTitle:'НОВОСТИ В ПРЯМОМ ЭФИРЕ',translatingNews:'Перевод…',translateDone:'Новости переведены',showMore:'Показать больше',showLess:'Показать меньше' },
         zh:{ aiTitle:'AI 助手',aiWelcome:'你好 👋 随时可以问我地图上的事件。',aiPlaceholder:'询问地图…',aiAskPh:'询问 AI…',aiThinking:'思考中…',aiError:'无法联系 AI。请确认服务器 (start_server.py) 正在运行。',srcTelegram:'Telegram',srcOutlets:'新闻媒体',outletsLoading:'加载中…',outletsError:'无法加载新闻媒体。',outletsEmpty:'暂无文章。',newsTitle:'实时新闻',translatingNews:'翻译中…',translateDone:'新闻已翻译',showMore:'显示更多',showLess:'显示更少' },
@@ -4887,22 +4887,22 @@
         const tr = T[currentLang] || T.en;
         const name = user.name || (user.email ? user.email.split('@')[0] : 'Skorpene');
         const plan = (user.plan || 'free').toLowerCase();
+        const paid = (plan === 'pro' || plan === 'team');
         const avatar = document.getElementById('profile-avatar');
         const nameEl = document.getElementById('profile-name');
         const planEl = document.getElementById('profile-plan');
+        const emailEl = document.getElementById('profile-email');
         if (avatar) avatar.textContent = (name[0] || 'S').toUpperCase();
         if (nameEl) nameEl.textContent = name;
+        if (emailEl) emailEl.textContent = user.email || '';
         if (planEl) {
-            planEl.classList.remove('is-free', 'is-choose');
-            if (plan === 'pro' || plan === 'team') {
-                planEl.textContent = plan === 'team' ? 'Team' : 'Pro';
-            } else {
-                planEl.textContent = tr.planChoose || 'Choose plan';
-                planEl.classList.add('is-choose');
-            }
+            planEl.classList.toggle('is-choose', !paid);
+            planEl.textContent = paid ? (plan === 'team' ? 'Team' : 'Pro') : (tr.planChoose || 'Choose plan');
         }
+        const backBtn = document.getElementById('profile-back-btn');
+        if (backBtn) backBtn.textContent = tr.backHome || 'Back to home';
         const plansBtn = document.getElementById('profile-plans-btn');
-        if (plansBtn) plansBtn.style.display = isPaidPlan() ? 'none' : '';
+        if (plansBtn) plansBtn.style.display = paid ? 'none' : '';
         const logoutBtn = document.getElementById('profile-logout-btn');
         if (logoutBtn) logoutBtn.textContent = tr.logoutLabel || 'Log out';
         if (!_profileWired) {
@@ -4917,9 +4917,11 @@
             if (btn) btn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(menu && menu.hasAttribute('hidden')); });
             document.addEventListener('click', () => setOpen(false));
             if (menu) menu.addEventListener('click', e => e.stopPropagation());
+            // "Volver a inicio" → re-open the landing over the app (mirror of the
+            // landing chip's "Enter app").
+            if (backBtn) backBtn.addEventListener('click', () => { setOpen(false); try { auth._showLanding(); } catch (_) {} });
             if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); try { auth.showPlans(); } catch (_) {} });
             if (logoutBtn) logoutBtn.addEventListener('click', async () => { setOpen(false); try { await auth.logout(); } catch (_) {} location.reload(); });
-            if (planEl) planEl.addEventListener('click', (e) => { if (!isPaidPlan()) { e.stopPropagation(); try { auth.showPlans(); } catch (_) {} } });
         }
     }
     window.renderProfileChip = renderProfileChip;
@@ -7223,15 +7225,11 @@ ${this.buildContext()}`;
             void el.offsetWidth;   // force reflow so the animation restarts
             el.classList.add('lv-anim');
         },
-        // Decide where a freshly-authenticated user with no pending plan action
-        // lands: into the product if they're paid OR already set up; otherwise
-        // they stay on the landing as a logged-in visitor (profile chip shown).
+        // After auth (login/register or a returning valid token), ALWAYS land on
+        // the landing page — never auto-jump into the app. The user enters the
+        // product deliberately via the profile chip's "Enter app" button. This
+        // is intentional per the product's UX.
         _route() {
-            let paid = false;
-            try { paid = isPaidPlan(); } catch (_) {}
-            let setUp = false;
-            try { setUp = onboarding.hasProfile(); } catch (_) {}
-            if (paid || setUp) { this._enterApp(); return; }
             this._showLanding();
         },
         // Swap the top-bar Login/Create-account buttons for a profile chip once
