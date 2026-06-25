@@ -66,14 +66,11 @@ _SESSION_TTL = 90 * 24 * 3600  # 90 days
 STRIPE_PRICE_PRO  = 'price_1TlnPE9mdlExjEPw31MJVnGe'
 STRIPE_PRICE_TEAM = 'price_1TlpGs9mdlExjEPwzBkE2fF3'
 
-# Developer accounts that may switch plan WITHOUT paying (for testing the full
-# gated experience). Server-enforced. Configurable via env DEV_EMAILS
-# (comma-separated); defaults to the owner's account.
-DEV_EMAILS = set(
-    e.strip().lower()
-    for e in os.environ.get('DEV_EMAILS', 'samimansouri365@gmail.com').split(',')
-    if e.strip()
-)
+# The single developer/owner account that may bypass payment + hard-reset.
+# Deliberately HARD-CODED (not read from an env var) so a stray DEV_EMAILS value
+# on the host can never silently grant dev powers (Reset, free plan upgrades) to
+# any other account. To add another dev, edit this set explicitly.
+DEV_EMAILS = {'samimansouri365@gmail.com'}
 def _is_dev_email(email):
     return bool(email) and email.strip().lower() in DEV_EMAILS
 
