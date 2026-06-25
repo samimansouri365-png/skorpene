@@ -1081,8 +1081,8 @@
     Object.keys(SIM_I18N_CARD).forEach(lng => { if (T[lng]) Object.assign(T[lng], SIM_I18N_CARD[lng]); });
     // AI assistant strings — all 9 languages.
     const AI_I18N = {
-        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',logoutLabel:'Cerrar sesión' },
-        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',logoutLabel:'Log out' },
+        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app' },
+        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',logoutLabel:'Log out',enterApp:'Enter app' },
         fr:{ aiTitle:'Assistant IA',aiWelcome:'Bonjour 👋 Posez-moi des questions sur les événements de la carte.',aiPlaceholder:'Question sur la carte…',aiAskPh:'Demandez à l\'IA…',aiThinking:'Réflexion…',aiError:'Impossible de contacter l\'IA. Vérifiez que le serveur (start_server.py) est en marche.',srcTelegram:'Telegram',srcOutlets:'Médias',outletsLoading:'Chargement…',outletsError:'Impossible de charger les médias.',outletsEmpty:'Aucun article disponible.',newsTitle:'ACTUALITÉS EN DIRECT',translatingNews:'Traduction…',translateDone:'Actualités traduites',showMore:'Afficher plus',showLess:'Afficher moins' },
         ru:{ aiTitle:'ИИ Ассистент',aiWelcome:'Привет 👋 Задайте мне вопросы о событиях на карте.',aiPlaceholder:'Вопрос о карте…',aiAskPh:'Спросите ИИ…',aiThinking:'Думаю…',aiError:'Не удалось связаться с ИИ. Проверьте, что сервер (start_server.py) запущен.',srcTelegram:'Телеграм',srcOutlets:'СМИ',outletsLoading:'Загрузка…',outletsError:'Не удалось загрузить СМИ.',outletsEmpty:'Нет доступных статей.',newsTitle:'НОВОСТИ В ПРЯМОМ ЭФИРЕ',translatingNews:'Перевод…',translateDone:'Новости переведены',showMore:'Показать больше',showLess:'Показать меньше' },
         zh:{ aiTitle:'AI 助手',aiWelcome:'你好 👋 随时可以问我地图上的事件。',aiPlaceholder:'询问地图…',aiAskPh:'询问 AI…',aiThinking:'思考中…',aiError:'无法联系 AI。请确认服务器 (start_server.py) 正在运行。',srcTelegram:'Telegram',srcOutlets:'新闻媒体',outletsLoading:'加载中…',outletsError:'无法加载新闻媒体。',outletsEmpty:'暂无文章。',newsTitle:'实时新闻',translatingNews:'翻译中…',translateDone:'新闻已翻译',showMore:'显示更多',showLess:'显示更少' },
@@ -4919,8 +4919,6 @@
             if (menu) menu.addEventListener('click', e => e.stopPropagation());
             if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); try { auth.showPlans(); } catch (_) {} });
             if (logoutBtn) logoutBtn.addEventListener('click', async () => { setOpen(false); try { await auth.logout(); } catch (_) {} location.reload(); });
-            const closeBtn = document.getElementById('landing-close');
-            if (closeBtn) closeBtn.addEventListener('click', () => { try { auth.hidePlans(); } catch (_) {} });
             if (planEl) planEl.addEventListener('click', (e) => { if (!isPaidPlan()) { e.stopPropagation(); try { auth.showPlans(); } catch (_) {} } });
         }
     }
@@ -6558,8 +6556,8 @@ ${this.buildContext()}`;
     // Note: email step removed (we'll have it from registration). Old s8/notifications
     // merged into a single step (s4 "updates") with two yes/no questions.
     const ONB_UI = {
-        es:{ welcome:'Bienvenido a Skorpene', stepOf:'Paso {a} de {b}', next:'Siguiente', back:'Atrás', finish:'Empezar', s1T:'Elige tu idioma', s1S:'Toda la interfaz se mostrará en este idioma', s2T:'Elige el tema', s2S:'¿Prefieres modo oscuro o claro?', dark:'Oscuro', light:'Claro', s3T:'¿Cómo te llamas?', s3S:'Para dirigirnos a ti correctamente', s3P:'Tu nombre', s3T2:'¿Y tu género?', sexMale:'Masculino', sexFemale:'Femenino', sexNoSay:'Prefiero no decirlo', s4T:'Novedades y notificaciones', s4S:'Para que no te pierdas nada importante', s4qNews:'¿Quieres recibir novedades?', s4qNotif:'¿Aceptas notificaciones?', s5T:'¿Qué temas te interesan?', s5S:'Elige al menos uno (o escribe los tuyos)', s5P:'Otros temas (separados por comas)', s6T:'¿Cómo quieres tus fuentes?', s6S:'Podrás cambiarlo cuando quieras', s6mT:'Las elijo yo', s6mS:'Añade tus propias fuentes: canales, foros, blogs, RSS, webs…', s6aT:'Que la IA las busque', s6aS:'Skorpene buscará canales, foros, blogs, webs y RSS según tus gustos', s7T:'¿Qué regiones te interesan?', s7S:'Elige al menos una (o escribe países concretos)', s7P:'Otros países o regiones (separados por comas)', yes:'Sí', no:'No' },
-        en:{ welcome:'Welcome to Skorpene', stepOf:'Step {a} of {b}', next:'Next', back:'Back', finish:'Start', s1T:'Choose your language', s1S:'The whole interface will use this language', s2T:'Choose a theme', s2S:'Do you prefer dark or light mode?', dark:'Dark', light:'Light', s3T:'What is your name?', s3S:'So we can address you correctly', s3P:'Your name', s3T2:'And your gender?', sexMale:'Male', sexFemale:'Female', sexNoSay:'Prefer not to say', s4T:'Updates & notifications', s4S:'So you don\'t miss anything important', s4qNews:'Receive newsletter?', s4qNotif:'Allow notifications?', s5T:'Which topics interest you?', s5S:'Pick at least one (or type your own)', s5P:'Other topics (comma-separated)', s6T:'How do you want your sources?', s6S:'You can change this anytime', s6mT:'I pick them', s6mS:'Add your own sources: channels, forums, blogs, RSS, websites…', s6aT:'Let the AI find them', s6aS:'Skorpene will find channels, forums, blogs, websites and RSS for your interests', s7T:'Which regions interest you?', s7S:'Pick at least one (or type specific countries)', s7P:'Other countries or regions (comma-separated)', yes:'Yes', no:'No' },
+        es:{ welcome:'Bienvenido a Skorpene', stepOf:'Paso {a} de {b}', next:'Siguiente', back:'Atrás', finish:'Empezar', s1T:'Elige tu idioma', s1S:'Toda la interfaz se mostrará en este idioma', s2T:'Elige el tema', s2S:'¿Prefieres modo oscuro o claro?', dark:'Oscuro', light:'Claro', s3T:'¿Cómo te llamas?', s3S:'Para dirigirnos a ti correctamente', s3P:'Tu nombre', s3T2:'¿cuál es tu género?', s3Greet:'Hola {name},', s3GreetSub:'Así podremos dirigirnos a ti correctamente', sexMale:'Masculino', sexFemale:'Femenino', sexNoSay:'Prefiero no decirlo', s4T:'Novedades y notificaciones', s4S:'Para que no te pierdas nada importante', s4qNews:'¿Quieres recibir novedades?', s4qNotif:'¿Aceptas notificaciones?', s5T:'¿Qué temas te interesan?', s5S:'Elige al menos uno (o escribe los tuyos)', s5P:'Otros temas (separados por comas)', s6T:'¿Cómo quieres tus fuentes?', s6S:'Podrás cambiarlo cuando quieras', s6mT:'Las elijo yo', s6mS:'Añade tus propias fuentes: canales, foros, blogs, RSS, webs…', s6aT:'Que la IA las busque', s6aS:'Skorpene buscará canales, foros, blogs, webs y RSS según tus gustos', s7T:'¿Qué regiones te interesan?', s7S:'Elige al menos una (o escribe países concretos)', s7P:'Otros países o regiones (separados por comas)', yes:'Sí', no:'No' },
+        en:{ welcome:'Welcome to Skorpene', stepOf:'Step {a} of {b}', next:'Next', back:'Back', finish:'Start', s1T:'Choose your language', s1S:'The whole interface will use this language', s2T:'Choose a theme', s2S:'Do you prefer dark or light mode?', dark:'Dark', light:'Light', s3T:'What is your name?', s3S:'So we can address you correctly', s3P:'Your name', s3T2:'what is your gender?', s3Greet:'Hi {name},', s3GreetSub:'So we can address you correctly', sexMale:'Male', sexFemale:'Female', sexNoSay:'Prefer not to say', s4T:'Updates & notifications', s4S:'So you don\'t miss anything important', s4qNews:'Receive newsletter?', s4qNotif:'Allow notifications?', s5T:'Which topics interest you?', s5S:'Pick at least one (or type your own)', s5P:'Other topics (comma-separated)', s6T:'How do you want your sources?', s6S:'You can change this anytime', s6mT:'I pick them', s6mS:'Add your own sources: channels, forums, blogs, RSS, websites…', s6aT:'Let the AI find them', s6aS:'Skorpene will find channels, forums, blogs, websites and RSS for your interests', s7T:'Which regions interest you?', s7S:'Pick at least one (or type specific countries)', s7P:'Other countries or regions (comma-separated)', yes:'Yes', no:'No' },
         fr:{ welcome:'Bienvenue sur Skorpene', stepOf:'Étape {a} sur {b}', next:'Suivant', back:'Retour', finish:'Commencer', s1T:'Choisissez votre langue', s1S:'Toute l\'interface utilisera cette langue', s2T:'Choisissez un thème', s2S:'Préférez-vous le mode sombre ou clair ?', dark:'Sombre', light:'Clair', s3T:'Comment vous appelez-vous ?', s3S:'Pour vous adresser correctement', s3P:'Votre nom', s3T2:'Et votre genre ?', sexMale:'Masculin', sexFemale:'Féminin', sexNoSay:'Préfère ne pas le dire', s4T:'Nouveautés et notifications', s4S:'Pour ne rien manquer d\'important', s4qNews:'Recevoir la newsletter ?', s4qNotif:'Autoriser les notifications ?', s5T:'Quels sujets vous intéressent ?', s5S:'Choisissez-en au moins un (ou tapez le vôtre)', s5P:'Autres sujets (séparés par des virgules)', s6T:'Comment voulez-vous vos sources ?', s6S:'Modifiable à tout moment', s6mT:'Je les choisis', s6mS:'Ajoutez vos sources : chaînes, forums, blogs, RSS, sites web…', s6aT:'Que l\'IA les trouve', s6aS:'Skorpene trouvera des chaînes, forums, blogs, sites et RSS selon vos goûts', s7T:'Quelles régions vous intéressent ?', s7S:'Choisissez-en au moins une (ou tapez des pays)', s7P:'Autres pays ou régions (séparés par des virgules)', yes:'Oui', no:'Non' },
         ru:{ welcome:'Добро пожаловать в Skorpene', stepOf:'Шаг {a} из {b}', next:'Далее', back:'Назад', finish:'Начать', s1T:'Выберите язык', s1S:'Весь интерфейс будет на этом языке', s2T:'Выберите тему', s2S:'Тёмный или светлый режим?', dark:'Тёмная', light:'Светлая', s3T:'Как вас зовут?', s3S:'Чтобы правильно к вам обращаться', s3P:'Ваше имя', s3T2:'Ваш пол?', sexMale:'Мужской', sexFemale:'Женский', sexNoSay:'Не хочу указывать', s4T:'Новости и уведомления', s4S:'Чтобы ничего не пропустить', s4qNews:'Получать рассылку?', s4qNotif:'Разрешить уведомления?', s5T:'Какие темы вам интересны?', s5S:'Выберите хотя бы одну (или впишите свои)', s5P:'Другие темы (через запятую)', s6T:'Как выбрать источники?', s6S:'Можно изменить в любой момент', s6mT:'Выберу сам', s6mS:'Добавьте свои источники: каналы, форумы, блоги, RSS, сайты…', s6aT:'Пусть найдёт ИИ', s6aS:'Skorpene найдёт каналы, форумы, блоги, сайты и RSS по вашим интересам', s7T:'Какие регионы вам интересны?', s7S:'Выберите хотя бы один (или впишите страны)', s7P:'Другие страны или регионы (через запятую)', yes:'Да', no:'Нет' },
         zh:{ welcome:'欢迎使用 Skorpene', stepOf:'第 {a} 步，共 {b} 步', next:'下一步', back:'返回', finish:'开始', s1T:'选择语言', s1S:'整个界面将使用此语言', s2T:'选择主题', s2S:'您喜欢深色还是浅色？', dark:'深色', light:'浅色', s3T:'您的名字？', s3S:'以便正确称呼您', s3P:'您的名字', s3T2:'您的性别？', sexMale:'男', sexFemale:'女', sexNoSay:'不愿透露', s4T:'更新和通知', s4S:'这样您不会错过任何重要内容', s4qNews:'接收新闻通讯？', s4qNotif:'允许通知？', s5T:'您对哪些主题感兴趣？', s5S:'至少选一个（或输入您自己的）', s5P:'其他主题（用逗号分隔）', s6T:'如何获取来源？', s6S:'随时可更改', s6mT:'我自己选', s6mS:'添加您自己的来源：频道、论坛、博客、RSS、网站…', s6aT:'让 AI 查找', s6aS:'Skorpene 将根据您的兴趣查找频道、论坛、博客、网站和 RSS', s7T:'您对哪些地区感兴趣？', s7S:'至少选一个（或输入具体国家）', s7P:'其他国家或地区（用逗号分隔）', yes:'是', no:'否' },
@@ -6612,10 +6610,14 @@ ${this.buildContext()}`;
         },
 
         start() {
+            // Prefill the name from the account the user already registered with
+            // — the onboarding no longer asks for it again (only gender).
+            let acctName = '';
+            try { acctName = (JSON.parse(localStorage.getItem('geoscope_auth_user') || '{}') || {}).name || ''; } catch (_) {}
             this.state = {
                 lang: currentLang || 'es',
                 theme: (document.documentElement.getAttribute('data-theme') === 'light') ? 'light' : 'dark',
-                name: '', sex: '',
+                name: acctName, sex: '',
                 newsletter: true, notifications: true,
                 topics: new Set(), topicsText: '',
                 sourceMode: 'ai',
@@ -6680,12 +6682,21 @@ ${this.buildContext()}`;
                     <button class="onb-card${s.theme === 'light' ? ' sel' : ''}" data-onb-theme="light"><span class="onb-card-t">${u.light}</span></button>
                 </div>`;
             } else if (key === 'name') {
-                // Name input + gender selector in the same step so we can
-                // address the user with the right pronoun.
-                title = u.s3T; sub = u.s3S;
-                body = `<input type="text" class="onb-input" id="onb-name" maxlength="60" placeholder="${escapeHtml(u.s3P)}" value="${escapeHtml(s.name)}">
-                <div class="onb-q-label">${escapeHtml(u.s3T2)}</div>
-                <div class="onb-grid onb-grid-3">
+                // The name already came from registration, so this step only
+                // asks for gender — and greets the user by their name.
+                const greetName = (s.name || '').trim();
+                if (greetName) {
+                    // "Hi Sami, what's your gender?"
+                    title = (u.s3Greet || 'Hi {name},').replace('{name}', greetName) + ' ' + (u.s3T2 || '');
+                    sub = u.s3GreetSub || u.s3S;
+                } else {
+                    // Fallback (no account name): keep the name input + gender.
+                    title = u.s3T; sub = u.s3S;
+                }
+                body = (greetName ? '' :
+                    `<input type="text" class="onb-input" id="onb-name" maxlength="60" placeholder="${escapeHtml(u.s3P)}" value="${escapeHtml(s.name)}">
+                     <div class="onb-q-label">${escapeHtml(u.s3T2)}</div>`)
+                + `<div class="onb-grid onb-grid-3">
                     <button class="onb-chip onb-chip-sex${s.sex === 'male' ? ' sel' : ''}" data-onb-sex="male">${escapeHtml(u.sexMale)}</button>
                     <button class="onb-chip onb-chip-sex${s.sex === 'female' ? ' sel' : ''}" data-onb-sex="female">${escapeHtml(u.sexFemale)}</button>
                     <button class="onb-chip onb-chip-sex${s.sex === 'nosay' ? ' sel' : ''}" data-onb-sex="nosay">${escapeHtml(u.sexNoSay)}</button>
@@ -7099,7 +7110,11 @@ ${this.buildContext()}`;
                         // Returning from a Stripe Checkout success URL? Confirm
                         // the payment with the server and persist the new plan.
                         await this._handleCheckoutReturn(tok);
-                        this._enterApp();
+                        // Route by account state: paid plan or a user who has
+                        // already set up (completed onboarding) → straight into
+                        // the product; a brand-new free user who hasn't entered
+                        // yet → stay on the landing, now showing a profile chip.
+                        this._route();
                         return;
                     }
                 } catch (_) { /* server unreachable — fall through to landing */ }
@@ -7146,6 +7161,78 @@ ${this.buildContext()}`;
             this.el.setAttribute('aria-hidden', 'false');
             this._setMode('login');
             document.body.classList.add('onb-active');
+            this._syncLandingChrome();
+            this._pulse(document.querySelector('.landing-inner'));
+        },
+        // ── Post-auth action (Stripe checkout intent) ──
+        // The ONLY thing that can send a user to payment is an explicit Pro/Team
+        // click, which stamps this. Free never sets it. It is consumed exactly
+        // once (read-and-clear) so a stale intent can never silently bill or
+        // unlock — the root cause of the "Free → payment screen" nonsense.
+        _setPostAuth(action) { try { sessionStorage.setItem('geoscope_post_auth', action || ''); } catch (_) {} },
+        _takePostAuth() {
+            let a = '';
+            try { a = sessionStorage.getItem('geoscope_post_auth') || ''; sessionStorage.removeItem('geoscope_post_auth'); } catch (_) {}
+            return a;
+        },
+        // Replay the entrance animation on an element by re-adding the class with
+        // a forced reflow in between — so the glide-in plays on every navigation
+        // (including Back), not just the first time the element is shown.
+        _pulse(el) {
+            if (!el) return;
+            el.classList.remove('lv-anim');
+            void el.offsetWidth;   // force reflow so the animation restarts
+            el.classList.add('lv-anim');
+        },
+        // Decide where a freshly-authenticated user with no pending plan action
+        // lands: into the product if they're paid OR already set up; otherwise
+        // they stay on the landing as a logged-in visitor (profile chip shown).
+        _route() {
+            let paid = false;
+            try { paid = isPaidPlan(); } catch (_) {}
+            let setUp = false;
+            try { setUp = onboarding.hasProfile(); } catch (_) {}
+            if (paid || setUp) { this._enterApp(); return; }
+            this._showLanding();
+        },
+        // Swap the top-bar Login/Create-account buttons for a profile chip once
+        // the user is authenticated, on the landing itself (the in-app chip is
+        // separate). Idempotent — safe to call on every landing render.
+        _syncLandingChrome() {
+            const logged = !!this.token();
+            const login = document.getElementById('landing-login-btn');
+            const reg = document.getElementById('landing-register-btn');
+            const prof = document.getElementById('landing-profile');
+            if (login) login.hidden = logged;
+            if (reg) reg.hidden = logged;
+            if (prof) {
+                prof.hidden = !logged;
+                if (logged) { try { this._fillLandingProfile(); } catch (_) {} }
+            }
+        },
+        _fillLandingProfile() {
+            let user = {};
+            try { user = JSON.parse(localStorage.getItem(LS_USER) || '{}') || {}; } catch (_) {}
+            const name = user.name || (user.email ? user.email.split('@')[0] : 'Skorpene');
+            const plan = (user.plan || 'free').toLowerCase();
+            const tr = (T[currentLang] || T.en);
+            const av = document.getElementById('landing-profile-avatar');
+            const nm = document.getElementById('landing-profile-name');
+            const pl = document.getElementById('landing-profile-plan');
+            const em = document.getElementById('landing-profile-email');
+            const planBtn = document.getElementById('landing-profile-plans');
+            const enterBtn = document.getElementById('landing-profile-enter');
+            if (av) av.textContent = (name[0] || 'S').toUpperCase();
+            if (nm) nm.textContent = name;
+            if (em) em.textContent = user.email || '';
+            if (pl) {
+                pl.classList.toggle('is-choose', !(plan === 'pro' || plan === 'team'));
+                pl.textContent = plan === 'team' ? 'Team' : plan === 'pro' ? 'Pro' : (tr.planChoose || 'Choose plan');
+            }
+            if (planBtn) planBtn.style.display = (plan === 'pro' || plan === 'team') ? 'none' : '';
+            const logoutBtn = document.getElementById('landing-profile-logout');
+            if (logoutBtn) logoutBtn.textContent = tr.logoutLabel || 'Log out';
+            if (enterBtn) enterBtn.textContent = tr.enterApp || 'Enter app';
         },
         _enterApp() {
             this.el.removeAttribute('data-view');
@@ -7163,11 +7250,17 @@ ${this.buildContext()}`;
         // pricing cards + a close button.
         showPlans() {
             if (!this.el) return;
+            // Remember where Back should return to: if we were already on a
+            // landing view (home/auth) Back goes home; if plans was opened from
+            // inside the app (no data-view), Back closes back to the app.
+            const prev = this.el.getAttribute('data-view');
+            this._plansFrom = (prev === 'home' || prev === 'auth') ? 'home' : 'app';
             this.el.setAttribute('data-view', 'plans');
             this.el.setAttribute('aria-hidden', 'false');
             document.body.classList.add('onb-active');
             try { this._wirePricing(); } catch (_) {}
             const pricing = document.getElementById('landing-pricing');
+            this._pulse(pricing);
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
             if (pricing) try { pricing.scrollIntoView({ block: 'start' }); } catch (_) {}
         },
@@ -7176,6 +7269,11 @@ ${this.buildContext()}`;
             this.el.removeAttribute('data-view');
             this.el.setAttribute('aria-hidden', 'true');
             document.body.classList.remove('onb-active');
+        },
+        // Back from the plans view → return to wherever the user came from.
+        _plansBack() {
+            if (this._plansFrom === 'home') this.showHome();
+            else this.hidePlans();
         },
         _setMode(mode) {
             this.mode = mode;
@@ -7216,12 +7314,40 @@ ${this.buildContext()}`;
             const form = document.getElementById('auth-form');
             if (form) form.addEventListener('submit', (e) => { e.preventDefault(); this._submit(); });
             // Top-bar auth buttons → dedicated auth view; back → home.
+            // Entering auth from the top bar is a plain login/register with NO
+            // plan attached, so clear any stale checkout intent first.
             const loginBtn = document.getElementById('landing-login-btn');
             const regBtn = document.getElementById('landing-register-btn');
             const backBtn = document.getElementById('landing-auth-back');
-            if (loginBtn) loginBtn.addEventListener('click', () => this.showAuth('login'));
-            if (regBtn) regBtn.addEventListener('click', () => this.showAuth('register'));
+            if (loginBtn) loginBtn.addEventListener('click', () => { this._setPostAuth(''); this.showAuth('login'); });
+            if (regBtn) regBtn.addEventListener('click', () => { this._setPostAuth(''); this.showAuth('register'); });
             if (backBtn) backBtn.addEventListener('click', () => this.showHome());
+            // Plans-view Back button (wired here so it works even before the app
+            // is ever entered, e.g. a landing visitor opening "Choose plan").
+            const plansBack = document.getElementById('landing-close');
+            if (plansBack) plansBack.addEventListener('click', () => this._plansBack());
+            this._wireLandingProfile();
+        },
+        // Landing profile chip: dropdown with the user's info, "Enter app",
+        // "Choose plan" (free only) and "Log out".
+        _wireLandingProfile() {
+            const btn = document.getElementById('landing-profile-btn');
+            const menu = document.getElementById('landing-profile-menu');
+            if (!btn || !menu || btn.dataset.wired === '1') return;
+            btn.dataset.wired = '1';
+            const setOpen = (open) => {
+                if (open) menu.removeAttribute('hidden'); else menu.setAttribute('hidden', '');
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+            btn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(menu.hasAttribute('hidden')); });
+            document.addEventListener('click', () => setOpen(false));
+            menu.addEventListener('click', e => e.stopPropagation());
+            const enterBtn = document.getElementById('landing-profile-enter');
+            if (enterBtn) enterBtn.addEventListener('click', () => { setOpen(false); this._enterApp(); });
+            const plansBtn = document.getElementById('landing-profile-plans');
+            if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); this.showPlans(); });
+            const logoutBtn = document.getElementById('landing-profile-logout');
+            if (logoutBtn) logoutBtn.addEventListener('click', async () => { setOpen(false); try { await this.logout(); } catch (_) {} location.reload(); });
         },
         // Show the dedicated auth view (login or register).
         showAuth(mode) {
@@ -7230,6 +7356,7 @@ ${this.buildContext()}`;
             this.el.setAttribute('aria-hidden', 'false');
             document.body.classList.add('onb-active');
             this._setMode(mode || 'login');
+            this._pulse(document.getElementById('landing-authview'));
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
             setTimeout(() => {
                 const f = (mode === 'register' && document.getElementById('auth-name')) || document.getElementById('auth-email');
@@ -7242,6 +7369,7 @@ ${this.buildContext()}`;
             this.el.setAttribute('data-view', 'home');
             this.el.setAttribute('aria-hidden', 'false');
             document.body.classList.add('onb-active');
+            this._syncLandingChrome();
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
         },
         // Hook up the pricing CTAs. Free → scroll up + open register tab.
@@ -7255,11 +7383,13 @@ ${this.buildContext()}`;
                 const plan = b.getAttribute('data-plan') || 'free';
                 b.addEventListener('click', () => {
                     if (plan === 'pro' || plan === 'team') { this._startCheckout(plan); return; }
-                    // Free CTA: if the user is already logged in (plans-only
-                    // mode), they're already on Free → just close. Otherwise
-                    // route them to register.
-                    if (this.token()) this.hidePlans();
-                    else this._gotoRegister();
+                    // FREE CTA — never touches payment. Logged in → enter the
+                    // product now (onboarding runs once if not done yet). Logged
+                    // out → register first, then enter the product (the
+                    // 'enter-free' intent, NOT a checkout intent).
+                    if (this.token()) { this._enterApp(); return; }
+                    this._setPostAuth('enter-free');
+                    this._gotoRegister();
                 });
             });
         },
@@ -7271,9 +7401,10 @@ ${this.buildContext()}`;
         async _startCheckout(plan) {
             const tok = this.token();
             if (!tok) {
-                // Not logged in yet — stash the intent, send them to register,
-                // and finish the checkout right after they create the account.
-                try { sessionStorage.setItem('geoscope_checkout_intent', plan); } catch (_) {}
+                // Not logged in yet — stash the checkout intent, send them to
+                // register, and finish the checkout right after they create the
+                // account. Only Pro/Team ever reach here.
+                this._setPostAuth('checkout-' + plan);
                 this._gotoRegister();
                 return;
             }
@@ -7284,10 +7415,7 @@ ${this.buildContext()}`;
                     body: JSON.stringify({ plan, origin: window.location.origin }),
                 });
                 const data = await r.json().catch(() => ({}));
-                if (r.ok && data.url) {
-                try { sessionStorage.removeItem('geoscope_checkout_intent'); } catch (_) {}
-                window.location.href = data.url; return;
-            }
+                if (r.ok && data.url) { window.location.href = data.url; return; }
                 this._error(this._msgFor(data.error || 'stripe_unreachable'));
             } catch (_) {
                 this._error(landingI18n.get(currentLang, 'lpErrServer'));
@@ -7324,18 +7452,17 @@ ${this.buildContext()}`;
                 const data = await r.json().catch(() => ({}));
                 if (r.ok && data.token) {
                     this._setSession(data.token, data.user);
-                    // If they came in via a Pricing CTA, finish that intent
-                    // instead of jumping straight into the app.
-                    let intent = '';
-                    try { intent = sessionStorage.getItem('geoscope_checkout_intent') || ''; } catch (_) {}
-                    if (intent) {
-                        // Don't remove the intent yet — only remove it inside
-                        // _startCheckout on success (window.location.href set).
-                        // If checkout fails the intent stays for the next attempt.
-                        await this._startCheckout(intent);
-                        return;
-                    }
-                    this._enterApp();
+                    // Consume the post-auth action (set exactly once by a plan
+                    // CTA). Pro/Team → checkout; Free → enter product; none →
+                    // route by account state (paid/onboarded → app, else stay on
+                    // the landing as a logged-in visitor). A plain top-bar
+                    // login/register has NO action, so it never pays and never
+                    // forces the onboarding/app.
+                    const post = this._takePostAuth();
+                    if (post === 'checkout-pro') { await this._startCheckout('pro'); return; }
+                    if (post === 'checkout-team') { await this._startCheckout('team'); return; }
+                    if (post === 'enter-free') { this._enterApp(); return; }
+                    this._route();
                     return;
                 }
                 this._error(this._msgFor(data.error));

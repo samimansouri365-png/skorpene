@@ -6352,11 +6352,16 @@ body.onb-active { overflow: hidden; }
 .fav-island.open, .fav-island.has-convo { width: min(700px, calc(100% - 36px)); border-radius: 18px; }
 
 .fav-island-convo {
-    display: none; max-height: 320px; overflow-y: auto;
-    padding: 14px 16px 4px; flex-direction: column; gap: 11px;
+    display: flex; flex-direction: column; gap: 11px;
+    max-height: 0; opacity: 0; overflow: hidden; padding: 0 16px;
+    transition: max-height .4s cubic-bezier(.22,.61,.36,1), opacity .3s ease, padding .4s cubic-bezier(.22,.61,.36,1);
 }
-.fav-island.has-convo .fav-island-convo { display: flex; }
-.fav-island.collapsed .fav-island-convo { display: none; }
+.fav-island.has-convo .fav-island-convo {
+    max-height: 320px; opacity: 1; overflow-y: auto; padding: 14px 16px 4px;
+}
+.fav-island.has-convo.collapsed .fav-island-convo {
+    max-height: 0; opacity: 0; overflow: hidden; padding: 0 16px;
+}
 .fav-msg { word-wrap: break-word; white-space: pre-wrap; }
 .fav-msg-user {
     align-self: flex-end; max-width: 85%;
@@ -6425,11 +6430,17 @@ body.onb-active { overflow: hidden; }
 
 /* The conversation log — message bubbles, scrollable, foldable. */
 .ai-island-convo {
-    display: none; max-height: min(48vh, 460px); overflow-y: auto;
-    padding: 16px 18px 4px; flex-direction: column; gap: 12px;
+    display: flex; flex-direction: column; gap: 12px;
+    max-height: 0; opacity: 0; overflow: hidden; padding: 0 18px;
+    /* Fluid fold/unfold instead of an instant show/hide. */
+    transition: max-height .4s cubic-bezier(.22,.61,.36,1), opacity .3s ease, padding .4s cubic-bezier(.22,.61,.36,1);
 }
-.ai-island.has-convo .ai-island-convo { display: flex; }
-.ai-island.collapsed .ai-island-convo { display: none; }
+.ai-island.has-convo .ai-island-convo {
+    max-height: min(48vh, 460px); opacity: 1; overflow-y: auto; padding: 16px 18px 4px;
+}
+.ai-island.has-convo.collapsed .ai-island-convo {
+    max-height: 0; opacity: 0; overflow: hidden; padding: 0 18px;
+}
 .ai-island-convo::-webkit-scrollbar { width: 8px; }
 .ai-island-convo::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 8px; }
 
@@ -6625,6 +6636,69 @@ body.onb-active { overflow: hidden; }
 .landing[data-view="auth"] #landing-login-btn,
 .landing[data-view="auth"] #landing-register-btn { display: none; }
 .landing[data-view="auth"] .lt-back { display: inline-flex; }
+
+/* ── Landing profile chip (replaces Log in / Create account once signed in) ── */
+.landing-profile { position: relative; }
+.landing-profile-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16);
+    color: #ece7fa; font-family: var(--font); font-size: 13px; font-weight: 600;
+    padding: 6px 12px 6px 6px; border-radius: 999px; cursor: pointer;
+    transition: background .18s, border-color .18s, transform .18s;
+}
+.landing-profile-btn:hover { background: rgba(139,92,246,0.14); border-color: rgba(139,92,246,0.45); transform: translateY(-1px); }
+.landing-profile-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg,#8b5cf6,#6d28d9); color: #fff; font-weight: 700; font-size: 13px;
+}
+.landing-profile-name { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.landing-profile-plan { font-size: 11px; font-weight: 700; color: #c7b6ff; background: rgba(139,92,246,0.18); padding: 2px 8px; border-radius: 999px; }
+.landing-profile-plan.is-choose { color: #f0b070; background: rgba(240,176,112,0.16); }
+.landing-profile-menu {
+    position: absolute; top: calc(100% + 8px); right: 0; z-index: 5;
+    min-width: 200px; padding: 8px;
+    background: #171022; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
+    box-shadow: 0 18px 44px rgba(0,0,0,0.5);
+    animation: lvIn .2s ease both;
+}
+.landing-profile-menu[hidden] { display: none; }
+.lpm-email { font-size: 12px; color: #9b93b8; padding: 6px 10px 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 6px; }
+.lpm-item {
+    display: block; width: 100%; text-align: left; background: transparent; border: 0;
+    color: #ece7fa; font-family: var(--font); font-size: 13px; padding: 9px 10px; border-radius: 9px; cursor: pointer;
+    transition: background .14s;
+}
+.lpm-item:hover { background: rgba(139,92,246,0.14); }
+.lpm-enter { font-weight: 600; }
+.lpm-logout { color: #ff8da3; }
+
+/* ── Fluid view transitions ──
+   Every landing view (home / auth / plans) and the in-card mode switch glides
+   in instead of snapping. The .lv-anim class is re-applied from JS (with a forced
+   reflow) so the entrance replays on every navigation, including Back. */
+@keyframes lvIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes lvInSoft {
+    from { opacity: 0; transform: translateY(9px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.lv-anim { animation: lvIn .42s cubic-bezier(.22,.61,.36,1) both; }
+@media (prefers-reduced-motion: reduce) {
+    .lv-anim, .landing-profile-menu, .onb-body, .onb-title, .onb-sub, .auth-only-register { animation: none !important; }
+}
+
+/* Auth mode switch (login ↔ register): the name field and switch text ease in. */
+.landing[data-mode="register"] .auth-only-register { animation: lvInSoft .34s cubic-bezier(.22,.61,.36,1) both; }
+.auth-switch:not([hidden]) { animation: lvInSoft .3s ease both; }
+
+/* Onboarding step content slides in on every step render (the modal frame stays
+   put so only the content moves — fluid, not a flash). */
+.onb-title { animation: lvInSoft .36s cubic-bezier(.22,.61,.36,1) both; }
+.onb-sub   { animation: lvInSoft .4s cubic-bezier(.22,.61,.36,1) .03s both; }
+.onb-body  { animation: lvInSoft .44s cubic-bezier(.22,.61,.36,1) .06s both; }
 
 /* ── Showcase (home view) ── */
 .landing-showcase { position: relative; z-index: 1; padding: 30px 24px 10px; }
