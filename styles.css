@@ -6307,9 +6307,15 @@ body.onb-active { overflow: hidden; }
 
 /* News reader: the full feed of all the user's sources, like a noticiero. */
 .fav-feed {
-    flex: 1; overflow-y: auto; padding: 16px 18px 110px;
+    flex: 1; min-height: 0; overflow-y: auto; padding: 16px 18px 110px;
     display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 12px; align-content: start;
+    transition: padding-bottom 0.4s cubic-bezier(.22,.61,.36,1);
+}
+/* When the AI island has an open conversation (~390px tall) push feed bottom
+   padding down so articles aren't hidden under the expanded island. */
+.fav-panel:has(.fav-island.has-convo:not(.collapsed)) .fav-feed {
+    padding-bottom: 420px;
 }
 .fav-feed-empty {
     grid-column: 1 / -1; text-align: center; color: var(--text2);
@@ -6355,7 +6361,9 @@ body.onb-active { overflow: hidden; }
     border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 22px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
     overflow: hidden; transition: width 0.28s ease, border-radius 0.25s ease;
+    pointer-events: none;
 }
+.fav-island-bar, .fav-island-convo { pointer-events: auto; }
 [data-theme="light"] .fav-island {
     background: rgba(255, 255, 255, 0.72); border-color: rgba(0, 0, 0, 0.1);
 }
