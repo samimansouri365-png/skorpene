@@ -6591,18 +6591,21 @@ body.onb-active { overflow: hidden; }
 .landing[data-view="plans"] .landing-inner,
 .landing[data-view="plans"] .landing-top { display: none; }
 .landing[data-view="plans"] .landing-pricing { border-top: 0; padding-top: 92px; }
+/* Plans-view Back button. Text "← Back" (NOT a round X). It must ONLY ever show
+   in the plans view — it is deliberately NOT given the .lt-back class, because
+   that class is shown in the auth view too, and this button's click enters the
+   app (a serious bug if it leaked outside plans mode). */
 .landing-close {
     display: none;
-    position: fixed; top: 18px; right: 24px; z-index: 3;
-    width: 40px; height: 40px; border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.14);
-    background: rgba(24,18,42,0.7); color: #f4f2fb;
-    font-size: 17px; line-height: 1; cursor: pointer;
-    align-items: center; justify-content: center;
-    transition: background .15s, border-color .15s;
+    position: fixed; top: 18px; left: 24px; z-index: 3;
+    background: transparent; border: 0;
+    color: #cbc5e0; font-family: var(--font); font-size: 14px; font-weight: 500;
+    line-height: 1; cursor: pointer; padding: 9px 12px; border-radius: 9px;
+    align-items: center; gap: 6px;
+    transition: color .15s, background .15s;
 }
-.landing-close:hover { background: rgba(139,92,246,0.28); border-color: rgba(139,92,246,0.5); }
-.landing[data-view="plans"] .landing-close { display: flex; }
+.landing-close:hover { color: #fff; background: rgba(255,255,255,0.07); }
+.landing[data-view="plans"] .landing-close { display: inline-flex; }
 .landing[data-view="plans"] .landing-showcase,
 .landing[data-view="plans"] .landing-authview { display: none; }
 
@@ -6690,9 +6693,10 @@ body.onb-active { overflow: hidden; }
     .lv-anim, .landing-profile-menu, .onb-body, .onb-title, .onb-sub, .auth-only-register { animation: none !important; }
 }
 
-/* Auth mode switch (login ↔ register): the name field and switch text ease in. */
-.landing[data-mode="register"] .auth-only-register { animation: lvInSoft .34s cubic-bezier(.22,.61,.36,1) both; }
-.auth-switch:not([hidden]) { animation: lvInSoft .3s ease both; }
+/* Auth mode switch (login ↔ register): the whole card content crossfades so the
+   name field appearing/disappearing reads as a smooth morph, not a snap. Driven
+   by auth._switchMode() re-applying .auth-anim with a forced reflow. */
+.auth-anim { animation: lvInSoft .34s cubic-bezier(.22,.61,.36,1) both; }
 
 /* Onboarding step content slides in on every step render (the modal frame stays
    put so only the content moves — fluid, not a flash). */

@@ -7271,7 +7271,11 @@ ${this.buildContext()}`;
             document.body.classList.remove('onb-active');
         },
         // Back from the plans view → return to wherever the user came from.
+        // Hard guard: this may ONLY act while the plans view is actually showing,
+        // so it can never accidentally drop a user into the app from another view
+        // (defense in depth against the button leaking outside plans mode).
         _plansBack() {
+            if (!this.el || this.el.getAttribute('data-view') !== 'plans') return;
             if (this._plansFrom === 'home') this.showHome();
             else this.hidePlans();
         },
@@ -7429,8 +7433,21 @@ ${this.buildContext()}`;
             this.el.querySelectorAll('[data-auth-tab]').forEach(b => {
                 if (b.dataset.wired === '1') return;
                 b.dataset.wired = '1';
-                b.addEventListener('click', () => this._setMode(b.getAttribute('data-auth-tab')));
+                b.addEventListener('click', () => this._switchMode(b.getAttribute('data-auth-tab')));
             });
+        },
+        // User-initiated login↔register switch: change the mode AND replay a soft
+        // crossfade on the whole auth card so the name field appearing/leaving is
+        // fluid rather than an instant jump.
+        _switchMode(mode) {
+            if (!mode || mode === this.mode) return;
+            this._setMode(mode);
+            const card = document.querySelector('.auth-card');
+            if (card) {
+                card.classList.remove('auth-anim');
+                void card.offsetWidth;   // force reflow so the animation restarts
+                card.classList.add('auth-anim');
+            }
         },
         async _submit() {
             const email = (document.getElementById('auth-email') || {}).value || '';
