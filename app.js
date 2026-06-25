@@ -7800,9 +7800,17 @@ ${this.buildContext()}`;
                 this._error(landingI18n.get(currentLang, 'lpErrServer'));
             }
         },
+        // The single owner account that gets dev powers (Reset, plan bypass).
+        // Hard-coded on BOTH client and server so neither a stale cached is_dev
+        // nor a misconfigured server can ever show the destructive Reset to any
+        // other account. The server still independently enforces the endpoints.
+        OWNER_EMAIL: 'samimansouri365@gmail.com',
         _isDevUser() {
-            try { return !!(JSON.parse(localStorage.getItem(LS_USER) || '{}') || {}).is_dev; }
-            catch (_) { return false; }
+            try {
+                const u = JSON.parse(localStorage.getItem(LS_USER) || '{}') || {};
+                return u.is_dev === true &&
+                    String(u.email || '').trim().toLowerCase() === this.OWNER_EMAIL;
+            } catch (_) { return false; }
         },
         // Developer-only HARD reset: wipe the account's profile + sources + plan
         // on the server, clear the matching local state, and reload → the whole
