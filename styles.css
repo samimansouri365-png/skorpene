@@ -6685,6 +6685,27 @@ body.onb-active { overflow: hidden; }
 .lpm-enter { font-weight: 600; }
 .lpm-logout { color: #ff8da3; }
 
+/* Light theme: the IN-APP profile chip sits in the (now light) top bar, so its
+   near-white text + dark menu must flip to dark-on-light. Scoped to #profile-chip
+   only — the landing chip (#landing-profile) always sits on the dark landing and
+   is left untouched. (Fixes the invisible profile name in light mode.) */
+[data-theme="light"] #profile-chip .landing-profile-btn {
+    background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); color: #1a1626;
+}
+[data-theme="light"] #profile-chip .landing-profile-btn:hover {
+    background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.4);
+}
+[data-theme="light"] #profile-chip .landing-profile-name { color: #1a1626; }
+[data-theme="light"] #profile-chip .landing-profile-plan { color: #6d28d9; background: rgba(139,92,246,0.14); }
+[data-theme="light"] #profile-chip .landing-profile-plan.is-choose { color: #b4630e; background: rgba(240,176,112,0.22); }
+[data-theme="light"] #profile-chip .landing-profile-menu {
+    background: #fff; border-color: rgba(0,0,0,0.1); box-shadow: 0 18px 44px rgba(0,0,0,0.18);
+}
+[data-theme="light"] #profile-chip .lpm-item { color: #2a2535; }
+[data-theme="light"] #profile-chip .lpm-item:hover { background: rgba(139,92,246,0.1); }
+[data-theme="light"] #profile-chip .lpm-email { color: #6b6577; border-bottom-color: rgba(0,0,0,0.08); }
+[data-theme="light"] #profile-chip .lpm-logout { color: #d6336c; }
+
 /* ── Fluid view transitions ──
    Every landing view (home / auth / plans) and the in-card mode switch glides
    in instead of snapping. The .lv-anim class is re-applied from JS (with a forced

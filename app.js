@@ -4713,6 +4713,9 @@
         // 3) Dynamic app surfaces that build their own markup.
         try { if (typeof rebuildAllLabels === 'function') rebuildAllLabels(); } catch (_) {}
         try { if (typeof renderNewsList === 'function') renderNewsList(); } catch (_) {}
+        // The Feed box builds its own markup (count + empty state + items), so it
+        // must be re-rendered or it keeps the language it was first opened in.
+        try { if (typeof favBox !== 'undefined' && favBox._renderHook) favBox._renderHook(); } catch (_) {}
         try { if (typeof _refreshAddSelectors === 'function') _refreshAddSelectors(); } catch (_) {}
         try {
             const simEl = document.getElementById('ars-simulator');
@@ -7248,12 +7251,29 @@ ${this.buildContext()}`;
             } catch (_) {}
         },
         _showLanding() {
-            this.el.setAttribute('data-view', 'home');
-            this.el.setAttribute('aria-hidden', 'false');
-            this._setMode('login');
-            document.body.classList.add('onb-active');
-            this._syncLandingChrome();
-            this._pulse(document.querySelector('.landing-inner'));
+            this._closeAppChrome();
+            this._nav(() => {
+                this.el.setAttribute('data-view', 'home');
+                this.el.setAttribute('aria-hidden', 'false');
+                this._setMode('login');
+                document.body.classList.add('onb-active');
+                this._syncLandingChrome();
+            }, document.querySelector('.landing-inner'));
+        },
+        // Close every in-app panel/overlay so none of them linger on top of the
+        // landing when the user goes back to it (e.g. Settings was open and they
+        // clicked "Back to home" — the profile menu stops click propagation, so
+        // the panels' own outside-click close never fires).
+        _closeAppChrome() {
+            const settings = document.getElementById('settings-panel');
+            if (settings) settings.classList.remove('is-open');
+            const sf = document.getElementById('settings-fab');
+            if (sf) sf.classList.remove('is-active');
+            try { if (typeof favBox !== 'undefined' && favBox.close) favBox.close(); } catch (_) {}
+            ['news-panel', 'country-info-panel'].forEach(id => {
+                const p = document.getElementById(id);
+                if (p) { p.classList.remove('open', 'is-open'); p.setAttribute('aria-hidden', 'true'); }
+            });
         },
         // ── Post-auth action (Stripe checkout intent) ──
         // The ONLY thing that can send a user to payment is an explicit Pro/Team
@@ -7988,9 +8008,6 @@ ${this.buildContext()}`;
         // Auth gate: show the landing page until login/registration. On success it
         // runs onboarding.init() (which shows the wizard only if no saved profile).
         auth.init();
-        // Provisional dev "reset" button — logs out + wipes state → back to landing.
-        const onbReset = document.getElementById('onb-reset-btn');
-        if (onbReset) onbReset.addEventListener('click', () => onboarding.reset());
 
         // Phase 4: plot user sources + important outlet stories on the map
         // (mixed with Telegram events). Refresh every 5 min; prune 24h-old icons.
