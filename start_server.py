@@ -138,6 +138,9 @@ def _auth_init():
             "ALTER TABLE users ADD COLUMN plan TEXT DEFAULT 'free'",
             "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
             "ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT",
+            # Onboarding profile (JSON). Bound to the account so the wizard runs
+            # once and is never asked again, on any device.
+            "ALTER TABLE users ADD COLUMN profile TEXT",
         ):
             try:
                 conn.execute(col_sql)
@@ -548,6 +551,8 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_auth_login()
         elif self.path == '/api/auth/logout':
             self.handle_auth_logout()
+        elif self.path == '/api/auth/profile':
+            self.handle_auth_profile()
         elif self.path == '/api/billing/create-checkout-session':
             self.handle_billing_create_session()
         else:
@@ -608,7 +613,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
                 token = _new_session(conn, uid)
         except sqlite3.IntegrityError:
             self._json_response(409, {'error': 'email_taken'}); return
-        self._json_response(200, {'token': token, 'user': {'email': email, 'name': name, 'plan': 'free'}})
+        self._json_response(200, {'token': token, 'user': {'email': email, 'name': name, 'plan': 'free', 'profile': None}})
 
     def handle_auth_login(self):
         data = self._read_json_body()
@@ -621,8 +626,15 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             if not row or not hmac.compare_digest(_hash_pw(password, row['pw_salt']), row['pw_hash']):
                 self._json_response(401, {'error': 'bad_credentials'}); return
             token = _new_session(conn, row['id'])
+        profile = None
+        try:
+            if row['profile']:
+                profile = json.loads(row['profile'])
+        except Exception:
+            profile = None
         self._json_response(200, {'token': token, 'user': {
-            'email': row['email'], 'name': row['name'], 'plan': row['plan'] or 'free'}})
+            'email': row['email'], 'name': row['name'], 'plan': row['plan'] or 'free',
+            'profile': profile}})
 
     def handle_auth_me(self):
         token = self._bearer_token()
@@ -631,15 +643,41 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         min_created = time.time() - _SESSION_TTL
         with _auth_db() as conn:
             row = conn.execute(
-                'SELECT u.email, u.name, u.plan FROM sessions s JOIN users u ON u.id=s.user_id '
+                'SELECT u.email, u.name, u.plan, u.profile FROM sessions s JOIN users u ON u.id=s.user_id '
                 'WHERE s.token=? AND s.created > ?',
                 (token, min_created)).fetchone()
         if not row:
             self._json_response(401, {'error': 'invalid_token'}); return
+        profile = None
+        try:
+            if row['profile']:
+                profile = json.loads(row['profile'])
+        except Exception:
+            profile = None
         self._json_response(200, {'user': {
             'email': row['email'], 'name': row['name'],
             'plan': row['plan'] or 'free',
+            # Account-bound onboarding profile (null until the wizard is done).
+            'profile': profile,
         }})
+
+    def handle_auth_profile(self):
+        """Persist the onboarding profile JSON onto the user's account so the
+        wizard is never asked again, on any device. Auth'd via Bearer token."""
+        user = self._user_from_token()
+        if not user:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        data = self._read_json_body()
+        if data is None or not isinstance(data, dict):
+            self._json_response(400, {'error': 'invalid_json'}); return
+        try:
+            blob = json.dumps(data)
+        except Exception:
+            self._json_response(400, {'error': 'invalid_json'}); return
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute('UPDATE users SET profile=? WHERE id=?', (blob, user['id']))
+            conn.commit()
+        self._json_response(200, {'ok': True})
 
     def _user_from_token(self):
         """Resolve the bearer token to a users row, or None."""

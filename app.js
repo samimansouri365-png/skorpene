@@ -6903,6 +6903,26 @@ ${this.buildContext()}`;
                 ts: Date.now(),
             };
             try { localStorage.setItem(LS_PROFILE, JSON.stringify(profile)); } catch (_) {}
+            // Persist the profile to the ACCOUNT (server-side) so it follows the
+            // user across devices/logins and the wizard is never asked again.
+            // Fire-and-forget; the local copy already unlocks the app instantly.
+            try {
+                const tok = (typeof auth !== 'undefined' && auth.token) ? auth.token() : '';
+                if (tok) {
+                    fetch('/api/auth/profile', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok },
+                        body: JSON.stringify(profile),
+                    }).catch(() => {});
+                    // Keep the cached user object in sync so a same-session
+                    // re-read of /me-style data reflects the new profile.
+                    try {
+                        const u = JSON.parse(localStorage.getItem('geoscope_auth_user') || '{}') || {};
+                        u.profile = profile;
+                        localStorage.setItem('geoscope_auth_user', JSON.stringify(u));
+                    } catch (_) {}
+                }
+            } catch (_) {}
 
             // Apply final language + theme to the live app.
             currentLang = s.lang;
@@ -7084,6 +7104,19 @@ ${this.buildContext()}`;
                 localStorage.setItem(LS_TOKEN, token);
                 localStorage.setItem(LS_USER, JSON.stringify(user || {}));
             } catch (_) {}
+            this._syncProfile(user);
+        },
+        // Mirror the account's server-side onboarding profile into localStorage so
+        // hasProfile()/the wizard reflect THIS account. If the account has no
+        // profile yet (null), the local one is CLEARED — so the wizard runs for a
+        // brand-new account and a different user on the same browser never
+        // inherits a stale profile.
+        _syncProfile(user) {
+            if (!user || typeof user.profile === 'undefined') return;  // unknown → leave as-is
+            try {
+                if (user.profile) localStorage.setItem(LS_PROFILE, JSON.stringify(user.profile));
+                else localStorage.removeItem(LS_PROFILE);
+            } catch (_) {}
         },
         async init() {
             this.el = document.getElementById('landing-overlay');
@@ -7105,7 +7138,13 @@ ${this.buildContext()}`;
                         // (e.g. an upgrade made in another tab) — gating reads it.
                         try {
                             const me = await r.clone().json();
-                            if (me && me.user) localStorage.setItem(LS_USER, JSON.stringify(me.user));
+                            if (me && me.user) {
+                                localStorage.setItem(LS_USER, JSON.stringify(me.user));
+                                // Pull the account-bound onboarding profile down so
+                                // the wizard is skipped for a user who already did it
+                                // (and cleared for a fresh account).
+                                this._syncProfile(me.user);
+                            }
                         } catch (_) {}
                         // Returning from a Stripe Checkout success URL? Confirm
                         // the payment with the server and persist the new plan.
@@ -7494,7 +7533,10 @@ ${this.buildContext()}`;
             if (tok) {
                 try { await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: 'Bearer ' + tok } }); } catch (_) {}
             }
-            try { localStorage.removeItem(LS_TOKEN); localStorage.removeItem(LS_USER); } catch (_) {}
+            // Clear the local onboarding profile too, so the next account that
+            // logs in on this browser doesn't inherit it (it's re-synced from the
+            // server on the next login).
+            try { localStorage.removeItem(LS_TOKEN); localStorage.removeItem(LS_USER); localStorage.removeItem(LS_PROFILE); } catch (_) {}
         },
     };
 
