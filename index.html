@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="styles.css?v=20260625d">
+    <link rel="stylesheet" href="styles.css?v=20260625f">
 
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -45,6 +45,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h1 class="loading-title">SKORPENE</h1>
         <p class="loading-sub" id="loading-text">Inicializando sistema...</p>
         <div class="loading-bar"><div class="loading-fill"></div></div>
+    </div>
+</div>
+
+<!-- Brief minimalist intro shown when the user enters the product (Enter app),
+     so the app doesn't appear abruptly. Reuses the loading globe; text is set
+     in the selected language by auth._playWelcome(). -->
+<div id="welcome-overlay" hidden aria-hidden="true">
+    <div class="welcome-content">
+        <div class="loading-globe">
+            <div class="globe-ring"></div>
+            <div class="globe-ring ring-2"></div>
+            <div class="globe-ring ring-3"></div>
+        </div>
+        <h1 class="welcome-title">Welcome to Skorpene</h1>
+        <p class="welcome-sub">Preparing your world…</p>
     </div>
 </div>
 
@@ -133,13 +148,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
         </div>
 
-        <div class="p-section">
+        <div class="p-section" id="icons-section">
             <div class="p-section-title" data-i18n="iconsPerSource">ICONOS POR FUENTE</div>
             <div class="range-row">
                 <input type="range" id="icons-per-source" class="range-input" min="1" max="20" step="1" value="6">
                 <span class="range-val" id="icons-per-source-val">6</span>
             </div>
             <div class="p-section-hint" data-i18n="iconsPerSourceHint">Máximo de iconos que cada fuente coloca en el mapa.</div>
+            <div class="p-lock-note" data-i18n="proLockedHint">🔒 Disponible en Pro (mapa en vivo)</div>
         </div>
 
         <!-- Map layers — moved here from the old "Map layers" dropdown. -->
@@ -467,27 +483,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="news-title" data-i18n="newsTitle">NOTICIAS EN VIVO</span>
         <button class="news-toggle" id="news-toggle">━</button>
     </div>
-    <div class="news-src-tabs">
-        <button class="news-src-tab active" data-src="news" data-i18n="srcAllNews">Noticias</button>
-        <button class="news-src-tab news-src-tab-sources" data-src="sources" data-i18n="sourcesTab">➕ Fuentes</button>
-    </div>
-    <div class="news-body" id="news-body">
-        <div class="news-status" id="news-status"></div>
-        <div id="news-list" class="news-list"></div>
-    </div>
-    <div class="user-src-panel" id="user-src-panel" style="display:none">
-        <div class="usp-title-row">
-            <span class="usp-title" data-i18n="srcAll">Todas las fuentes</span>
-            <button type="button" id="usp-help-btn" class="usp-help-btn" data-i18n="srcHelp">ayuda</button>
+    <!-- Everything under the header collapses as one unit, animated smoothly via
+         the grid-rows trick (see styles.css). The inner wrapper keeps the flex
+         column + news-body scroll intact so the live feed is never disrupted. -->
+    <div class="news-collapsible"><div class="news-collapsible-inner">
+        <div class="news-src-tabs">
+            <button class="news-src-tab active" data-src="news" data-i18n="srcAllNews">Noticias</button>
+            <button class="news-src-tab news-src-tab-sources" data-src="sources" data-i18n="sourcesTab">➕ Fuentes</button>
         </div>
-        <div class="usp-add-row">
-            <input type="text" id="usp-input" class="usp-input" data-i18n-ph="addSourcePh"
-                   placeholder="Pega el enlace del sitio (URL)" autocomplete="off">
-            <button id="usp-add-btn" class="usp-add-btn" data-i18n="addBtn">Añadir</button>
+        <div class="news-body" id="news-body">
+            <div class="news-status" id="news-status"></div>
+            <div id="news-list" class="news-list"></div>
         </div>
-        <div class="usp-status" id="usp-status"></div>
-        <div class="usp-list" id="usp-list"></div>
-    </div>
+        <div class="user-src-panel" id="user-src-panel" style="display:none">
+            <div class="usp-title-row">
+                <span class="usp-title" data-i18n="srcAll">Todas las fuentes</span>
+                <button type="button" id="usp-help-btn" class="usp-help-btn" data-i18n="srcHelp">ayuda</button>
+            </div>
+            <div class="usp-add-row">
+                <input type="text" id="usp-input" class="usp-input" data-i18n-ph="addSourcePh"
+                       placeholder="Pega el enlace del sitio (URL)" autocomplete="off">
+                <button id="usp-add-btn" class="usp-add-btn" data-i18n="addBtn">Añadir</button>
+            </div>
+            <div class="usp-status" id="usp-status"></div>
+            <div class="usp-list" id="usp-list"></div>
+        </div>
+    </div></div>
 </div>
 
 <!-- Source-types help modal — opens from the "ayuda" link in the Sources panel -->
@@ -582,6 +603,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      is ready when the base layer is created. -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYi2ig-ZkmwkXv_dt-0glm0o17BxKTCJk&v=quarterly&language=es" data-gmaps-loader="1" data-lang="es"></script>
 <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.14.1/dist/Leaflet.GoogleMutant.js"></script>
-<script src="app.js?v=20260625d"></script>
+<script src="app.js?v=20260625f"></script>
 </body>
 </html>

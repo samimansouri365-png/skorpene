@@ -1081,8 +1081,8 @@
     Object.keys(SIM_I18N_CARD).forEach(lng => { if (T[lng]) Object.assign(T[lng], SIM_I18N_CARD[lng]); });
     // AI assistant strings — all 9 languages.
     const AI_I18N = {
-        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app',backHome:'Volver a inicio' },
-        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',logoutLabel:'Log out',enterApp:'Enter app',backHome:'Back to home' },
+        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app',backHome:'Volver a inicio',welcomeTitle:'Bienvenido a Skorpene',welcomeSub:'Preparando tu mundo…',proLockedHint:'🔒 Disponible en Pro (mapa en vivo)' },
+        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',logoutLabel:'Log out',enterApp:'Enter app',backHome:'Back to home',welcomeTitle:'Welcome to Skorpene',welcomeSub:'Preparing your world…',proLockedHint:'🔒 Available on Pro (live map)' },
         fr:{ aiTitle:'Assistant IA',aiWelcome:'Bonjour 👋 Posez-moi des questions sur les événements de la carte.',aiPlaceholder:'Question sur la carte…',aiAskPh:'Demandez à l\'IA…',aiThinking:'Réflexion…',aiError:'Impossible de contacter l\'IA. Vérifiez que le serveur (start_server.py) est en marche.',srcTelegram:'Telegram',srcOutlets:'Médias',outletsLoading:'Chargement…',outletsError:'Impossible de charger les médias.',outletsEmpty:'Aucun article disponible.',newsTitle:'ACTUALITÉS EN DIRECT',translatingNews:'Traduction…',translateDone:'Actualités traduites',showMore:'Afficher plus',showLess:'Afficher moins' },
         ru:{ aiTitle:'ИИ Ассистент',aiWelcome:'Привет 👋 Задайте мне вопросы о событиях на карте.',aiPlaceholder:'Вопрос о карте…',aiAskPh:'Спросите ИИ…',aiThinking:'Думаю…',aiError:'Не удалось связаться с ИИ. Проверьте, что сервер (start_server.py) запущен.',srcTelegram:'Телеграм',srcOutlets:'СМИ',outletsLoading:'Загрузка…',outletsError:'Не удалось загрузить СМИ.',outletsEmpty:'Нет доступных статей.',newsTitle:'НОВОСТИ В ПРЯМОМ ЭФИРЕ',translatingNews:'Перевод…',translateDone:'Новости переведены',showMore:'Показать больше',showLess:'Показать меньше' },
         zh:{ aiTitle:'AI 助手',aiWelcome:'你好 👋 随时可以问我地图上的事件。',aiPlaceholder:'询问地图…',aiAskPh:'询问 AI…',aiThinking:'思考中…',aiError:'无法联系 AI。请确认服务器 (start_server.py) 正在运行。',srcTelegram:'Telegram',srcOutlets:'新闻媒体',outletsLoading:'加载中…',outletsError:'无法加载新闻媒体。',outletsEmpty:'暂无文章。',newsTitle:'实时新闻',translatingNews:'翻译中…',translateDone:'新闻已翻译',showMore:'显示更多',showLess:'显示更少' },
@@ -1752,29 +1752,10 @@
         // native <select> whose system popup hid the chevron).
         langDropdown.init();
         langDropdown.setValue(currentLang);
-        langDropdown.onChange = (v) => {
-            currentLang = v;
-            applyLang();
-            // Re-render map labels (country / city / water names) in the new language.
-            try { if (typeof rebuildAllLabels === 'function') rebuildAllLabels(); } catch (_) {}
-            // Refresh the feed so dynamic bits (expand buttons, event tags) re-localize.
-            try { if (typeof renderNewsList === 'function') renderNewsList(); } catch (_) {}
-            // Refresh dynamically-rendered simulator parts so they pick up the new language.
-            try { if (typeof _refreshAddSelectors === 'function') _refreshAddSelectors(); } catch (_) {}
-            try {
-                const simEl = document.getElementById('ars-simulator');
-                if (simEl && simEl.style.display !== 'none') {
-                    if (typeof _renderSide === 'function') { _renderSide('A'); _renderSide('B'); }
-                    if (typeof _renderLaunchSummary === 'function') _renderLaunchSummary();
-                }
-            } catch (_) {}
-            // Re-render the sources list since its tags ("default", "live", "yours") are localized.
-            try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
-            // Reload Google Maps JS with the new language so country / city / sea
-            // labels rendered by Google update to match the UI. The map view (center,
-            // zoom, layers, markers) is preserved across the swap.
-            try { _reloadGoogleMapsForLang(currentLang); } catch (_) {}
-        };
+        // One unified switch covers app strings, landing/pricing strings, every
+        // dynamic re-render and both picker chips — so the change is complete and
+        // instant whether triggered here or from the landing picker.
+        langDropdown.onChange = (v) => { setLanguage(v); };
     }
 
     // ── Google Maps language swap (preserves view + all overlays) ─────────────
@@ -4668,6 +4649,24 @@
            scheduleLabelCollision();
        }
 
+    // Profile-chip + welcome + locked-setting words for the 11 languages that
+    // didn't have them, so the chrome never falls back to English. (es/en already
+    // carry these keys inline in T above.) Merged into T so applyLang/tk see them.
+    const _UI_EXTRA = {
+        fr: { planChoose:'Choisir un plan', logoutLabel:'Se déconnecter', enterApp:"Ouvrir l'app", backHome:"Retour à l'accueil", welcomeTitle:'Bienvenue sur Skorpene', welcomeSub:'Préparation de ton monde…', proLockedHint:'🔒 Disponible avec Pro (carte en direct)' },
+        ru: { planChoose:'Выбрать план', logoutLabel:'Выйти', enterApp:'Войти в приложение', backHome:'На главную', welcomeTitle:'Добро пожаловать в Skorpene', welcomeSub:'Готовим твой мир…', proLockedHint:'🔒 Доступно в Pro (живая карта)' },
+        zh: { planChoose:'选择方案', logoutLabel:'退出登录', enterApp:'进入应用', backHome:'返回首页', welcomeTitle:'欢迎使用 Skorpene', welcomeSub:'正在准备你的世界…', proLockedHint:'🔒 Pro 专享（实时地图）' },
+        tr: { planChoose:'Plan seç', logoutLabel:'Çıkış yap', enterApp:'Uygulamaya gir', backHome:'Ana sayfaya dön', welcomeTitle:"Skorpene'ye hoş geldin", welcomeSub:'Dünyan hazırlanıyor…', proLockedHint:"🔒 Pro'da mevcut (canlı harita)" },
+        ar: { planChoose:'اختر خطة', logoutLabel:'تسجيل الخروج', enterApp:'ادخل التطبيق', backHome:'العودة للرئيسية', welcomeTitle:'مرحبًا بك في Skorpene', welcomeSub:'نُجهّز عالمك…', proLockedHint:'🔒 متاح في Pro (خريطة حية)' },
+        fa: { planChoose:'انتخاب پلن', logoutLabel:'خروج', enterApp:'ورود به برنامه', backHome:'بازگشت به خانه', welcomeTitle:'به Skorpene خوش آمدید', welcomeSub:'در حال آماده‌سازی دنیای تو…', proLockedHint:'🔒 در Pro موجود است (نقشه زنده)' },
+        he: { planChoose:'בחר תוכנית', logoutLabel:'התנתק', enterApp:'כניסה לאפליקציה', backHome:'חזרה לדף הבית', welcomeTitle:'ברוכים הבאים ל-Skorpene', welcomeSub:'מכינים את העולם שלך…', proLockedHint:'🔒 זמין ב-Pro (מפה חיה)' },
+        nl: { planChoose:'Plan kiezen', logoutLabel:'Uitloggen', enterApp:'App openen', backHome:'Terug naar start', welcomeTitle:'Welkom bij Skorpene', welcomeSub:'Je wereld wordt voorbereid…', proLockedHint:'🔒 Beschikbaar in Pro (live kaart)' },
+        it: { planChoose:'Scegli piano', logoutLabel:'Esci', enterApp:"Apri l'app", backHome:'Torna alla home', welcomeTitle:'Benvenuto su Skorpene', welcomeSub:'Stiamo preparando il tuo mondo…', proLockedHint:'🔒 Disponibile in Pro (mappa live)' },
+        pt: { planChoose:'Escolher plano', logoutLabel:'Terminar sessão', enterApp:'Entrar na app', backHome:'Voltar ao início', welcomeTitle:'Bem-vindo ao Skorpene', welcomeSub:'A preparar o teu mundo…', proLockedHint:'🔒 Disponível no Pro (mapa em direto)' },
+        hi: { planChoose:'प्लान चुनें', logoutLabel:'लॉग आउट', enterApp:'ऐप खोलें', backHome:'होम पर वापस', welcomeTitle:'Skorpene में आपका स्वागत है', welcomeSub:'आपकी दुनिया तैयार हो रही है…', proLockedHint:'🔒 Pro में उपलब्ध (लाइव मानचित्र)' },
+    };
+    for (const _l in _UI_EXTRA) { T[_l] = Object.assign(T[_l] || {}, _UI_EXTRA[_l]); }
+
     function applyLang() {
         const lang = T[currentLang] || T.es;
         // Per-key fallback: chosen language → English → Spanish. This lets newly
@@ -4692,6 +4691,51 @@
         document.documentElement.lang = currentLang;
         document.body.dir = (currentLang === 'ar' || currentLang === 'fa' || currentLang === 'he') ? 'rtl' : 'ltr';
     }
+
+    // ── Single source of truth for switching language ──
+    // The app historically had TWO disconnected i18n passes: applyLang() (the
+    // `data-i18n` app strings) and landingI18n.apply() (the `data-i18n-landing`
+    // landing/pricing strings). Whichever entry point you used only refreshed
+    // ITS half, so the other half stayed in the old language until a reload —
+    // the root cause of "some words don't translate / only after refresh".
+    // setLanguage() runs BOTH passes plus every dynamic re-render, so a language
+    // change is complete and instant from anywhere (settings dropdown OR the
+    // landing picker). Only live news content stays in its original language.
+    function setLanguage(lng) {
+        if (!lng) return;
+        currentLang = lng;
+        try { localStorage.setItem('geoscope_landing_lang', lng); } catch (_) {}
+        // 1) Static strings — app + landing.
+        try { applyLang(); } catch (_) {}
+        try { if (window.__landingI18n) window.__landingI18n.apply(lng); } catch (_) {}
+        // 2) Keep both language pickers' chips in sync.
+        try { langDropdown && langDropdown.setValue && langDropdown.setValue(lng); } catch (_) {}
+        // 3) Dynamic app surfaces that build their own markup.
+        try { if (typeof rebuildAllLabels === 'function') rebuildAllLabels(); } catch (_) {}
+        try { if (typeof renderNewsList === 'function') renderNewsList(); } catch (_) {}
+        try { if (typeof _refreshAddSelectors === 'function') _refreshAddSelectors(); } catch (_) {}
+        try {
+            const simEl = document.getElementById('ars-simulator');
+            if (simEl && simEl.style.display !== 'none') {
+                if (typeof _renderSide === 'function') { _renderSide('A'); _renderSide('B'); }
+                if (typeof _renderLaunchSummary === 'function') _renderLaunchSummary();
+            }
+        } catch (_) {}
+        try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
+        // 4) Profile chips (app + landing) and pricing CTAs carry localized text.
+        try { renderProfileChip(); } catch (_) {}
+        try { auth && auth._fillLandingProfile && auth._fillLandingProfile(); } catch (_) {}
+        try { auth && auth._refreshPricingCtas && auth._refreshPricingCtas(); } catch (_) {}
+        // 5) The onboarding wizard, if it's currently open.
+        try {
+            if (onboarding && onboarding.el &&
+                onboarding.el.getAttribute('aria-hidden') === 'false' &&
+                typeof onboarding.render === 'function') onboarding.render();
+        } catch (_) {}
+        // 6) Google Maps base labels (country / city / sea names).
+        try { _reloadGoogleMapsForLang(currentLang); } catch (_) {}
+    }
+    window.__setLanguage = setLanguage;
 
     function applyUnit(unit) {
         currentUnit = unit;
@@ -4864,6 +4908,12 @@
         document.body.classList.toggle('plan-locked', locked);
         const lock = document.getElementById('map-lock');
         if (lock) lock.setAttribute('aria-hidden', locked ? 'false' : 'true');
+        // Free has no live map, so the "icons per source" map control is useless
+        // for them → disable it and show a Pro hint (gates a setting Free can't use).
+        const iconRange = document.getElementById('icons-per-source');
+        if (iconRange) iconRange.disabled = locked;
+        const iconSec = document.getElementById('icons-section');
+        if (iconSec) iconSec.classList.toggle('p-locked', locked);
         if (!_mapLockWired) {
             const cta = document.getElementById('map-lock-cta');
             if (cta) { cta.addEventListener('click', () => { try { auth.showPlans(); } catch (_) {} }); _mapLockWired = true; }
@@ -7246,6 +7296,8 @@ ${this.buildContext()}`;
                 prof.hidden = !logged;
                 if (logged) { try { this._fillLandingProfile(); } catch (_) {} }
             }
+            // Reflect login/plan state on the pricing CTAs (current plan → "in use").
+            try { this._refreshPricingCtas(); } catch (_) {}
         },
         _fillLandingProfile() {
             let user = {};
@@ -7272,14 +7324,45 @@ ${this.buildContext()}`;
             if (enterBtn) enterBtn.textContent = tr.enterApp || 'Enter app';
         },
         _enterApp() {
-            this.el.removeAttribute('data-view');
-            this.el.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('onb-active');
-            // Apply plan gating (locks the live map for Free) + render the
-            // profile chip now that we know who the user is.
-            try { applyPlanGating(); } catch (_) {}
-            // Continue the normal first-run flow (wizard shows only if no profile).
-            onboarding.init();
+            // Play a brief minimalist intro OVER the landing, then (while it's
+            // fully opaque) swap to the product underneath and fade the intro out
+            // — so the app never appears abruptly "like flicking a light on".
+            this._playWelcome(() => {
+                this.el.removeAttribute('data-view');
+                this.el.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('onb-active');
+                // Apply plan gating (locks the live map for Free) + render the
+                // profile chip now that we know who the user is.
+                try { applyPlanGating(); } catch (_) {}
+                // Continue the normal first-run flow (wizard shows only if no profile).
+                onboarding.init();
+            });
+        },
+        // Minimalist "Welcome to Skorpene" intro (spinning globe). `swap` runs
+        // once the overlay is fully shown — that's when we switch the view
+        // underneath, so the fade-out reveals the wizard/map with no flash.
+        _playWelcome(swap) {
+            const ov = document.getElementById('welcome-overlay');
+            if (!ov) { try { swap(); } catch (_) {} return; }
+            const tr = T[currentLang] || T.en;
+            const titleEl = ov.querySelector('.welcome-title');
+            const subEl = ov.querySelector('.welcome-sub');
+            if (titleEl) titleEl.textContent = tr.welcomeTitle || 'Welcome to Skorpene';
+            if (subEl) subEl.textContent = tr.welcomeSub || '';
+            ov.hidden = false;
+            ov.setAttribute('aria-hidden', 'false');
+            ov.classList.remove('welcome-in', 'welcome-out');
+            void ov.offsetWidth;                 // reflow so the fade-in plays
+            ov.classList.add('welcome-in');
+            window.setTimeout(() => {
+                try { swap(); } catch (_) {}     // swap the view underneath
+                ov.classList.add('welcome-out'); // then fade the intro away
+                window.setTimeout(() => {
+                    ov.hidden = true;
+                    ov.setAttribute('aria-hidden', 'true');
+                    ov.classList.remove('welcome-in', 'welcome-out');
+                }, 480);
+            }, 1250);
         },
         // Re-open the landing overlay in PLANS-ONLY mode (logged-in users who
         // need to pick a plan: Free trying to use the map, the "Choose plan"
@@ -7303,9 +7386,21 @@ ${this.buildContext()}`;
         },
         hidePlans() {
             if (!this.el) return;
-            this.el.removeAttribute('data-view');
-            this.el.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('onb-active');
+            // Fade the overlay out before hiding it, so returning to the app is a
+            // quick fluid transition — not an instant "light switch".
+            this._fadeOutThen(() => {
+                this.el.removeAttribute('data-view');
+                this.el.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('onb-active');
+            });
+        },
+        _fadeOutThen(fn) {
+            const el = this.el;
+            if (!el) { try { fn(); } catch (_) {} return; }
+            el.classList.add('landing-leaving');
+            window.setTimeout(() => {
+                try { fn(); } finally { el.classList.remove('landing-leaving'); }
+            }, 300);
         },
         // Back from the plans view → return to wherever the user came from.
         // Hard guard: this may ONLY act while the plans view is actually showing,
@@ -7419,19 +7514,43 @@ ${this.buildContext()}`;
         _wirePricing() {
             if (!this.el) return;
             this.el.querySelectorAll('.lpr-cta').forEach(b => {
-                if (b.dataset.wired === '1') return;
-                b.dataset.wired = '1';
-                const plan = b.getAttribute('data-plan') || 'free';
-                b.addEventListener('click', () => {
-                    if (plan === 'pro' || plan === 'team') { this._startCheckout(plan); return; }
-                    // FREE CTA — never touches payment. Logged in → enter the
-                    // product now (onboarding runs once if not done yet). Logged
-                    // out → register first, then enter the product (the
-                    // 'enter-free' intent, NOT a checkout intent).
-                    if (this.token()) { this._enterApp(); return; }
-                    this._setPostAuth('enter-free');
-                    this._gotoRegister();
-                });
+                if (b.dataset.wired !== '1') {
+                    b.dataset.wired = '1';
+                    b.addEventListener('click', () => {
+                        const plan = b.getAttribute('data-plan') || 'free';
+                        // If the user is logged in and this card IS their current
+                        // plan, the CTA shows "Plan en uso" and does nothing (the
+                        // only way into the product is Enter app on the profile).
+                        if (this.token() && plan === currentPlan()) return;
+                        if (plan === 'pro' || plan === 'team') { this._startCheckout(plan); return; }
+                        // FREE CTA — never touches payment. Logged in → enter the
+                        // product now (onboarding runs once if not done yet). Logged
+                        // out → register first, then enter (the 'enter-free' intent).
+                        if (this.token()) { this._enterApp(); return; }
+                        this._setPostAuth('enter-free');
+                        this._gotoRegister();
+                    });
+                }
+            });
+            this._refreshPricingCtas();
+        },
+        // Localize each plan card's CTA, and for a logged-in user mark their
+        // current plan's CTA as "Plan en uso" (label + .is-current, kept hoverable
+        // but inert). Runs after landingI18n.apply() so it wins over the static
+        // data-i18n-landing label, and on every language switch / plan change.
+        _refreshPricingCtas() {
+            if (!this.el) return;
+            const logged = !!this.token();
+            const plan = currentPlan();
+            const inUse = (window.__landingI18n && window.__landingI18n.get(currentLang, 'prInUse')) || 'Current plan';
+            this.el.querySelectorAll('.lpr-cta').forEach(b => {
+                const cardPlan = b.getAttribute('data-plan') || 'free';
+                const isCurrent = logged && cardPlan === plan;
+                b.classList.toggle('is-current', isCurrent);
+                if (isCurrent) { b.textContent = inUse; return; }
+                const key = cardPlan === 'pro' ? 'prProCta' : cardPlan === 'team' ? 'prTeamCta' : 'prFreeCta';
+                const v = window.__landingI18n && window.__landingI18n.get(currentLang, key);
+                if (v) b.textContent = v;
             });
         },
         _gotoRegister() {
@@ -7449,6 +7568,10 @@ ${this.buildContext()}`;
                 this._gotoRegister();
                 return;
             }
+            // Developer accounts switch plan instantly without Stripe (the server
+            // enforces who qualifies). Lets the owner test the full gated Pro/Team
+            // experience. Non-dev accounts get 403 and fall through to Stripe.
+            if (this._isDevUser() && await this._devUpgrade(plan, tok)) return;
             try {
                 const r = await fetch('/api/billing/create-checkout-session', {
                     method: 'POST',
@@ -7461,6 +7584,34 @@ ${this.buildContext()}`;
             } catch (_) {
                 this._error(landingI18n.get(currentLang, 'lpErrServer'));
             }
+        },
+        _isDevUser() {
+            try { return !!(JSON.parse(localStorage.getItem(LS_USER) || '{}') || {}).is_dev; }
+            catch (_) { return false; }
+        },
+        // Switch a developer account's plan with no payment, then unlock the UI
+        // in place (no reload). Returns true if the upgrade happened.
+        async _devUpgrade(plan, tok) {
+            try {
+                const r = await fetch('/api/billing/dev-upgrade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok },
+                    body: JSON.stringify({ plan }),
+                });
+                if (!r.ok) return false;
+                const d = await r.json().catch(() => ({}));
+                if (!d || !d.plan) return false;
+                // Persist the new plan locally so gating unlocks immediately.
+                try {
+                    const u = JSON.parse(localStorage.getItem(LS_USER) || '{}') || {};
+                    u.plan = d.plan;
+                    localStorage.setItem(LS_USER, JSON.stringify(u));
+                } catch (_) {}
+                try { applyPlanGating(); } catch (_) {}      // unlock map + re-render chip
+                try { this._fillLandingProfile(); } catch (_) {}
+                try { this._refreshPricingCtas(); } catch (_) {}  // current card → "Plan en uso"
+                return true;
+            } catch (_) { return false; }
         },
         // Re-attach click handlers to every [data-auth-tab] in the landing.
         // Needed after landingI18n.apply() rewrites .auth-switch via innerHTML,
@@ -7614,6 +7765,12 @@ ${this.buildContext()}`;
               prProName:'Pro', prProTag:'जो भी चाहिए, सब कुछ।', prProF1:'असीमित स्रोत', prProF2:'लाइव मानचित्र + सभी लेयर्स', prProF3:'AI सहायक (20 क्वेरी/दिन)', prProF4:'13 भाषाएँ', prProF5:'प्राथमिक सहायता', prProCta:'Pro लें',
               prTeamName:'Team', prTeamTag:'पावर यूज़र्स के लिए।', prTeamF1:'Pro की सभी सुविधाएँ', prTeamF2:'असीमित AI सहायक', prTeamF3:'असीमित स्रोत', prTeamF4:'13 भाषाएँ', prTeamF5:'प्राथमिक सहायता', prTeamCta:'Team लें' },
     };
+    // Label shown on the CTA of the user's CURRENT plan (non-actionable — see
+    // auth._refreshPricingCtas / _wirePricing).
+    const _PR_INUSE = { es:'Plan en uso', en:'Current plan', fr:'Plan actuel', ru:'Текущий план',
+        zh:'当前方案', tr:'Mevcut plan', ar:'الخطة الحالية', fa:'پلن فعلی', he:'התוכנית הנוכחית',
+        nl:'Huidig plan', it:'Piano attuale', pt:'Plano atual', hi:'मौजूदा प्लान' };
+    for (const _l in PRICING_I18N) { PRICING_I18N[_l].prInUse = _PR_INUSE[_l] || _PR_INUSE.en; }
     for (const _lng in PRICING_I18N) {
         LANDING_I18N[_lng] = Object.assign(LANDING_I18N[_lng] || {}, PRICING_I18N[_lng]);
     }
@@ -7635,6 +7792,11 @@ ${this.buildContext()}`;
             return t[key] || (LANDING_I18N.en && LANDING_I18N.en[key]) || (LANDING_I18N.es && LANDING_I18N.es[key]) || '';
         },
         apply(lng) {
+            // Keep the main app's `data-i18n` strings in sync with the landing's
+            // `data-i18n-landing` strings. Without this, a non-English language
+            // resolved at boot (or picked from the landing) left every app string
+            // in English until a reload. currentLang is already set by the caller.
+            try { currentLang = lng; applyLang(); } catch (_) {}
             const root = document.getElementById('landing-overlay');
             if (!root) return;
             root.querySelectorAll('[data-i18n-landing]').forEach(el => {
@@ -7700,10 +7862,9 @@ ${this.buildContext()}`;
                 const li = e.target.closest('li[data-lang]');
                 if (!li) return;
                 const lng = li.getAttribute('data-lang');
-                currentLang = lng;
-                try { langDropdown && langDropdown.setValue && langDropdown.setValue(lng); } catch (_) {}
-                this.save(lng);
-                this.apply(lng);
+                // Route through the unified switch so the WHOLE app (not just the
+                // landing strings) re-localizes instantly.
+                try { setLanguage(lng); } catch (_) { this.apply(lng); }
                 // Update the menu's selected state.
                 menu.querySelectorAll('li').forEach(x => x.classList.toggle('sel', x.getAttribute('data-lang') === lng));
                 close();
@@ -7808,8 +7969,27 @@ ${this.buildContext()}`;
         document.getElementById('news-toggle').addEventListener('click', () => {
             const panel = document.getElementById('news-panel');
             const btn = document.getElementById('news-toggle');
-            panel.classList.toggle('collapsed');
-            btn.textContent = panel.classList.contains('collapsed') ? '╋' : '━';
+            const collap = panel.querySelector('.news-collapsible');
+            const willCollapse = !panel.classList.contains('collapsed');
+            btn.textContent = willCollapse ? '╋' : '━';
+            if (!collap) { panel.classList.toggle('collapsed'); return; }
+            // Bulletproof max-height accordion: pin the current px height, force a
+            // reflow, then animate to/from 0. On expand we clear the inline cap
+            // after the transition so the news-body can flex + scroll normally.
+            collap._tEnd && collap.removeEventListener('transitionend', collap._tEnd);
+            if (willCollapse) {
+                collap.style.maxHeight = collap.getBoundingClientRect().height + 'px';
+                void collap.offsetHeight;
+                panel.classList.add('collapsed');
+                collap.style.maxHeight = '0px';
+            } else {
+                panel.classList.remove('collapsed');
+                collap.style.maxHeight = '0px';
+                void collap.offsetHeight;
+                collap.style.maxHeight = collap.scrollHeight + 'px';
+                collap._tEnd = () => { collap.style.maxHeight = ''; collap.removeEventListener('transitionend', collap._tEnd); };
+                collap.addEventListener('transitionend', collap._tEnd);
+            }
         });
     }
 

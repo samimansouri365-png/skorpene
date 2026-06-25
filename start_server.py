@@ -66,6 +66,17 @@ _SESSION_TTL = 90 * 24 * 3600  # 90 days
 STRIPE_PRICE_PRO  = 'price_1TlnPE9mdlExjEPw31MJVnGe'
 STRIPE_PRICE_TEAM = 'price_1TlpGs9mdlExjEPwzBkE2fF3'
 
+# Developer accounts that may switch plan WITHOUT paying (for testing the full
+# gated experience). Server-enforced. Configurable via env DEV_EMAILS
+# (comma-separated); defaults to the owner's account.
+DEV_EMAILS = set(
+    e.strip().lower()
+    for e in os.environ.get('DEV_EMAILS', 'samimansouri365@gmail.com').split(',')
+    if e.strip()
+)
+def _is_dev_email(email):
+    return bool(email) and email.strip().lower() in DEV_EMAILS
+
 # Plan limits enforced server-side (the client mirrors these for UX only).
 #   free → no AI at all          pro → PRO_AI_DAILY assistant queries/day
 #   team → unlimited AI
@@ -555,6 +566,8 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_auth_profile()
         elif self.path == '/api/billing/create-checkout-session':
             self.handle_billing_create_session()
+        elif self.path == '/api/billing/dev-upgrade':
+            self.handle_billing_dev_upgrade()
         else:
             self.send_error(404)
 
@@ -613,7 +626,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
                 token = _new_session(conn, uid)
         except sqlite3.IntegrityError:
             self._json_response(409, {'error': 'email_taken'}); return
-        self._json_response(200, {'token': token, 'user': {'email': email, 'name': name, 'plan': 'free', 'profile': None}})
+        self._json_response(200, {'token': token, 'user': {'email': email, 'name': name, 'plan': 'free', 'profile': None, 'is_dev': _is_dev_email(email)}})
 
     def handle_auth_login(self):
         data = self._read_json_body()
@@ -634,7 +647,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             profile = None
         self._json_response(200, {'token': token, 'user': {
             'email': row['email'], 'name': row['name'], 'plan': row['plan'] or 'free',
-            'profile': profile}})
+            'profile': profile, 'is_dev': _is_dev_email(row['email'])}})
 
     def handle_auth_me(self):
         token = self._bearer_token()
@@ -659,6 +672,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             'plan': row['plan'] or 'free',
             # Account-bound onboarding profile (null until the wizard is done).
             'profile': profile,
+            'is_dev': _is_dev_email(row['email']),
         }})
 
     def handle_auth_profile(self):
@@ -690,6 +704,25 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
                 'SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id '
                 'WHERE s.token=? AND s.created > ?',
                 (token, min_created)).fetchone()
+
+    def handle_billing_dev_upgrade(self):
+        """Switch a DEVELOPER account's plan without paying, so the owner can test
+        the full gated Pro/Team experience. Server-enforced: only accounts whose
+        email is in DEV_EMAILS may use this; everyone else gets 403 and the client
+        falls back to real Stripe checkout."""
+        user = self._user_from_token()
+        if not user:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        if not _is_dev_email(user['email']):
+            self._json_response(403, {'error': 'not_dev'}); return
+        data = self._read_json_body() or {}
+        plan = (data.get('plan') or '').strip().lower()
+        if plan not in ('free', 'pro', 'team'):
+            self._json_response(400, {'error': 'bad_plan'}); return
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute('UPDATE users SET plan=? WHERE id=?', (plan, user['id']))
+            conn.commit()
+        self._json_response(200, {'plan': plan, 'dev': True})
 
     def handle_billing_create_session(self):
         """Create a Stripe Checkout session for the Pro plan."""

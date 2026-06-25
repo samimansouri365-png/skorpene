@@ -580,12 +580,21 @@ body.scale-light {
     display: none;
 }
 
-/* Collapsed panel: hide EVERYTHING under the header (tabs, news body, sources
-   panel) so only the "Live News" header bar remains — on every tab. */
-#news-panel.collapsed .news-src-tabs,
-#news-panel.collapsed .news-body,
-#news-panel.collapsed .user-src-panel {
-    display: none !important;
+/* Collapsed panel: everything under the header folds away smoothly as one unit.
+   A JS-driven max-height accordion (see the news-toggle handler) gives a reliable
+   variable-height collapse; the inner wrapper keeps the flex column + the
+   news-body's own scroll intact so the live feed is never disturbed. */
+.news-collapsible {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    transition: max-height .42s cubic-bezier(.22,.61,.36,1);
+}
+.news-collapsible-inner {
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .news-status {
@@ -7085,4 +7094,94 @@ body.onb-active { overflow: hidden; }
     .landing-feats { max-width: 420px; margin: 0 auto; text-align: left; }
     .lpr-cards { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
     .lpr-title { font-size: 26px; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Round 2026-06-25c — welcome intro, fluid transitions, current-plan CTA,
+   free-plan setting lock.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Welcome intro shown on Enter app. Mirrors the loading screen's globe but
+   fades in/out fluidly so the product never appears abruptly. */
+#welcome-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;             /* above the landing + onboarding overlays */
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+}
+#welcome-overlay[hidden] { display: none; }
+#welcome-overlay.welcome-in {
+    opacity: 1;
+    animation: welcomePop .5s cubic-bezier(.22,.61,.36,1) both;
+}
+#welcome-overlay.welcome-out {
+    opacity: 0;
+    transition: opacity .46s ease;
+}
+@keyframes welcomePop {
+    from { opacity: 0; transform: scale(.985); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.welcome-content { text-align: center; }
+.welcome-title {
+    font-family: var(--display);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #f4f2fb;
+    margin: 0 0 8px;
+    text-shadow: 0 0 40px rgba(139,92,246,0.45);
+    animation: lvInSoft .6s ease .12s both;
+}
+.welcome-sub {
+    font-size: 0.82rem;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+    margin: 0;
+    animation: lvInSoft .6s ease .22s both;
+}
+
+/* Fluid fade-out for the landing overlay when returning to the app from plans
+   (Back) — a quick transition instead of an instant disappearance. */
+.landing.landing-leaving { animation: lvFadeOut .3s ease forwards; }
+@keyframes lvFadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* The user's current plan: CTA reads "Plan en uso", keeps its hover feel but is
+   inert (the only way into the product is Enter app on the profile). */
+.lpr-cta.is-current {
+    cursor: default;
+    opacity: 0.92;
+    position: relative;
+}
+.lpr-cta.is-current::after {
+    content: "✓";
+    margin-left: 7px;
+    font-weight: 700;
+    opacity: 0.85;
+}
+
+/* A setting that's locked behind Pro (e.g. icons-per-source — Free has no live
+   map). Dim the control, block interaction, and reveal the Pro hint. */
+.p-lock-note {
+    display: none;
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: var(--skp-purple2, #a78bfa);
+    letter-spacing: 0.02em;
+}
+.p-section.p-locked .range-row,
+.p-section.p-locked .p-section-hint { opacity: 0.4; pointer-events: none; }
+.p-section.p-locked .p-lock-note { display: block; }
+
+/* Respect reduced-motion for the new animations. */
+@media (prefers-reduced-motion: reduce) {
+    #welcome-overlay.welcome-in,
+    .welcome-title, .welcome-sub,
+    .landing.landing-leaving { animation: none !important; }
+    .news-collapsible { transition: none !important; }
 }
