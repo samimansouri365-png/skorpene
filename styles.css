@@ -7178,10 +7178,22 @@ body.onb-active { overflow: hidden; }
 .p-section.p-locked .p-section-hint { opacity: 0.4; pointer-events: none; }
 .p-section.p-locked .p-lock-note { display: block; }
 
+/* View Transitions — smooth crossfade/morph between landing views (home ↔ auth ↔
+   plans) and plans → app, on browsers that support them (Chrome/Arc/Edge). Gives
+   the continuous, premium Linear/Apple-style feel. Driven by auth._nav(). */
+@media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: .46s;
+        animation-timing-function: cubic-bezier(.33, 1, .68, 1);
+    }
+}
+
 /* Respect reduced-motion for the new animations. */
 @media (prefers-reduced-motion: reduce) {
     #welcome-overlay.welcome-in,
     .welcome-title, .welcome-sub,
     .landing.landing-leaving { animation: none !important; }
     .news-collapsible { transition: none !important; }
+    ::view-transition-group(*) { animation-duration: .01ms !important; }
 }

@@ -7275,6 +7275,20 @@ ${this.buildContext()}`;
             void el.offsetWidth;   // force reflow so the animation restarts
             el.classList.add('lv-anim');
         },
+        // Premium view morph. Wrap a DOM mutation that changes which landing view
+        // is shown so the browser smoothly crossfades the before/after states via
+        // the View Transitions API (Chrome/Arc/Edge), giving the continuous,
+        // Linear/Apple-style feel. Falls back to running the mutation directly +
+        // replaying the entrance `pulse` only where View Transitions are absent
+        // (so the animation never doubles up).
+        _nav(mutate, pulse) {
+            const run = () => { try { mutate(); } catch (_) {} };
+            if (document.startViewTransition) {
+                try { document.startViewTransition(run); return; } catch (_) {}
+            }
+            run();
+            if (pulse) this._pulse(pulse);
+        },
         // After auth (login/register or a returning valid token), ALWAYS land on
         // the landing page — never auto-jump into the app. The user enters the
         // product deliberately via the profile chip's "Enter app" button. This
@@ -7318,7 +7332,10 @@ ${this.buildContext()}`;
                 pl.classList.toggle('is-choose', !(plan === 'pro' || plan === 'team'));
                 pl.textContent = plan === 'team' ? 'Team' : plan === 'pro' ? 'Pro' : (tr.planChoose || 'Choose plan');
             }
-            if (planBtn) planBtn.style.display = (plan === 'pro' || plan === 'team') ? 'none' : '';
+            if (planBtn) {
+                planBtn.style.display = (plan === 'pro' || plan === 'team') ? 'none' : '';
+                planBtn.textContent = tr.planChoose || 'Choose plan';
+            }
             const logoutBtn = document.getElementById('landing-profile-logout');
             if (logoutBtn) logoutBtn.textContent = tr.logoutLabel || 'Log out';
             if (enterBtn) enterBtn.textContent = tr.enterApp || 'Enter app';
@@ -7375,24 +7392,27 @@ ${this.buildContext()}`;
             // inside the app (no data-view), Back closes back to the app.
             const prev = this.el.getAttribute('data-view');
             this._plansFrom = (prev === 'home' || prev === 'auth') ? 'home' : 'app';
-            this.el.setAttribute('data-view', 'plans');
-            this.el.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('onb-active');
-            try { this._wirePricing(); } catch (_) {}
             const pricing = document.getElementById('landing-pricing');
-            this._pulse(pricing);
+            this._nav(() => {
+                this.el.setAttribute('data-view', 'plans');
+                this.el.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('onb-active');
+                try { this._wirePricing(); } catch (_) {}
+            }, pricing);
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
             if (pricing) try { pricing.scrollIntoView({ block: 'start' }); } catch (_) {}
         },
         hidePlans() {
             if (!this.el) return;
-            // Fade the overlay out before hiding it, so returning to the app is a
-            // quick fluid transition — not an instant "light switch".
-            this._fadeOutThen(() => {
+            // View Transitions crossfade plans → app smoothly; on browsers without
+            // them, fall back to a quick opacity fade (not an instant light-switch).
+            const mutate = () => {
                 this.el.removeAttribute('data-view');
                 this.el.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('onb-active');
-            });
+            };
+            if (document.startViewTransition) { this._nav(mutate); return; }
+            this._fadeOutThen(mutate);
         },
         _fadeOutThen(fn) {
             const el = this.el;
@@ -7488,11 +7508,12 @@ ${this.buildContext()}`;
         // Show the dedicated auth view (login or register).
         showAuth(mode) {
             if (!this.el) return;
-            this.el.setAttribute('data-view', 'auth');
-            this.el.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('onb-active');
-            this._setMode(mode || 'login');
-            this._pulse(document.getElementById('landing-authview'));
+            this._nav(() => {
+                this.el.setAttribute('data-view', 'auth');
+                this.el.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('onb-active');
+                this._setMode(mode || 'login');
+            }, document.getElementById('landing-authview'));
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
             setTimeout(() => {
                 const f = (mode === 'register' && document.getElementById('auth-name')) || document.getElementById('auth-email');
@@ -7502,10 +7523,12 @@ ${this.buildContext()}`;
         // Back to the home view (hero + showcase + pricing).
         showHome() {
             if (!this.el) return;
-            this.el.setAttribute('data-view', 'home');
-            this.el.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('onb-active');
-            this._syncLandingChrome();
+            this._nav(() => {
+                this.el.setAttribute('data-view', 'home');
+                this.el.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('onb-active');
+                this._syncLandingChrome();
+            }, document.querySelector('.landing-inner'));
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
         },
         // Hook up the pricing CTAs. Free → scroll up + open register tab.
@@ -7518,16 +7541,21 @@ ${this.buildContext()}`;
                     b.dataset.wired = '1';
                     b.addEventListener('click', () => {
                         const plan = b.getAttribute('data-plan') || 'free';
-                        // If the user is logged in and this card IS their current
-                        // plan, the CTA shows "Plan en uso" and does nothing (the
-                        // only way into the product is Enter app on the profile).
-                        if (this.token() && plan === currentPlan()) return;
-                        if (plan === 'pro' || plan === 'team') { this._startCheckout(plan); return; }
-                        // FREE CTA — never touches payment. Logged in → enter the
-                        // product now (onboarding runs once if not done yet). Logged
-                        // out → register first, then enter (the 'enter-free' intent).
-                        if (this.token()) { this._enterApp(); return; }
-                        this._setPostAuth('enter-free');
+                        if (this.token()) {
+                            // Logged in: NO plan card ever enters the app — the only
+                            // way into the product is Enter app on the profile. The
+                            // current plan's card is inert ("Plan en uso"); the
+                            // others just SWITCH plan and stay on the plans view.
+                            if (plan === currentPlan()) return;
+                            if (plan === 'pro' || plan === 'team') { this._startCheckout(plan); return; }
+                            // Free: switch the plan down (dev bypass for now); stay put.
+                            if (this._isDevUser()) { this._devUpgrade('free'); }
+                            return;
+                        }
+                        // Logged out: any plan CTA → register. Pro/Team stash a
+                        // checkout intent; Free stashes none, so after register the
+                        // user lands on the landing and enters via Enter app.
+                        this._setPostAuth((plan === 'pro' || plan === 'team') ? ('checkout-' + plan) : '');
                         this._gotoRegister();
                     });
                 }
@@ -7592,6 +7620,8 @@ ${this.buildContext()}`;
         // Switch a developer account's plan with no payment, then unlock the UI
         // in place (no reload). Returns true if the upgrade happened.
         async _devUpgrade(plan, tok) {
+            tok = tok || this.token();
+            if (!tok) return false;
             try {
                 const r = await fetch('/api/billing/dev-upgrade', {
                     method: 'POST',
@@ -7658,15 +7688,12 @@ ${this.buildContext()}`;
                 if (r.ok && data.token) {
                     this._setSession(data.token, data.user);
                     // Consume the post-auth action (set exactly once by a plan
-                    // CTA). Pro/Team → checkout; Free → enter product; none →
-                    // route by account state (paid/onboarded → app, else stay on
-                    // the landing as a logged-in visitor). A plain top-bar
-                    // login/register has NO action, so it never pays and never
-                    // forces the onboarding/app.
+                    // CTA). ONLY Pro/Team checkout is honored; everything else
+                    // lands on the landing — the app is entered solely via the
+                    // profile's "Enter app" (no plan CTA ever auto-enters).
                     const post = this._takePostAuth();
                     if (post === 'checkout-pro') { await this._startCheckout('pro'); return; }
                     if (post === 'checkout-team') { await this._startCheckout('team'); return; }
-                    if (post === 'enter-free') { this._enterApp(); return; }
                     this._route();
                     return;
                 }
@@ -7774,6 +7801,23 @@ ${this.buildContext()}`;
     for (const _lng in PRICING_I18N) {
         LANDING_I18N[_lng] = Object.assign(LANDING_I18N[_lng] || {}, PRICING_I18N[_lng]);
     }
+    // Showcase strings for the 11 languages that lacked them (es/en carry them
+    // inline in LANDING_I18N above). Without this the whole #landing-showcase
+    // section fell back to English in zh/ar/ru/etc.
+    const _SC_I18N = {
+        fr: { scTitle:'Ton monde, dans un seul flux', scSub:'Rassemble tes sources préférées, place-les sur la carte et laisse l\'IA t\'aider.', sc1T:'Un flux personnalisé', sc1B:'Les chaînes, sites, forums et RSS qui comptent pour toi, réunis dans un seul flux que tu peux lire sans limite.', sc2T:'Géolocalisé sur la carte', sc2B:'Vois où tout se passe, en direct et avec précision. Des icônes par événement te disent quoi et où, instantanément.', sc3T:'Une IA à tes côtés', sc3B:'Elle synthétise l\'actu, t\'explique ce que tu n\'as pas saisi et choisit même les meilleures sources pour tes sujets.', scCases:'Géopolitique en temps réel, transferts du football international partout dans le monde, marchés, ton sport ou ton hobby… tu choisis les sujets, Skorpene les met sur la carte.' },
+        ru: { scTitle:'Твой мир в одной ленте', scSub:'Собери любимые источники, размести их на карте и доверь помощь ИИ.', sc1T:'Персональная лента', sc1B:'Каналы, сайты, форумы и RSS, которые тебе важны, собраны в одну ленту, которую можно читать без ограничений.', sc2T:'Геолокация на карте', sc2B:'Смотри, где что происходит, в реальном времени и точно. Значки событий мгновенно показывают, что и где.', sc3T:'ИИ на твоей стороне', sc3B:'Он обобщает новости, объясняет непонятное и даже подбирает лучшие источники по твоим темам.', scCases:'Геополитика в реальном времени, международные футбольные трансферы по всему миру, рынки, твой спорт или хобби… ты выбираешь темы, Skorpene наносит их на карту.' },
+        zh: { scTitle:'你的世界，汇于一条资讯流', scSub:'聚合你喜爱的来源，放上地图，让 AI 来帮忙。', sc1T:'个性化资讯流', sc1B:'你在意的频道、网站、论坛和 RSS，汇集成一条可无限阅读的资讯流。', sc2T:'在地图上定位', sc2B:'实时、精准地看到每件事发生的地点。逐事件图标让你立刻知道发生了什么、在哪里。', sc3T:'AI 站在你这边', sc3B:'它汇总新闻、解释你没看懂的内容，甚至为你的话题挑选最佳来源。', scCases:'实时地缘政治、全球国际足球转会、市场行情、你的运动或爱好……你来选主题，Skorpene 把它们放上地图。' },
+        tr: { scTitle:'Dünyan tek bir akışta', scSub:'Favori kaynaklarını topla, haritaya yerleştir ve YZ\'nin yardım etmesine izin ver.', sc1T:'Kişiselleştirilmiş akış', sc1B:'Önemsediğin kanallar, siteler, forumlar ve RSS, sınırsız okuyabileceğin tek bir akışta toplanır.', sc2T:'Haritada konumlanmış', sc2B:'Her şeyin nerede olduğunu canlı ve tam olarak gör. Olay başına simgeler ne olduğunu ve nerede olduğunu anında söyler.', sc3T:'Yanında bir YZ', sc3B:'Haberleri özetler, anlamadığını açıklar ve hatta konuların için en iyi kaynakları seçer.', scCases:'Gerçek zamanlı jeopolitik, dünya çapında uluslararası futbol transferleri, piyasalar, sporun ya da hobin… konuları sen seç, Skorpene haritaya koysun.' },
+        ar: { scTitle:'عالمك في موجز واحد', scSub:'اجمع مصادرك المفضّلة، ضعها على الخريطة، ودع الذكاء الاصطناعي يساعدك.', sc1T:'موجز مخصّص', sc1B:'القنوات والمواقع والمنتديات وخلاصات RSS التي تهمّك، مجمّعة في موجز واحد تقرأه بلا حدود.', sc2T:'محدَّد جغرافيًا على الخريطة', sc2B:'شاهد أين يحدث كل شيء، حيًّا وبدقة. أيقونات لكل حدث تخبرك بما يجري وأين، في الحال.', sc3T:'ذكاء اصطناعي إلى جانبك', sc3B:'يلخّص الأخبار، ويشرح ما لم تفهمه، بل ويختار لك أفضل المصادر لمواضيعك.', scCases:'جغرافيا سياسية لحظية، انتقالات كرة القدم الدولية حول العالم، أسواق، رياضتك أو هوايتك… أنت تختار المواضيع، وSkorpene يضعها على الخريطة.' },
+        fa: { scTitle:'دنیای تو در یک فید', scSub:'منابع محبوبت را جمع کن، روی نقشه بگذار و بگذار هوش مصنوعی کمکت کند.', sc1T:'فید شخصی‌سازی‌شده', sc1B:'کانال‌ها، سایت‌ها، انجمن‌ها و RSSهایی که برایت مهم‌اند، در یک فید گرد می‌آیند که بی‌حد می‌خوانی.', sc2T:'مکان‌یابی‌شده روی نقشه', sc2B:'ببین هر چیزی کجا رخ می‌دهد، زنده و دقیق. آیکون هر رویداد فوراً می‌گوید چه خبر است و کجا.', sc3T:'یک هوش مصنوعی در کنار تو', sc3B:'خبرها را خلاصه می‌کند، آنچه نفهمیدی را توضیح می‌دهد و حتی بهترین منابع را برای موضوعاتت برمی‌گزیند.', scCases:'ژئوپلیتیک لحظه‌ای، نقل‌وانتقالات فوتبال بین‌المللی در سراسر جهان، بازارها، ورزش یا سرگرمی‌ات… تو موضوع‌ها را انتخاب کن، Skorpene آن‌ها را روی نقشه می‌گذارد.' },
+        he: { scTitle:'העולם שלך, בפיד אחד', scSub:'אסוף את המקורות האהובים עליך, מקם אותם על המפה ותן ל-AI לעזור.', sc1T:'פיד מותאם אישית', sc1B:'הערוצים, האתרים, הפורומים וה-RSS שחשובים לך, מרוכזים בפיד אחד שאפשר לקרוא בלי הגבלה.', sc2T:'ממוקם על המפה', sc2B:'ראה היכן כל דבר קורה, בשידור חי ובדיוק. אייקון לכל אירוע אומר לך מה קורה ואיפה, מיד.', sc3T:'AI לצידך', sc3B:'הוא מסכם חדשות, מסביר את מה שלא הבנת, ואפילו בוחר את המקורות הטובים ביותר לנושאים שלך.', scCases:'גאופוליטיקה בזמן אמת, העברות כדורגל בינלאומיות מכל העולם, שווקים, הספורט או התחביב שלך… אתה בוחר את הנושאים, ו-Skorpene שם אותם על המפה.' },
+        nl: { scTitle:'Jouw wereld, in één feed', scSub:'Verzamel je favoriete bronnen, plaats ze op de kaart en laat AI helpen.', sc1T:'Een gepersonaliseerde feed', sc1B:'De kanalen, sites, forums en RSS die er voor jou toe doen, gebundeld in één feed die je zonder limiet kunt lezen.', sc2T:'Gelokaliseerd op de kaart', sc2B:'Zie waar alles gebeurt, live en nauwkeurig. Iconen per gebeurtenis vertellen je meteen wat er aan de hand is en waar.', sc3T:'Een AI aan jouw kant', sc3B:'Het vat nieuws samen, legt uit wat je niet begreep en kiest zelfs de beste bronnen voor jouw onderwerpen.', scCases:'Realtime geopolitiek, internationale voetbaltransfers over de hele wereld, markten, jouw sport of hobby… jij kiest de onderwerpen, Skorpene zet ze op de kaart.' },
+        it: { scTitle:'Il tuo mondo, in un unico feed', scSub:'Raccogli le tue fonti preferite, posizionale sulla mappa e lascia che l\'IA ti aiuti.', sc1T:'Un feed personalizzato', sc1B:'I canali, i siti, i forum e gli RSS che ti interessano, riuniti in un unico feed che puoi leggere senza limiti.', sc2T:'Geolocalizzato sulla mappa', sc2B:'Guarda dove succede tutto, in diretta e con precisione. Le icone per evento ti dicono cosa accade e dove, all\'istante.', sc3T:'Un\'IA dalla tua parte', sc3B:'Sintetizza le notizie, ti spiega ciò che non hai capito e sceglie persino le migliori fonti per i tuoi temi.', scCases:'Geopolitica in tempo reale, trasferimenti del calcio internazionale in tutto il mondo, mercati, il tuo sport o hobby… scegli tu i temi, Skorpene li mette sulla mappa.' },
+        pt: { scTitle:'O teu mundo, num só feed', scSub:'Reúne as tuas fontes favoritas, coloca-as no mapa e deixa a IA ajudar.', sc1T:'Um feed personalizado', sc1B:'Os canais, sites, fóruns e RSS que te importam, reunidos num só feed que podes ler sem limites.', sc2T:'Geolocalizado no mapa', sc2B:'Vê onde tudo acontece, em direto e com precisão. Ícones por evento dizem-te o que se passa e onde, num instante.', sc3T:'Uma IA do teu lado', sc3B:'Sintetiza notícias, explica o que não percebeste e até escolhe as melhores fontes para os teus temas.', scCases:'Geopolítica em tempo real, transferências do futebol internacional por todo o mundo, mercados, o teu desporto ou passatempo… escolhes os temas, o Skorpene põe-nos no mapa.' },
+        hi: { scTitle:'तुम्हारी दुनिया, एक ही फ़ीड में', scSub:'अपने पसंदीदा स्रोत इकट्ठा करो, उन्हें मानचित्र पर रखो और AI को मदद करने दो।', sc1T:'एक व्यक्तिगत फ़ीड', sc1B:'तुम्हारे पसंदीदा चैनल, साइट, फ़ोरम और RSS, एक ही फ़ीड में इकट्ठा जिसे तुम बिना सीमा पढ़ सको।', sc2T:'मानचित्र पर जियो-स्थित', sc2B:'देखो हर चीज़ कहाँ हो रही है, लाइव और सटीक। हर घटना के आइकन तुरंत बताते हैं कि क्या और कहाँ हो रहा है।', sc3T:'तुम्हारे साथ एक AI', sc3B:'यह समाचार का सार देता है, जो तुम्हें समझ न आया उसे समझाता है, और तुम्हारे विषयों के लिए सबसे अच्छे स्रोत भी चुनता है।', scCases:'रियल-टाइम भू-राजनीति, दुनिया भर के अंतरराष्ट्रीय फ़ुटबॉल ट्रांसफ़र, बाज़ार, तुम्हारा खेल या शौक… तुम विषय चुनो, Skorpene उन्हें मानचित्र पर रखता है।' },
+    };
+    for (const _l in _SC_I18N) { LANDING_I18N[_l] = Object.assign(LANDING_I18N[_l] || {}, _SC_I18N[_l]); }
     // Flags + native names for the picker. Mirrors ONB_LANGS but adds flag emoji
     // so the landing dropdown can show 🇪🇸 Español etc. compactly.
     const LANDING_LANGS = [
