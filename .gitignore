@@ -18,3 +18,6 @@ auth_server.log
 mikey.txt
 stripe_secret.txt
 auth.db
+auth.db-shm
+auth.db-wal
+Screenshot*.png
