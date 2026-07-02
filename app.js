@@ -8459,25 +8459,24 @@ ${this.buildContext()}`;
         hi: { scTitle:'तुम्हारी दुनिया, एक ही फ़ीड में', scSub:'अपने पसंदीदा स्रोत इकट्ठा करो, उन्हें मानचित्र पर रखो और AI को मदद करने दो।', sc1T:'एक व्यक्तिगत फ़ीड', sc1B:'तुम्हारे पसंदीदा चैनल, साइट, फ़ोरम और RSS, एक ही फ़ीड में इकट्ठा जिसे तुम बिना सीमा पढ़ सको।', sc2T:'मानचित्र पर जियो-स्थित', sc2B:'देखो हर चीज़ कहाँ हो रही है, लाइव और सटीक। हर घटना के आइकन तुरंत बताते हैं कि क्या और कहाँ हो रहा है।', sc3T:'तुम्हारे साथ एक AI', sc3B:'यह समाचार का सार देता है, जो तुम्हें समझ न आया उसे समझाता है, और तुम्हारे विषयों के लिए सबसे अच्छे स्रोत भी चुनता है।', scCases:'रियल-टाइम भू-राजनीति, दुनिया भर के अंतरराष्ट्रीय फ़ुटबॉल ट्रांसफ़र, बाज़ार, तुम्हारा खेल या शौक… तुम विषय चुनो, Skorpene उन्हें मानचित्र पर रखता है।' },
     };
     for (const _l in _SC_I18N) { LANDING_I18N[_l] = Object.assign(LANDING_I18N[_l] || {}, _SC_I18N[_l]); }
-    // ── Video showcase block (autoplay, muted, loops) — title + subtitle in
-    //    all 13 UI languages, and a rewritten scCases that drops the old
-    //    "geopolitics" framing per the product's current positioning. ──
-    const _VIDEO_SC_I18N = {
-        es:{ sc4T:'Míralo en acción', sc4B:'Una demo silenciada, sin cortes: fuentes, feed, mapa y el asistente de IA trabajando juntos.', scCases:'Un mapa en tiempo real con un feed personalizado de los temas que más te gustan — deportes, mercados, tecnología, tus hobbies o cualquier combinación — con asistencia de IA.' },
-        en:{ sc4T:'See it in action', sc4B:'A silent, uncut demo: sources, feed, map and the AI assistant working together.', scCases:'A real-time map with a personalized feed of the topics you love — sports, markets, tech, your hobbies, or any combination of them — with AI assistance.' },
-        fr:{ sc4T:'Vois-le à l\'œuvre', sc4B:'Une démo silencieuse, sans coupures : sources, flux, carte et l\'assistant IA au travail.', scCases:'Une carte en temps réel avec un flux personnalisé des sujets qui te plaisent — sports, marchés, tech, tes hobbies ou toute combinaison — avec l\'aide de l\'IA.' },
-        ru:{ sc4T:'Посмотри в действии', sc4B:'Тихое, непрерывное демо: источники, лента, карта и ИИ-ассистент в связке.', scCases:'Карта в реальном времени с персональной лентой любимых тем — спорт, рынки, техно, твои хобби или любое сочетание — с помощью ИИ.' },
-        zh:{ sc4T:'看看它的表现', sc4B:'一个静音、不间断的演示：来源、资讯流、地图和 AI 助手协同工作。', scCases:'实时地图 + 你喜欢的主题的个性化资讯流 — 体育、市场、科技、你的爱好或任意组合 — 配有 AI 助手。' },
-        tr:{ sc4T:'İş başında gör', sc4B:'Sessiz, kesintisiz bir demo: kaynaklar, akış, harita ve YZ asistanı birlikte çalışıyor.', scCases:'Sevdiğin konuların gerçek zamanlı haritası ve kişiselleştirilmiş akışı — spor, piyasalar, teknoloji, hobilerin ya da herhangi bir bileşim — yapay zekâ desteğiyle.' },
-        ar:{ sc4T:'شاهده في العمل', sc4B:'عرض توضيحي صامت ودون قطع: مصادر، موجز، خريطة، ومساعد الذكاء الاصطناعي معًا.', scCases:'خريطة حية مع موجز مخصص للمواضيع التي تحبها — رياضة، أسواق، تقنية، هواياتك أو أي مزيج — مع مساعدة الذكاء الاصطناعي.' },
-        fa:{ sc4T:'در عمل ببین', sc4B:'یک دموی بی‌صدا و بی‌وقفه: منابع، فید، نقشه و دستیار هوش مصنوعی در کنار هم.', scCases:'یک نقشه در لحظه با فید شخصی‌سازی‌شده از موضوعاتی که دوست داری — ورزش، بازارها، فناوری، سرگرمی‌ها یا هر ترکیب — همراه با کمک هوش مصنوعی.' },
-        he:{ sc4T:'ראה בפעולה', sc4B:'הדגמה שקטה ורצופה: מקורות, פיד, מפה ועוזר הבינה המלאכותית פועלים יחד.', scCases:'מפה בזמן אמת עם פיד מותאם אישית של הנושאים שאתה אוהב — ספורט, שווקים, טכנולוגיה, תחביבים או כל שילוב — עם עזרה של בינה מלאכותית.' },
-        nl:{ sc4T:'Zie het in actie', sc4B:'Een stille, ononderbroken demo: bronnen, feed, kaart en de AI-assistent samen aan het werk.', scCases:'Een realtime kaart met een persoonlijke feed van de onderwerpen die je leuk vindt — sport, markten, tech, je hobby\'s of elke combinatie — met AI-assistentie.' },
-        it:{ sc4T:'Vedilo in azione', sc4B:'Una demo silenziosa e senza tagli: fonti, feed, mappa e l\'assistente IA che lavorano insieme.', scCases:'Una mappa in tempo reale con un feed personalizzato degli argomenti che ami — sport, mercati, tech, i tuoi hobby o qualsiasi combinazione — con l\'aiuto dell\'IA.' },
-        pt:{ sc4T:'Vê-o em ação', sc4B:'Uma demo silenciosa, sem cortes: fontes, feed, mapa e o assistente de IA a trabalhar juntos.', scCases:'Um mapa em tempo real com um feed personalizado dos temas que gostas — desporto, mercados, tech, os teus hobbies ou qualquer combinação — com assistência de IA.' },
-        hi:{ sc4T:'इसे कार्रवाई में देखो', sc4B:'एक बिना आवाज़ का, बिना कट का डेमो: स्रोत, फ़ीड, नक्शा और AI असिस्टेंट एक साथ काम करते हुए।', scCases:'तुम्हारे पसंदीदा विषयों की रीयल-टाइम मैप और पर्सनल फ़ीड — खेल, बाज़ार, टेक, तुम्हारे शौक या कोई भी संयोजन — AI सहायता के साथ।' },
+    // Rewrite the closing scCases line across every locale to drop the old
+    // "geopolitics" framing per the product's current positioning.
+    const _CASES_I18N = {
+        es:{ scCases:'Un mapa en tiempo real con un feed personalizado de los temas que más te gustan — deportes, mercados, tecnología, tus hobbies o cualquier combinación — con asistencia de IA.' },
+        en:{ scCases:'A real-time map with a personalized feed of the topics you love — sports, markets, tech, your hobbies, or any combination of them — with AI assistance.' },
+        fr:{ scCases:'Une carte en temps réel avec un flux personnalisé des sujets qui te plaisent — sports, marchés, tech, tes hobbies ou toute combinaison — avec l\'aide de l\'IA.' },
+        ru:{ scCases:'Карта в реальном времени с персональной лентой любимых тем — спорт, рынки, техно, твои хобби или любое сочетание — с помощью ИИ.' },
+        zh:{ scCases:'实时地图 + 你喜欢的主题的个性化资讯流 — 体育、市场、科技、你的爱好或任意组合 — 配有 AI 助手。' },
+        tr:{ scCases:'Sevdiğin konuların gerçek zamanlı haritası ve kişiselleştirilmiş akışı — spor, piyasalar, teknoloji, hobilerin ya da herhangi bir bileşim — yapay zekâ desteğiyle.' },
+        ar:{ scCases:'خريطة حية مع موجز مخصص للمواضيع التي تحبها — رياضة، أسواق، تقنية، هواياتك أو أي مزيج — مع مساعدة الذكاء الاصطناعي.' },
+        fa:{ scCases:'یک نقشه در لحظه با فید شخصی‌سازی‌شده از موضوعاتی که دوست داری — ورزش، بازارها، فناوری، سرگرمی‌ها یا هر ترکیب — همراه با کمک هوش مصنوعی.' },
+        he:{ scCases:'מפה בזמן אמת עם פיד מותאם אישית של הנושאים שאתה אוהב — ספורט, שווקים, טכנולוגיה, תחביבים או כל שילוב — עם עזרה של בינה מלאכותית.' },
+        nl:{ scCases:'Een realtime kaart met een persoonlijke feed van de onderwerpen die je leuk vindt — sport, markten, tech, je hobby\'s of elke combinatie — met AI-assistentie.' },
+        it:{ scCases:'Una mappa in tempo reale con un feed personalizzato degli argomenti che ami — sport, mercati, tech, i tuoi hobby o qualsiasi combinazione — con l\'aiuto dell\'IA.' },
+        pt:{ scCases:'Um mapa em tempo real com um feed personalizado dos temas que gostas — desporto, mercados, tech, os teus hobbies ou qualquer combinação — com assistência de IA.' },
+        hi:{ scCases:'तुम्हारे पसंदीदा विषयों की रीयल-टाइम मैप और पर्सनल फ़ीड — खेल, बाज़ार, टेक, तुम्हारे शौक या कोई भी संयोजन — AI सहायता के साथ।' },
     };
-    for (const _l in _VIDEO_SC_I18N) { LANDING_I18N[_l] = Object.assign(LANDING_I18N[_l] || {}, _VIDEO_SC_I18N[_l]); }
+    for (const _l in _CASES_I18N) { LANDING_I18N[_l] = Object.assign(LANDING_I18N[_l] || {}, _CASES_I18N[_l]); }
     // Flags + native names for the picker. Mirrors ONB_LANGS but adds flag emoji
     // so the landing dropdown can show 🇪🇸 Español etc. compactly.
     const LANDING_LANGS = [
