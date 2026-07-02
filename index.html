@@ -3,12 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skorpene — Mapa Geopolítico Mundial</title>
+    <title>Skorpene — Personalized real-time feed with map</title>
+    <meta name="description" content="A real-time map with a personalized feed of the topics you love — sports, markets, tech, your hobbies, or any combination of them — with AI assistance.">
+    <meta name="theme-color" content="#0a0a12">
 
-    <!-- Favicon: Skorpene scorpion on a black square (shows in the browser tab). -->
-    <link rel="icon" type="image/png" href="favicon.png?v=20260702c">
-    <link rel="icon" type="image/x-icon" href="favicon.ico?v=20260702c">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260702c">
+    <!-- Open Graph / social share -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Skorpene">
+    <meta property="og:title" content="Skorpene — Personalized real-time feed with map">
+    <meta property="og:description" content="A real-time map with a personalized feed of the topics you love — sports, markets, tech, your hobbies, or any combination of them — with AI assistance.">
+    <meta property="og:url" content="https://www.skorpene.com/">
+    <meta property="og:image" content="https://www.skorpene.com/favicon.png?v=20260702d">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Skorpene — Personalized real-time feed with map">
+    <meta name="twitter:description" content="A real-time map with a personalized feed of the topics you love — sports, markets, tech, your hobbies, or any combination of them — with AI assistance.">
+
+    <!-- Favicon: Skorpene scorpion on black. Absolute paths + explicit sizes
+         so browsers pick the right one for the tab (some skip <link rel=icon>
+         if href is relative from a nested URL, others need /favicon.ico at root). -->
+    <link rel="icon" href="/favicon.ico?v=20260702d" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260702d">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png?v=20260702d">
+    <link rel="shortcut icon" href="/favicon.ico?v=20260702d">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260702d">
 
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -22,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="styles.css?v=20260702d">
+    <link rel="stylesheet" href="styles.css?v=20260702e">
 
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -625,6 +642,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      is ready when the base layer is created. -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYi2ig-ZkmwkXv_dt-0glm0o17BxKTCJk&v=quarterly&language=es" data-gmaps-loader="1" data-lang="es"></script>
 <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.14.1/dist/Leaflet.GoogleMutant.js"></script>
-<script src="app.js?v=20260702d"></script>
+<script src="app.js?v=20260702e"></script>
 </body>
 </html>

@@ -1336,6 +1336,39 @@
         },
     };
     Object.keys(NEW_LANG_I18N).forEach(lng => { if (T[lng]) Object.assign(T[lng], NEW_LANG_I18N[lng]); });
+
+    // ── Localize <title> and <meta name=description> to the user's browser
+    // language (falls back to English — which is the SEO default in the HTML).
+    // Runs BEFORE any other init so search-engine previews and the browser tab
+    // both see the right text, regardless of the user's app-language pick later.
+    const SEO_I18N = {
+        en:{ t:'Skorpene — Personalized real-time feed with map', d:'A real-time map with a personalized feed of the topics you love — sports, markets, tech, your hobbies, or any combination of them — with AI assistance.' },
+        es:{ t:'Skorpene — Feed personalizado en tiempo real con mapa', d:'Un mapa en tiempo real con un feed personalizado de los temas que te gustan — deportes, mercados, tecnología, tus hobbies o cualquier combinación — con asistencia de IA.' },
+        fr:{ t:'Skorpene — Flux personnalisé en temps réel avec carte', d:'Une carte en temps réel avec un flux personnalisé des sujets qui te plaisent — sports, marchés, tech, tes hobbies ou toute combinaison — avec l\'aide de l\'IA.' },
+        ru:{ t:'Skorpene — Персональная лента в реальном времени с картой', d:'Карта в реальном времени с персональной лентой любимых тем — спорт, рынки, техно, твои хобби или любое сочетание — с помощью ИИ.' },
+        zh:{ t:'Skorpene — 带地图的实时个性化资讯流', d:'实时地图 + 你喜欢的主题的个性化资讯流 — 体育、市场、科技、你的爱好或任意组合 — 配有 AI 助手。' },
+        tr:{ t:'Skorpene — Haritalı, kişiselleştirilmiş gerçek zamanlı akış', d:'Sevdiğin konuların gerçek zamanlı haritası ve kişiselleştirilmiş akışı — spor, piyasalar, teknoloji, hobilerin ya da herhangi bir bileşim — yapay zekâ desteğiyle.' },
+        ar:{ t:'Skorpene — موجز مخصص في الوقت الحقيقي مع خريطة', d:'خريطة حية مع موجز مخصص للمواضيع التي تحبها — رياضة، أسواق، تقنية، هواياتك أو أي مزيج — مع مساعدة الذكاء الاصطناعي.' },
+        fa:{ t:'Skorpene — فید شخصی‌سازی‌شده در لحظه با نقشه', d:'یک نقشه در لحظه با فید شخصی‌سازی‌شده از موضوعاتی که دوست داری — ورزش، بازارها، فناوری، سرگرمی‌ها یا هر ترکیب — همراه با کمک هوش مصنوعی.' },
+        he:{ t:'Skorpene — פיד מותאם אישית בזמן אמת עם מפה', d:'מפה בזמן אמת עם פיד מותאם אישית של הנושאים שאתה אוהב — ספורט, שווקים, טכנולוגיה, תחביבים או כל שילוב — עם עזרה של בינה מלאכותית.' },
+        nl:{ t:'Skorpene — Persoonlijke realtime feed met kaart', d:'Een realtime kaart met een persoonlijke feed van de onderwerpen die je leuk vindt — sport, markten, tech, je hobby\'s of elke combinatie — met AI-assistentie.' },
+        it:{ t:'Skorpene — Feed personalizzato in tempo reale con mappa', d:'Una mappa in tempo reale con un feed personalizzato degli argomenti che ami — sport, mercati, tech, i tuoi hobby o qualsiasi combinazione — con l\'aiuto dell\'IA.' },
+        pt:{ t:'Skorpene — Feed personalizado em tempo real com mapa', d:'Um mapa em tempo real com um feed personalizado dos temas que gostas — desporto, mercados, tech, os teus hobbies ou qualquer combinação — com assistência de IA.' },
+        hi:{ t:'Skorpene — नक्शे के साथ रीयल-टाइम पर्सनल फ़ीड', d:'तुम्हारे पसंदीदा विषयों की रीयल-टाइम मैप और पर्सनल फ़ीड — खेल, बाज़ार, टेक, तुम्हारे शौक या कोई भी संयोजन — AI सहायता के साथ।' },
+    };
+    (function _localizeSeo() {
+        try {
+            const nl = String(navigator.language || navigator.userLanguage || 'en').toLowerCase();
+            const key = (nl.split('-')[0] || 'en');
+            const s = SEO_I18N[key] || SEO_I18N.en;
+            if (s.t) document.title = s.t;
+            const md = document.querySelector('meta[name="description"]');
+            if (md && s.d) md.setAttribute('content', s.d);
+            // Update the html lang attribute for a11y + browser hints.
+            if (SEO_I18N[key] && document.documentElement) document.documentElement.setAttribute('lang', key);
+        } catch (_) {}
+    })();
+
     let map, baseLayer, labelsLayer;
     let currentLayer = 'satellite', currentLang = 'en', currentUnit = 'km';
     let labelState = { countries:false, cities:false, regions:false, roads:false, water:false };
@@ -7906,7 +7939,24 @@ ${this.buildContext()}`;
                 // Continue the normal first-run flow (wizard shows only if no profile).
                 onboarding.init();
             };
-            this._setView('app');
+            // GUARANTEE a 'home' entry sits BENEATH 'app' in the browser history
+            // so Back from the map always returns to Skorpene's landing, never off
+            // to Google or wherever the user came from. Without this, entering the
+            // app from a landing view that was itself a REPLACE (not a push) — the
+            // usual flow on first visit — leaves Back walking straight off the site.
+            if (!this._popping) {
+                try {
+                    const st = history.state;
+                    if (!st || st.skView !== 'app') {
+                        history.replaceState({ skView: 'home' }, '');
+                        history.pushState({ skView: 'app' }, '');
+                    }
+                } catch (_) {}
+                this._view = 'app';
+                try { sessionStorage.setItem('geoscope_view', 'app'); } catch (_) {}
+            } else {
+                this._setView('app');
+            }
             if (withWelcome) this._playWelcome(doReveal);
             else doReveal();
         },
