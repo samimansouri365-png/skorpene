@@ -6828,6 +6828,15 @@ body.onb-active { overflow: hidden; }
 }
 .lsc-shot img, .lsc-shot picture { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+/* Video block: same minimalist frame as the image shots; native controls on
+   hover/tap (Chrome/Safari) so the user can scrub, pause and resume. */
+.lsc-video { aspect-ratio: 16 / 9; }
+.lsc-video video {
+    width: 100%; height: 100%; display: block;
+    object-fit: cover; background: #0b0714;
+}
+.lsc-video video::-webkit-media-controls-panel { background: rgba(11,7,20,0.45); }
+
 /* Carrusel: track horizontal con snap; flechas laterales minimalistas + dots. */
 .lsc-carousel { padding: 0; }
 .lsc-carousel-track {
