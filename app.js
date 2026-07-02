@@ -968,6 +968,9 @@
     let roadsLayer = null, arsenalLayer = null;
     let countryData = null, cityData = null;
     let newsItems = [];
+    // News-panel multi-selection (by stable event_id) for the right-click context
+    // menu ("Mostrar en feed" / "Analizar con IA").
+    let _newsSel = new Set();
     let _renderNewsScheduled = false, _collisionRAF = null, _mapDragSuppress = false;
     let _searchTimer = null, _cityRefreshTimer = null, _restackTimer = null, _bkndPollTimer = null;
     let _bkndPollInflight = false, _lastBackendHeartbeat = null;
@@ -1234,6 +1237,23 @@
         hi:{ aiSourcesAdded:'हो गया: मैंने तुम्हारे फ़ीड में {n} स्रोत जोड़े। मानचित्र और Feed देखो।', aiSourcesNone:'जोड़ने के लिए कोई नया स्रोत नहीं मिला (शायद पहले से हैं)।', devReset:'सब रीसेट करो (dev)' },
     };
     Object.keys(AISRC_I18N).forEach(lng => { if (T[lng]) Object.assign(T[lng], AISRC_I18N[lng]); });
+    // News context menu (right-click) + AI "analyze" greeting + source-removal, per language.
+    const NEWSCTX_I18N = {
+        es:{ newsSelect:'Seleccionar', newsShowInFeed:'Mostrar en feed', newsAnalyzeOne:'Analizar noticia', newsAnalyzeN:'Analizar {n} noticias', aiAnalyzeGreet1:'¿Qué quieres saber sobre esta noticia?', aiAnalyzeGreetN:'¿Qué quieres saber sobre estas {n} noticias?', aiSourcesRemoved:'Listo: he quitado {n} fuentes de tu feed.', aiSourcesRemovedNone:'No encontré esas fuentes para quitar.' },
+        en:{ newsSelect:'Select', newsShowInFeed:'Show in feed', newsAnalyzeOne:'Analyze story', newsAnalyzeN:'Analyze {n} stories', aiAnalyzeGreet1:'What would you like to know about this story?', aiAnalyzeGreetN:'What would you like to know about these {n} stories?', aiSourcesRemoved:'Done: I removed {n} sources from your feed.', aiSourcesRemovedNone:'I couldn\'t find those sources to remove.' },
+        fr:{ newsSelect:'Sélectionner', newsShowInFeed:'Afficher dans le feed', newsAnalyzeOne:'Analyser l\'actu', newsAnalyzeN:'Analyser {n} actus', aiAnalyzeGreet1:'Que veux-tu savoir sur cette actu ?', aiAnalyzeGreetN:'Que veux-tu savoir sur ces {n} actus ?', aiSourcesRemoved:'C\'est fait : j\'ai retiré {n} sources de ton flux.', aiSourcesRemovedNone:'Je n\'ai pas trouvé ces sources à retirer.' },
+        ru:{ newsSelect:'Выбрать', newsShowInFeed:'Показать в ленте', newsAnalyzeOne:'Анализировать новость', newsAnalyzeN:'Анализировать {n} новостей', aiAnalyzeGreet1:'Что ты хочешь узнать об этой новости?', aiAnalyzeGreetN:'Что ты хочешь узнать об этих {n} новостях?', aiSourcesRemoved:'Готово: я удалил {n} источников из твоей ленты.', aiSourcesRemovedNone:'Не нашёл эти источники для удаления.' },
+        zh:{ newsSelect:'选择', newsShowInFeed:'在 Feed 中显示', newsAnalyzeOne:'分析这条新闻', newsAnalyzeN:'分析 {n} 条新闻', aiAnalyzeGreet1:'关于这条新闻你想了解什么？', aiAnalyzeGreetN:'关于这 {n} 条新闻你想了解什么？', aiSourcesRemoved:'完成：我已从你的资讯流移除 {n} 个来源。', aiSourcesRemovedNone:'没有找到要移除的那些来源。' },
+        tr:{ newsSelect:'Seç', newsShowInFeed:'Feed\'de göster', newsAnalyzeOne:'Haberi analiz et', newsAnalyzeN:'{n} haberi analiz et', aiAnalyzeGreet1:'Bu haber hakkında ne bilmek istersin?', aiAnalyzeGreetN:'Bu {n} haber hakkında ne bilmek istersin?', aiSourcesRemoved:'Tamam: akışından {n} kaynak kaldırdım.', aiSourcesRemovedNone:'Kaldıracak o kaynakları bulamadım.' },
+        ar:{ newsSelect:'تحديد', newsShowInFeed:'عرض في الـFeed', newsAnalyzeOne:'تحليل الخبر', newsAnalyzeN:'تحليل {n} أخبار', aiAnalyzeGreet1:'ماذا تريد أن تعرف عن هذا الخبر؟', aiAnalyzeGreetN:'ماذا تريد أن تعرف عن هذه الأخبار الـ{n}؟', aiSourcesRemoved:'تم: أزلت {n} مصادر من موجزك.', aiSourcesRemovedNone:'لم أجد تلك المصادر لإزالتها.' },
+        fa:{ newsSelect:'انتخاب', newsShowInFeed:'نمایش در Feed', newsAnalyzeOne:'تحلیل خبر', newsAnalyzeN:'تحلیل {n} خبر', aiAnalyzeGreet1:'می‌خواهی درباره این خبر چه بدانی؟', aiAnalyzeGreetN:'می‌خواهی درباره این {n} خبر چه بدانی؟', aiSourcesRemoved:'انجام شد: {n} منبع از فید تو حذف کردم.', aiSourcesRemovedNone:'آن منابع را برای حذف پیدا نکردم.' },
+        he:{ newsSelect:'בחר', newsShowInFeed:'הצג ב-Feed', newsAnalyzeOne:'נתח ידיעה', newsAnalyzeN:'נתח {n} ידיעות', aiAnalyzeGreet1:'מה תרצה לדעת על הידיעה הזו?', aiAnalyzeGreetN:'מה תרצה לדעת על {n} הידיעות האלה?', aiSourcesRemoved:'בוצע: הסרתי {n} מקורות מהפיד שלך.', aiSourcesRemovedNone:'לא מצאתי את המקורות האלה להסרה.' },
+        nl:{ newsSelect:'Selecteren', newsShowInFeed:'Toon in feed', newsAnalyzeOne:'Nieuws analyseren', newsAnalyzeN:'{n} nieuwsberichten analyseren', aiAnalyzeGreet1:'Wat wil je weten over dit nieuws?', aiAnalyzeGreetN:'Wat wil je weten over deze {n} nieuwsberichten?', aiSourcesRemoved:'Klaar: ik heb {n} bronnen uit je feed verwijderd.', aiSourcesRemovedNone:'Ik kon die bronnen niet vinden om te verwijderen.' },
+        it:{ newsSelect:'Seleziona', newsShowInFeed:'Mostra nel feed', newsAnalyzeOne:'Analizza notizia', newsAnalyzeN:'Analizza {n} notizie', aiAnalyzeGreet1:'Cosa vuoi sapere su questa notizia?', aiAnalyzeGreetN:'Cosa vuoi sapere su queste {n} notizie?', aiSourcesRemoved:'Fatto: ho rimosso {n} fonti dal tuo feed.', aiSourcesRemovedNone:'Non ho trovato quelle fonti da rimuovere.' },
+        pt:{ newsSelect:'Selecionar', newsShowInFeed:'Mostrar no feed', newsAnalyzeOne:'Analisar notícia', newsAnalyzeN:'Analisar {n} notícias', aiAnalyzeGreet1:'O que queres saber sobre esta notícia?', aiAnalyzeGreetN:'O que queres saber sobre estas {n} notícias?', aiSourcesRemoved:'Pronto: removi {n} fontes do teu feed.', aiSourcesRemovedNone:'Não encontrei essas fontes para remover.' },
+        hi:{ newsSelect:'चुनें', newsShowInFeed:'फ़ीड में दिखाएँ', newsAnalyzeOne:'खबर का विश्लेषण करें', newsAnalyzeN:'{n} खबरों का विश्लेषण करें', aiAnalyzeGreet1:'इस खबर के बारे में क्या जानना चाहते हो?', aiAnalyzeGreetN:'इन {n} खबरों के बारे में क्या जानना चाहते हो?', aiSourcesRemoved:'हो गया: मैंने तुम्हारे फ़ीड से {n} स्रोत हटा दिए।', aiSourcesRemovedNone:'हटाने के लिए वे स्रोत नहीं मिले।' },
+    };
+    Object.keys(NEWSCTX_I18N).forEach(lng => { if (T[lng]) Object.assign(T[lng], NEWSCTX_I18N[lng]); });
     // Source-loading veil message, per language.
     const SRC_LOAD_I18N = {
         es:{ loadingSources:'Cargando fuentes de información…' },
@@ -4430,6 +4450,13 @@
             // Media thumbnails open in the lightbox via mediaViewer's own
             // document-level delegation — don't also treat them as item clicks.
             if (e.target.closest('.news-media-wrap')) return;
+            // Selection checkbox → toggle this item in the multi-selection.
+            const checkBtn = e.target.closest('[data-news-check]');
+            if (checkBtn) {
+                e.stopPropagation();
+                newsContextMenu.toggleSelect(checkBtn.getAttribute('data-news-check'), checkBtn.closest('.news-item'));
+                return;
+            }
             // Expand / collapse long text.
             const expandBtn = e.target.closest('[data-expand]');
             if (expandBtn) {
@@ -4453,6 +4480,135 @@
                 if (it && it.lat != null) flyToNews(it.lat, it.lng, it.event_id);
             }
         });
+        // Right-click a news item → context menu (Show in feed / Analyze with AI).
+        list.addEventListener('contextmenu', (e) => {
+            const itemEl = e.target.closest('.news-item');
+            if (!itemEl) return;
+            e.preventDefault();
+            newsContextMenu.openFor(itemEl, e.clientX, e.clientY);
+        });
+    }
+
+    // ── News right-click context menu + multi-selection ──
+    // Right-click a news item to "Show in feed" or "Analyze with AI". Items can
+    // be multi-selected via the hover checkbox; the menu then acts on the whole
+    // selection (or just the right-clicked item when nothing is selected).
+    const newsContextMenu = {
+        _ids: [], _primaryId: null,
+        _t() { return T[currentLang] || T.en; },
+        // Resolve a stable news id back to its live news item object.
+        _itemById(id) {
+            if (!id) return null;
+            if (newsById[id] && newsById[id][0]) return newsById[id][0];
+            const found = newsItems.find(it => (it.event_id || '') === id);
+            if (found) return found;
+            const m = /^gf-idx-(\d+)$/.exec(id);
+            if (m) return newsItems[parseInt(m[1], 10)];
+            return null;
+        },
+        toggleSelect(id, itemEl) {
+            if (!id) return;
+            if (_newsSel.has(id)) _newsSel.delete(id); else _newsSel.add(id);
+            if (itemEl) itemEl.classList.toggle('is-selected', _newsSel.has(id));
+        },
+        clearSelection() {
+            _newsSel.clear();
+            document.querySelectorAll('.news-item.is-selected').forEach(el => el.classList.remove('is-selected'));
+        },
+        _ensureMenu() {
+            if (this._menu) return this._menu;
+            const menu = document.createElement('div');
+            menu.id = 'news-ctx-menu';
+            menu.className = 'news-ctx-menu';
+            menu.hidden = true;
+            menu.innerHTML =
+                `<button type="button" class="news-ctx-item" data-ctx="feed"><span class="news-ctx-ico">📰</span><span class="news-ctx-lbl"></span></button>` +
+                `<button type="button" class="news-ctx-item" data-ctx="analyze"><span class="news-ctx-ico">🧠</span><span class="news-ctx-lbl"></span></button>`;
+            document.body.appendChild(menu);
+            menu.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-ctx]');
+                if (!btn) return;
+                const action = btn.getAttribute('data-ctx');
+                this.close();
+                if (action === 'feed') this._showInFeed(this._primaryId);
+                else if (action === 'analyze') this._analyze(this._ids);
+            });
+            // Dismiss on outside click, escape, scroll or resize.
+            document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target)) this.close(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.close(); });
+            window.addEventListener('resize', () => this.close());
+            const newsBody = document.getElementById('news-body');
+            if (newsBody) newsBody.addEventListener('scroll', () => this.close(), { passive: true });
+            this._menu = menu;
+            return menu;
+        },
+        openFor(itemEl, x, y) {
+            const thisId = itemEl.getAttribute('data-news-id');
+            if (!thisId) return;
+            // Act on the whole selection when the right-clicked item is part of it;
+            // otherwise act on just this item (standard file-manager behavior).
+            this._ids = (_newsSel.has(thisId) && _newsSel.size > 0) ? [..._newsSel] : [thisId];
+            this._primaryId = thisId;
+            const menu = this._ensureMenu();
+            const tr = this._t();
+            const n = this._ids.length;
+            menu.querySelector('[data-ctx="feed"] .news-ctx-lbl').textContent = tr.newsShowInFeed || 'Mostrar en feed';
+            menu.querySelector('[data-ctx="analyze"] .news-ctx-lbl').textContent = n > 1
+                ? (tr.newsAnalyzeN || 'Analizar {n} noticias').replace('{n}', n)
+                : (tr.newsAnalyzeOne || 'Analizar noticia');
+            // Show then position (needs measured size to clamp within the viewport).
+            menu.hidden = false;
+            menu.style.visibility = 'hidden';
+            const mw = menu.offsetWidth, mh = menu.offsetHeight;
+            const px = Math.min(x, window.innerWidth - mw - 8);
+            const py = Math.min(y, window.innerHeight - mh - 8);
+            menu.style.left = Math.max(8, px) + 'px';
+            menu.style.top = Math.max(8, py) + 'px';
+            menu.style.visibility = '';
+        },
+        close() { if (this._menu) this._menu.hidden = true; },
+        _showInFeed(id) {
+            const it = this._itemById(id);
+            if (!it) return;
+            try { favBox.open(); } catch (_) {}
+            try { favBox.showItem(it.event_id || id); } catch (_) {}
+        },
+        _analyze(ids) {
+            const items = (ids || []).map(id => this._itemById(id)).filter(Boolean);
+            if (!items.length) return;
+            try { aiAssistant.analyzeNews(items); } catch (_) {}
+            this.clearSelection();
+        },
+    };
+
+    // Build the compact news card shown inside the AI chat when the user picks
+    // "Analyze" — one row per selected item (source · time + headline).
+    function _renderNewsCard(items) {
+        const wrap = document.createElement('div');
+        wrap.className = 'ai-news-card';
+        (items || []).forEach(it => {
+            const row = document.createElement('div');
+            row.className = 'ai-news-card-item';
+            const clean = _cleanMessage(it.message || '');
+            const nl = clean.indexOf('\n');
+            const title = (nl > 0 ? clean.slice(0, nl) : clean).slice(0, 160) || (it.channel || '');
+            const src = it.channel || '';
+            const when = it.timestamp ? `${it.timestamp.substring(5, 10)} ${it.timestamp.substring(11, 16)}` : '';
+            row.innerHTML =
+                `<div class="ai-news-card-src">${it.event_icon || '📰'} ${escapeHtml(src)}${when ? ` · <span class="ai-news-card-when">${escapeHtml(when)}</span>` : ''}</div>` +
+                `<div class="ai-news-card-title">${escapeHtml(title)}</div>`;
+            wrap.appendChild(row);
+        });
+        return wrap;
+    }
+
+    // Build the assistant's confirmation line after it added/removed sources.
+    function _sourceActionMsg(res) {
+        const tr = T[currentLang] || T.en;
+        if (res.removed > 0) return (tr.aiSourcesRemoved || 'Listo: he quitado {n} fuentes de tu feed.').replace('{n}', res.removed);
+        if (res.added > 0) return (tr.aiSourcesAdded || 'Listo: he añadido {n} fuentes a tu feed.').replace('{n}', res.added);
+        if (res.action === 'remove') return tr.aiSourcesRemovedNone || 'No encontré esas fuentes para quitar.';
+        return tr.aiSourcesNone || 'No encontré fuentes nuevas para añadir.';
     }
 
     function abandonActiveMeasure() {
@@ -5324,6 +5480,17 @@ ${context}`;
                 if (ev.length >= 40) break;
             }
             let ctx = '';
+            // If the user opened specific news via "Analyze", put those FIRST and
+            // make them the focus of the conversation.
+            if (this._analyzeItems && this._analyzeItems.length) {
+                const foc = this._analyzeItems.map((it, i) => {
+                    const src = (it.channel || '').trim();
+                    const when = it.timestamp ? String(it.timestamp).slice(0, 10) : '';
+                    const msg = _cleanMessage(it.message || '').replace(/\s+/g, ' ').slice(0, 700);
+                    return `${this._analyzeItems.length > 1 ? (i + 1) + '. ' : ''}[${src}${when ? ', ' + when : ''}] ${msg}`;
+                }).join('\n\n');
+                ctx += `The user selected THESE specific news item(s) to analyze — center the conversation on them, answer questions about them, and explain/expand as asked:\n${foc}\n\n`;
+            }
             if (srcNames.length) ctx += `The user's chosen sources: ${srcNames.join(', ')}.\n\n`;
             ctx += news.length
                 ? `LIVE NEWS from the user's sources (newest first) — read and use these:\n${news.join('\n')}\n\n`
@@ -5336,17 +5503,24 @@ ${context}`;
         },
         // Conversation rendering — bubbles for each turn; the last assistant bubble
         // is the live-streaming one. Returns that element so the stream can fill it.
+        // An 'analyze' entry renders as a card showing the news being discussed.
         _renderConvo() {
             const convo = document.getElementById('ai-island-convo');
             if (!convo) return null;
             convo.innerHTML = '';
+            let last = null;
             this.history.forEach(m => {
+                if (m.role === 'analyze') {
+                    convo.appendChild(_renderNewsCard(m.items));
+                    return;
+                }
                 const el = document.createElement('div');
                 el.className = 'ai-msg ai-msg-' + (m.role === 'user' ? 'user' : 'bot');
                 el.textContent = m.content;
                 convo.appendChild(el);
+                last = el;
             });
-            return convo.lastElementChild;
+            return last;
         },
         _scrollConvo() {
             const convo = document.getElementById('ai-island-convo');
@@ -5381,10 +5555,7 @@ ${context}`;
                 try {
                     const res = await aiSourceFinder.runForChat(q);
                     if (res.handled) {
-                        const msg = res.added > 0
-                            ? (t('aiSourcesAdded') || 'Listo: he añadido {n} fuentes a tu feed.').replace('{n}', res.added)
-                            : (t('aiSourcesNone') || 'No encontré fuentes nuevas para añadir.');
-                        this.history[this.history.length - 1].content = msg;
+                        this.history[this.history.length - 1].content = _sourceActionMsg(res);
                         bubble = this._renderConvo();
                         if (bubble) bubble.classList.remove('ai-msg-pending');
                         this._scrollConvo();
@@ -5394,8 +5565,16 @@ ${context}`;
                 } catch (_) {}
             }
 
-            // Build the request from history WITHOUT the empty placeholder.
-            const msgs = this.history.slice(0, -1).slice(-12);
+            // Build the request from history WITHOUT the empty placeholder, and
+            // WITHOUT the visual-only 'analyze' cards (not valid API turns — the
+            // selected news are injected via buildContext instead).
+            const msgs = this.history.slice(0, -1)
+                .filter(m => m.role === 'user' || m.role === 'assistant')
+                .slice(-12);
+            // The API requires the first message to be from the user. After an
+            // "Analyze" action the history opens with the assistant's greeting —
+            // drop any leading assistant turns so the request stays valid.
+            while (msgs.length && msgs[0].role !== 'user') msgs.shift();
             const system = _aiSystemPrompt(this.buildContext());
             const fail = (msg) => {
                 this.history[this.history.length - 1].content = msg;
@@ -5421,6 +5600,29 @@ ${context}`;
             } finally {
                 this.busy = false;
             }
+        },
+        // Open the assistant focused on specific news item(s) picked from the news
+        // panel's "Analyze" context-menu action. The item(s) show as a card in the
+        // chat and the assistant greets, inviting questions about them.
+        analyzeNews(items) {
+            const island = document.getElementById('ai-island');
+            if (!island || !items || !items.length) return;
+            // Free accounts: AI is Pro-only — route to the upgrade lock instead.
+            if (!isPaidPlan()) { showAiUpgradeLock(island); return; }
+            this._analyzeItems = items.slice();
+            island.classList.add('open', 'has-convo');
+            island.classList.remove('collapsed');
+            const tr = T[currentLang] || T.en;
+            const greet = items.length > 1
+                ? (tr.aiAnalyzeGreetN || '¿Qué quieres saber sobre estas {n} noticias?').replace('{n}', items.length)
+                : (tr.aiAnalyzeGreet1 || '¿Qué quieres saber sobre esta noticia?');
+            // A visual news card, then the assistant's greeting.
+            this.history.push({ role: 'analyze', items: items.slice() });
+            this.history.push({ role: 'assistant', content: greet });
+            this._renderConvo();
+            this._scrollConvo();
+            const input = document.getElementById('ai-island-input');
+            if (input) try { input.focus(); } catch (_) {}
         }
     };
 
@@ -5519,7 +5721,7 @@ ${context}`;
                 const img = it.image ? `<img class="fav-news-img" loading="lazy" src="${escapeHtml(it.image)}" alt="">` : '';
                 const link = it.link
                     ? `<a class="fav-news-link" href="${escapeHtml(it.link)}" target="_blank" rel="noopener noreferrer">↗</a>` : '';
-                return `<article class="fav-news-item">
+                return `<article class="fav-news-item"${it.event_id ? ` data-event-id="${escapeHtml(it.event_id)}"` : ''}>
                     ${img}
                     <div class="fav-news-main">
                         <div class="fav-news-top"><span class="fav-news-src">${icon} ${channel}</span><span class="fav-news-when">${time}</span></div>
@@ -5529,6 +5731,28 @@ ${context}`;
                     </div>
                 </article>`;
             }).join('');
+        },
+        // Scroll the feed to a specific news item (by event_id) and flash it —
+        // used by the news panel's "Show in feed" context-menu action.
+        showItem(eventId) {
+            if (!eventId) return;
+            const feed = document.getElementById('fav-feed');
+            if (!feed) return;
+            const find = () => feed.querySelector(`.fav-news-item[data-event-id="${(window.CSS && CSS.escape) ? CSS.escape(eventId) : eventId}"]`);
+            const go = () => {
+                const el = find();
+                if (!el) return false;
+                el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                el.classList.remove('fav-news-flash');
+                void el.offsetWidth;
+                el.classList.add('fav-news-flash');
+                setTimeout(() => el.classList.remove('fav-news-flash'), 1800);
+                return true;
+            };
+            // The feed may still be rendering when opened — retry briefly.
+            if (go()) return;
+            let tries = 0;
+            const timer = setInterval(() => { if (go() || ++tries > 20) clearInterval(timer); }, 150);
         },
         // Ground the AI in the user's CURRENT feed — headlines + summaries from the
         // sources they follow, newest first.
@@ -5607,10 +5831,7 @@ ${this.buildContext()}`;
                 try {
                     const res = await aiSourceFinder.runForChat(q);
                     if (res.handled) {
-                        const msg = res.added > 0
-                            ? (tr.aiSourcesAdded || 'Listo: he añadido {n} fuentes a tu feed.').replace('{n}', res.added)
-                            : (tr.aiSourcesNone || 'No encontré fuentes nuevas para añadir.');
-                        this.history[this.history.length - 1].content = msg;
+                        this.history[this.history.length - 1].content = _sourceActionMsg(res);
                         bubble = this._renderConvo();
                         if (bubble) bubble.classList.remove('fav-island-pending');
                         this._scrollConvo();
@@ -6172,6 +6393,27 @@ ${this.buildContext()}`;
             return bag;
         },
 
+        // ── "News pass done" signal ──
+        // A refresh does a FAST pass (fetch + list the articles) then a SLOW pass
+        // (AI geolocation, batched). A source-loading veil should drop after the
+        // fast pass, not block on the slow one. refresh() calls _signalNewsPass()
+        // between the two; onceNewsPass() lets a caller await just the fast pass
+        // (or a timeout), so the UI never freezes behind the veil for ~35s.
+        _newsPassWaiters: [],
+        _signalNewsPass() {
+            const w = this._newsPassWaiters;
+            this._newsPassWaiters = [];
+            w.forEach(fn => { try { fn(); } catch (_) {} });
+        },
+        onceNewsPass(maxMs) {
+            return new Promise(resolve => {
+                let done = false;
+                const fin = () => { if (done) return; done = true; resolve(); };
+                this._newsPassWaiters.push(fin);
+                setTimeout(fin, maxMs || 9000);
+            });
+        },
+
         async refresh(force) {
             if (!_isOnline) return;               // offline mode — skip all fetching
             if (!map) return;
@@ -6221,6 +6463,11 @@ ${this.buildContext()}`;
                     newsAdded++;
                 }
                 if (newsAdded) scheduleNewsRender();
+                // News are on screen now — let any source-loading veil drop and
+                // let the (slow) geolocation below finish in the BACKGROUND. This
+                // is what fixes the "app freezes for up to 35s" bug: the veil no
+                // longer waits for every Claude geolocation batch.
+                this._signalNewsPass();
 
                 // ── Step 2: geolocate → place up to (cap) icons PER SOURCE.
                 // The user sets how many icons each source may put on the map
@@ -6582,9 +6829,10 @@ ${this.buildContext()}`;
                         setErr(tr.srcNoFeed);
                     }
                 }
-                // Only wait if a source was actually added. Wait for the FULL load
-                // (news + geolocated icons), capped so it can never hang.
-                if (added) await _refreshAndWait(35000);
+                // Only wait if a source was actually added. Keep the veil up only
+                // until the news list is populated (fast pass); icons keep
+                // geolocating in the background so the UI never freezes.
+                if (added) { geoFeed.refresh(true).catch(() => {}); await geoFeed.onceNewsPass(9000); }
             } finally {
                 hideSourceLoading();
             }
@@ -7204,10 +7452,11 @@ ${this.buildContext()}`;
 
             if (added > 0) {
                 this._setStatus(`✓ ${added} fuentes añadidas — buscando noticias…`);
-                // Single forced refresh — fetches every source in parallel and runs
-                // the geolocation pass. Awaited (capped) so the veil stays up until
-                // news + icons are actually on screen.
-                await _refreshAndWait(35000);
+                // Kick the refresh and keep the veil up only until the news list is
+                // populated (fast pass); geolocation continues in the background so
+                // the UI is never frozen behind the veil for ~35s.
+                geoFeed.refresh(true).catch(() => {});
+                await geoFeed.onceNewsPass(9000);
                 this._setStatus(`✓ ${added} fuentes añadidas y noticias cargadas`);
             } else {
                 this._setStatus('⚠️ No se añadió ninguna fuente nueva (ya las tenías).');
@@ -7247,8 +7496,10 @@ ${this.buildContext()}`;
             // suscríbeme…) match the accent-free latin patterns below.
             const s = ' ' + String(q || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') + ' ';
             const noun = /(fuente|source|canal|channel|feed|rss|telegram|noticier|medio|outlet|fonte|bron|kaynak|подписк|источник|来源|频道|قناة|مصدر|منبع|स्रोत)/i.test(s);
-            const verb = /(anad|agreg|adicion|\badd\b|incorpor|mete|\bpon|dame|\bgive|busca|encuentr|\bfind\b|recomien|recommend|suscr|sigue|\bfollow\b|quiero|necesito|\bwant\b|voeg|ekle|添加|加入|推荐|أضف|اضف|جोड़|اضافه)/i.test(s);
-            return noun && verb;
+            // Add OR remove intent — runForChat then classifies precisely.
+            const addVerb = /(anad|agreg|adicion|\badd\b|incorpor|mete|\bpon|dame|\bgive|busca|encuentr|\bfind\b|recomien|recommend|suscr|sigue|\bfollow\b|quiero|necesito|\bwant\b|voeg|ekle|添加|加入|推荐|أضف|اضف|जोड़|اضافه)/i.test(s);
+            const remVerb = /(quita|elimin|borra|\bremove\b|\bdelete\b|unsub|unfollow|retir|\bsaca|deja de|verwijder|kaldir|\bsil\b|удали|убер|отпис|删除|移除|取消|احذف|حذف|ازل|ازاله|हटा)/i.test(s);
+            return noun && (addVerb || remVerb);
         },
         _parseObj(raw) {
             const cleaned = String(raw).trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
@@ -7257,37 +7508,79 @@ ${this.buildContext()}`;
             if (m) { try { return JSON.parse(m[0]); } catch (_) {} }
             return null;
         },
-        // Chat shortcut: when the user asks the AI to add sources, let Claude pick
-        // them, add them (icons appear on the map; the blur veil shows while news
-        // loads) and report back. Returns { handled, added }. handled=false means
-        // "not a source request — answer normally".
+        // Remove the sources Claude picked from the user's CURRENT list. `ids` are
+        // exact source ids; we also fall back to fuzzy name/value matching so a
+        // loose id still resolves. Returns the count removed.
+        _removeItems(ids) {
+            const cur = (geoFeed.sources || []);
+            const toRemove = new Set();
+            (ids || []).forEach(raw => {
+                const key = String(raw || '').trim().toLowerCase();
+                if (!key) return;
+                cur.forEach(s => {
+                    const sid = String(s.id || '').toLowerCase();
+                    const sval = String(s.value || '').toLowerCase();
+                    const sname = String(s.name || '').toLowerCase();
+                    if (sid === key || sval === key || sname === key ||
+                        (key.length >= 3 && (sid.includes(key) || sname.includes(key) || sval.includes(key)))) {
+                        toRemove.add(s.id);
+                    }
+                });
+            });
+            toRemove.forEach(id => { try { geoFeed.removeSource(id); } catch (_) {} });
+            return toRemove.size;
+        },
+        // Chat shortcut: when the user asks the AI to ADD or REMOVE sources, let
+        // Claude decide and do it (icons appear/disappear on the map; the veil
+        // shows while news loads on add). Returns { handled, added, removed,
+        // action }. handled=false means "not a source request — answer normally".
         async runForChat(q) {
+            // Give Claude the current sources so it can pick which to remove.
+            const cur = (geoFeed.sources || []).map(s =>
+                `  id=${s.id} | name=${s.name || s.value} | value=${s.value} | type=${s.type}`).join('\n') || '  (none)';
             const system = [
-                'You decide whether the user is asking to ADD information sources to their feed',
-                '(news channels, RSS/Atom feeds, Telegram channels, blogs, forums, subreddits…).',
-                'Output STRICT JSON ONLY — no prose, no markdown, no code fences.',
-                'If they are NOT asking to add sources, output exactly: {"add":false}',
-                'If they ARE, output: {"add":true,"items":[{"type":"telegram"|"rss","value":string,"name":string,"note":string}]}',
-                '  • type "telegram": value = the @handle (with or without @).',
-                '  • type "rss": value = the full RSS/Atom feed URL.',
-                '  • Honor an explicit count if the user named one; otherwise return 8–12 strong picks.',
-                '  • Prefer well-known sources you are confident exist and are active, matching the user\'s topic/region.',
+                'You decide whether the user is asking to ADD information sources, REMOVE',
+                'sources they already follow, or neither. Output STRICT JSON ONLY — no prose,',
+                'no markdown, no code fences.',
+                'If NEITHER: output exactly {"action":"none"}',
+                'If ADD: {"action":"add","items":[{"type":"telegram"|"rss","value":string,"name":string}]}',
+                '  • type "telegram": value = the @handle. type "rss": value = the full feed URL.',
+                '  • Honor an explicit count if named; otherwise 8–12 strong, real, active picks matching the topic/region.',
+                'If REMOVE: {"action":"remove","ids":[string,...]}',
+                '  • Each id MUST be an exact id copied from the CURRENT SOURCES list below.',
+                '  • Match the source(s) the user names (by name or handle); include EVERY matching id.',
+                '  • If they say "remove all"/"quita todas", include every id in the list.',
             ].join('\n');
-            const user = `User message: "${String(q || '').slice(0, 500)}"\nReturn the JSON now.`;
+            const user = `CURRENT SOURCES:\n${cur}\n\nUser message: "${String(q || '').slice(0, 500)}"\nReturn the JSON now.`;
             let raw = null;
             try { raw = await claudeComplete({ system, max_tokens: 2048, messages: [{ role: 'user', content: user }] }); }
             catch (_) { return { handled: false }; }
             if (raw == null) return { handled: false };
             const obj = this._parseObj(raw);
-            if (!obj || obj.add !== true || !Array.isArray(obj.items) || !obj.items.length) return { handled: false };
-            let added = 0;
-            showSourceLoading();
-            try {
-                added = this._addItems(obj.items).added;
+            if (!obj) return { handled: false };
+            const action = obj.action || (obj.add === true ? 'add' : 'none');
+
+            // ── Remove ──
+            if (action === 'remove' && Array.isArray(obj.ids) && obj.ids.length) {
+                const removed = this._removeItems(obj.ids);
                 try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
-                if (added > 0) await _refreshAndWait(35000);
-            } finally { hideSourceLoading(); }
-            return { handled: true, added };
+                if (removed > 0) { try { geoFeed.refresh(true); } catch (_) {} }
+                return { handled: true, action: 'remove', added: 0, removed };
+            }
+
+            // ── Add ──
+            if (action === 'add' && Array.isArray(obj.items) && obj.items.length) {
+                let added = 0;
+                showSourceLoading();
+                try {
+                    added = this._addItems(obj.items).added;
+                    try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
+                    if (added > 0) { geoFeed.refresh(true).catch(() => {}); await geoFeed.onceNewsPass(9000); }
+                } finally { hideSourceLoading(); }
+                return { handled: true, action: 'add', added, removed: 0 };
+            }
+
+            return { handled: false };
         },
     };
 
@@ -7635,12 +7928,17 @@ ${this.buildContext()}`;
             ov.classList.add('welcome-in');
             window.setTimeout(() => {
                 try { swap(); } catch (_) {}     // swap the view underneath
-                ov.classList.add('welcome-out'); // then fade the intro away
+                // Remove welcome-in FIRST: its `animation … both` fill pins
+                // opacity:1 and would otherwise override welcome-out's fade, making
+                // the intro vanish abruptly instead of dissolving into the map.
+                ov.classList.remove('welcome-in');
+                ov.classList.add('welcome-out');
                 window.setTimeout(() => {
                     ov.hidden = true;
                     ov.setAttribute('aria-hidden', 'true');
                     ov.classList.remove('welcome-in', 'welcome-out');
-                }, 480);
+                    ov.style.transform = '';
+                }, 620);
             }, 1250);
         },
         // Re-open the landing overlay in PLANS-ONLY mode (logged-in users who
@@ -9958,7 +10256,13 @@ ${this.buildContext()}`;
             const outletLink = (item.is_outlet && item.link)
                 ? `<a class="news-outlet-link" href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer">↗ ${channel || 'Fuente'}</a>`
                 : '';
-            return `<div class="news-item${isEvent ? ' has-event' : ''}" data-idx="${i}"${hasGeo ? ` data-geo="${idx}"` : ''}${item.event_id ? ` data-event-id="${escapeHtml(item.event_id)}"` : ''}>
+            // Stable per-item id for selection + context menu (event_id when present).
+            const selId = item.event_id || ('gf-idx-' + idx);
+            const isSel = _newsSel.has(selId);
+            return `<div class="news-item${isEvent ? ' has-event' : ''}${isSel ? ' is-selected' : ''}" data-idx="${i}"${hasGeo ? ` data-geo="${idx}"` : ''}${item.event_id ? ` data-event-id="${escapeHtml(item.event_id)}"` : ''} data-news-id="${escapeHtml(selId)}">
+                <button class="news-item-check" data-news-check="${escapeHtml(selId)}" title="${escapeHtml((T[currentLang] || T.en).newsSelect || 'Seleccionar')}" aria-label="${escapeHtml((T[currentLang] || T.en).newsSelect || 'Seleccionar')}">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
                 <div class="news-item-top">
                     <span class="news-channel">${icon ? icon + ' ' : ''}${channel}</span>
                     <span class="news-item-time">${date} ${time}</span>

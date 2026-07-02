@@ -613,6 +613,7 @@ body.scale-light {
 }
 
 .news-item {
+    position: relative;
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -626,6 +627,60 @@ body.scale-light {
 .news-item:hover {
     background: var(--bg2);
     border-color: var(--border2);
+}
+
+/* Multi-select checkbox (appears on hover / when the item is selected). */
+.news-item-check {
+    position: absolute; top: 7px; right: 7px; z-index: 2;
+    width: 18px; height: 18px; border-radius: 5px;
+    border: 1px solid var(--border2); background: rgba(10,12,16,0.65);
+    color: transparent; cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
+}
+.news-item:hover .news-item-check { opacity: 0.75; }
+.news-item-check:hover { opacity: 1; border-color: var(--accent); }
+.news-item.is-selected { border-color: var(--accent); background: rgba(0, 229, 255, 0.06); }
+.news-item.is-selected .news-item-check {
+    opacity: 1; background: var(--accent); border-color: var(--accent); color: #06222a;
+}
+
+/* Right-click context menu for news items. */
+.news-ctx-menu {
+    position: fixed; z-index: 100050; min-width: 190px;
+    background: rgba(18, 20, 26, 0.97); backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border2); border-radius: 10px;
+    box-shadow: 0 16px 44px rgba(0,0,0,0.55); padding: 5px;
+    animation: newsCtxIn 0.12s ease-out;
+}
+[data-theme="light"] .news-ctx-menu { background: rgba(255,255,255,0.98); }
+@keyframes newsCtxIn { from { opacity: 0; transform: translateY(-4px) scale(0.98); } to { opacity: 1; transform: none; } }
+.news-ctx-item {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    padding: 9px 11px; border: 0; border-radius: 7px; background: transparent;
+    color: var(--text); font-size: 0.82rem; font-family: inherit; text-align: left;
+    cursor: pointer; transition: background 0.12s;
+}
+.news-ctx-item:hover { background: rgba(0, 229, 255, 0.12); }
+.news-ctx-ico { font-size: 0.95rem; flex-shrink: 0; }
+
+/* News card shown inside the AI chat when analyzing selected news. */
+.ai-news-card {
+    align-self: stretch; display: flex; flex-direction: column; gap: 8px;
+    background: rgba(0, 229, 255, 0.06); border: 1px solid rgba(0, 229, 255, 0.22);
+    border-left: 3px solid var(--accent); border-radius: 10px; padding: 10px 12px;
+}
+.ai-news-card-item + .ai-news-card-item { border-top: 1px solid var(--border); padding-top: 8px; }
+.ai-news-card-src { font-size: 0.68rem; font-weight: 700; color: var(--accent); margin-bottom: 3px; }
+.ai-news-card-when { color: var(--text2); font-weight: 500; }
+.ai-news-card-title { font-size: 0.82rem; line-height: 1.4; color: var(--text); }
+
+/* Brief flash when "Show in feed" scrolls to an item. */
+.fav-news-flash { animation: favFlash 1.8s ease-out; }
+@keyframes favFlash {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+    15% { box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.55); border-color: var(--accent); }
 }
 
 .news-item-time {
@@ -7203,7 +7258,10 @@ body.onb-active { overflow: hidden; }
 }
 #welcome-overlay.welcome-out {
     opacity: 0;
-    transition: opacity .46s ease;
+    transform: scale(1.04);
+    /* Gentle zoom-through dissolve into the map — same easing as the
+       back-to-home view transition, so entering feels consistent. */
+    transition: opacity .5s ease, transform .6s cubic-bezier(.22,.61,.36,1);
 }
 @keyframes welcomePop {
     from { opacity: 0; transform: scale(.985); }
