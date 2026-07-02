@@ -1343,10 +1343,26 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({'error': msg}).encode('utf-8'))
 
     def end_headers(self):
-        """Add CORS headers to all responses."""
+        """Add CORS + caching headers to all responses."""
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        # Caching strategy: HTML is served without caching (so index.html updates
+        # go live immediately for every visitor). Everything else — CSS, JS,
+        # images, fonts — gets a long-lived cache since we already cache-bust
+        # them via `?v=` query strings. Without this the browser cached
+        # index.html and users had to hard-reload to see any layout change.
+        path = getattr(self, 'path', '') or ''
+        base = path.split('?', 1)[0].split('#', 1)[0]
+        is_html = base.endswith('.html') or base in ('', '/')
+        if is_html:
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
+        elif base.startswith('/api/'):
+            pass  # API responses set their own cache headers
+        else:
+            self.send_header('Cache-Control', 'public, max-age=86400')
         super().end_headers()
 
     def do_OPTIONS(self):
