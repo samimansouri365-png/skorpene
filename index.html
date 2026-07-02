@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="styles.css?v=20260626b">
+    <link rel="stylesheet" href="styles.css?v=20260702a">
 
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -332,37 +332,55 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <h2 class="lsc-title" data-i18n-landing="scTitle">Tu mundo, en un solo feed</h2>
             <p class="lsc-sub" data-i18n-landing="scSub">Reúne tus fuentes favoritas, ubícalas en el mapa y deja que la IA te ayude.</p>
 
-            <div class="lsc-row">
-                <figure class="lsc-shot">
-                    <img src="shot-feed.png" alt="" onerror="this.style.display='none';this.parentElement.classList.add('lsc-shot-empty');">
-                    <figcaption class="lsc-shot-ph">📰</figcaption>
-                </figure>
+            <!-- Bloque 1: Feed personalizado -->
+            <div class="lsc-block">
                 <div class="lsc-copy">
                     <h3 data-i18n-landing="sc1T">Un feed personalizado</h3>
                     <p data-i18n-landing="sc1B">Canales, webs, foros y RSS que te importan, reunidos en un único feed que puedes leer sin límite.</p>
                 </div>
+                <figure class="lsc-shot">
+                    <picture>
+                        <source srcset="assets/showcase/feed.webp" type="image/webp">
+                        <img src="assets/showcase/feed.png" alt="Feed personalizado de Skorpene" loading="lazy">
+                    </picture>
+                </figure>
             </div>
 
-            <div class="lsc-row lsc-row-rev">
-                <figure class="lsc-shot">
-                    <img src="shot-map.png" alt="" onerror="this.style.display='none';this.parentElement.classList.add('lsc-shot-empty');">
-                    <figcaption class="lsc-shot-ph">🗺️</figcaption>
-                </figure>
-                <div class="lsc-copy">
-                    <h3 data-i18n-landing="sc2T">Geolocalizado en el mapa</h3>
-                    <p data-i18n-landing="sc2B">Ve dónde pasa cada cosa, en vivo y con exactitud. Iconos por evento para saber qué ocurre y dónde, al instante.</p>
-                </div>
-            </div>
-
-            <div class="lsc-row">
-                <figure class="lsc-shot">
-                    <img src="shot-events.png" alt="" onerror="this.style.display='none';this.parentElement.classList.add('lsc-shot-empty');">
-                    <figcaption class="lsc-shot-ph">🧠</figcaption>
-                </figure>
+            <!-- Bloque 2: IA a tu lado -->
+            <div class="lsc-block">
                 <div class="lsc-copy">
                     <h3 data-i18n-landing="sc3T">Una IA de tu lado</h3>
                     <p data-i18n-landing="sc3B">Sintetiza noticias, te explica lo que no entiendes y hasta te elige las mejores fuentes para tus temas.</p>
                 </div>
+                <figure class="lsc-shot">
+                    <picture>
+                        <source srcset="assets/showcase/ai.webp" type="image/webp">
+                        <img src="assets/showcase/ai.png" alt="Asistente de IA de Skorpene" loading="lazy">
+                    </picture>
+                </figure>
+            </div>
+
+            <!-- Bloque 3: Geolocalizado en el mapa (carrusel) -->
+            <div class="lsc-block">
+                <div class="lsc-copy">
+                    <h3 data-i18n-landing="sc2T">Geolocalizado en el mapa</h3>
+                    <p data-i18n-landing="sc2B">Ve dónde pasa cada cosa, en vivo y con exactitud. Iconos por evento para saber qué ocurre y dónde, al instante.</p>
+                </div>
+                <figure class="lsc-shot lsc-carousel" data-carousel>
+                    <div class="lsc-carousel-track" data-carousel-track>
+                        <picture class="lsc-carousel-slide"><source srcset="assets/showcase/map1.webp" type="image/webp"><img src="assets/showcase/map1.png" alt="" loading="lazy"></picture>
+                        <picture class="lsc-carousel-slide"><source srcset="assets/showcase/map2.webp" type="image/webp"><img src="assets/showcase/map2.png" alt="" loading="lazy"></picture>
+                        <picture class="lsc-carousel-slide"><source srcset="assets/showcase/map3.webp" type="image/webp"><img src="assets/showcase/map3.png" alt="" loading="lazy"></picture>
+                        <picture class="lsc-carousel-slide"><source srcset="assets/showcase/map4.webp" type="image/webp"><img src="assets/showcase/map4.png" alt="" loading="lazy"></picture>
+                    </div>
+                    <button type="button" class="lsc-carousel-nav lsc-carousel-prev" data-carousel-prev aria-label="Anterior">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+                    </button>
+                    <button type="button" class="lsc-carousel-nav lsc-carousel-next" data-carousel-next aria-label="Siguiente">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+                    </button>
+                    <div class="lsc-carousel-dots" data-carousel-dots></div>
+                </figure>
             </div>
 
             <p class="lsc-cases" data-i18n-landing="scCases">Geopolítica en tiempo real, fichajes del fútbol internacional por todo el mundo, mercados, tu deporte o afición… tú eliges los temas, Skorpene los pone en el mapa.</p>
@@ -602,6 +620,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      is ready when the base layer is created. -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYi2ig-ZkmwkXv_dt-0glm0o17BxKTCJk&v=quarterly&language=es" data-gmaps-loader="1" data-lang="es"></script>
 <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.14.1/dist/Leaflet.GoogleMutant.js"></script>
-<script src="app.js?v=20260625k"></script>
+<script src="app.js?v=20260702a"></script>
 </body>
 </html>

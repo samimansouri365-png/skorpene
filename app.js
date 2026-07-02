@@ -7336,12 +7336,15 @@ ${this.buildContext()}`;
             this.el = document.getElementById('landing-overlay');
             if (!this.el) { onboarding.init(); return; }
             this._wire();
+            this._wireHistory();
             // Init the landing language picker + apply the resolved language to
             // every data-i18n-landing string (incl. error messages and the auth
             // switch markup), BEFORE the form is shown.
             try { landingI18n.init(); } catch (_) {}
             // Clean the black box off the brand PNG logo.
             try { _processLandingLogo(); } catch (_) {}
+            // Wire the showcase carousel (map screenshots slider).
+            try { _wireLandingCarousels(); } catch (_) {}
             const tok = this.token();
             if (tok) {
                 // Validate the saved session against the server before letting them in.
@@ -7364,6 +7367,21 @@ ${this.buildContext()}`;
                         // Returning from a Stripe Checkout success URL? Confirm
                         // the payment with the server and persist the new plan.
                         await this._handleCheckoutReturn(tok);
+                        // Refresh-restore: if the user was IN THE APP when they
+                        // reloaded, put them back in the app instead of bouncing
+                        // them to the landing. Seed a 'home' base entry beneath so
+                        // a single Back press returns to the landing (never off the
+                        // site, never to a stale checkout URL). Only restore the
+                        // app — auth/plans views always re-resolve through _route.
+                        let saved = '';
+                        try { saved = sessionStorage.getItem('geoscope_view') || ''; } catch (_) {}
+                        if (saved === 'app') {
+                            try { history.replaceState({ skView: 'home' }, ''); } catch (_) {}
+                            try { history.pushState({ skView: 'app' }, ''); } catch (_) {}
+                            this._popping = true;          // states already seeded
+                            try { this._revealApp(false); } finally { this._popping = false; }
+                            return;
+                        }
                         // Route by account state: paid plan or a user who has
                         // already set up (completed onboarding) → straight into
                         // the product; a brand-new free user who hasn't entered
@@ -7407,7 +7425,8 @@ ${this.buildContext()}`;
                 url.searchParams.delete('checkout');
                 url.searchParams.delete('session_id');
                 const next = url.pathname + (url.search || '') + url.hash;
-                window.history.replaceState({}, '', next);
+                // Preserve the current view state so history navigation stays intact.
+                window.history.replaceState(history.state || { skView: 'home' }, '', next);
             } catch (_) {}
         },
         _showLanding() {
@@ -7419,6 +7438,7 @@ ${this.buildContext()}`;
                 document.body.classList.add('onb-active');
                 this._syncLandingChrome();
             }, document.querySelector('.landing-inner'));
+            this._setView('home');
         },
         // Close every in-app panel/overlay so none of them linger on top of the
         // landing when the user goes back to it (e.g. Settings was open and they
@@ -7476,6 +7496,58 @@ ${this.buildContext()}`;
         _route() {
             this._showLanding();
         },
+        // ── Browser history integration ──────────────────────────────────────
+        // The app is a single page that swaps between four "views": home, auth,
+        // plans and app (the map). Without history integration the browser Back
+        // button walked the REAL history — leaving the site or, worse, landing on
+        // a stale Stripe checkout URL. Here every view change records a history
+        // entry, Back/Forward move BETWEEN views, and the current view is mirrored
+        // to sessionStorage so a refresh restores where you were (notably: stay in
+        // the app instead of being kicked to the landing).
+        _popping: false,
+        _view: 'home',
+        // Record a view as the current one: persist it (for refresh-restore) and
+        // push/replace a matching browser-history entry (unless we got here from a
+        // Back/Forward pop, in which case the history is already correct).
+        _setView(view) {
+            this._view = view;
+            try { sessionStorage.setItem('geoscope_view', view); } catch (_) {}
+            if (this._popping) return;
+            try {
+                if (history.state && history.state.skView === view) {
+                    history.replaceState({ skView: view }, '');
+                } else {
+                    history.pushState({ skView: view }, '');
+                }
+            } catch (_) {}
+        },
+        // Render a view WITHOUT pushing a new history entry. Used by popstate so
+        // Back/Forward navigate between views instead of off the site.
+        _goView(view, fromPop) {
+            this._popping = !!fromPop;
+            try {
+                if (view === 'app') this._revealApp(false);
+                else if (view === 'plans') this.showPlans();
+                else if (view === 'auth') this.showAuth(this.mode);
+                else this.showHome();
+            } finally { this._popping = false; }
+        },
+        // Wire the popstate listener once. On Back/Forward, render the target
+        // view internally. A missing state means we'd be walking off our own
+        // stack — fall back to the landing home so the user never leaves the app
+        // unexpectedly (true navigation away from home is still allowed normally).
+        _wireHistory() {
+            if (this._historyWired) return;
+            this._historyWired = true;
+            // Seed the current entry as the 'home' base so the first view set
+            // replaces it (no phantom entry) and Back from home leaves the site
+            // normally rather than being absorbed.
+            try { if (!history.state || !history.state.skView) history.replaceState({ skView: 'home' }, ''); } catch (_) {}
+            window.addEventListener('popstate', (e) => {
+                const view = (e && e.state && e.state.skView) || 'home';
+                this._goView(view, true);
+            });
+        },
         // Swap the top-bar Login/Create-account buttons for a profile chip once
         // the user is authenticated, on the landing itself (the in-app chip is
         // separate). Idempotent — safe to call on every landing render.
@@ -7525,11 +7597,13 @@ ${this.buildContext()}`;
                 resetBtn.textContent = tr.devReset || 'Reset everything (dev)';
             }
         },
-        _enterApp() {
-            // Play a brief minimalist intro OVER the landing, then (while it's
-            // fully opaque) swap to the product underneath and fade the intro out
-            // — so the app never appears abruptly "like flicking a light on".
-            this._playWelcome(() => {
+        _enterApp() { this._revealApp(true); },
+        // Reveal the product (map) by hiding the landing overlay. `withWelcome`
+        // plays the minimalist intro first (deliberate "Enter app"); without it
+        // the app appears immediately (used when RESTORING the app after a page
+        // refresh, where a welcome animation every reload would be annoying).
+        _revealApp(withWelcome) {
+            const doReveal = () => {
                 this.el.removeAttribute('data-view');
                 this.el.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('onb-active');
@@ -7538,7 +7612,10 @@ ${this.buildContext()}`;
                 try { applyPlanGating(); } catch (_) {}
                 // Continue the normal first-run flow (wizard shows only if no profile).
                 onboarding.init();
-            });
+            };
+            this._setView('app');
+            if (withWelcome) this._playWelcome(doReveal);
+            else doReveal();
         },
         // Minimalist "Welcome to Skorpene" intro (spinning globe). `swap` runs
         // once the overlay is fully shown — that's when we switch the view
@@ -7584,6 +7661,7 @@ ${this.buildContext()}`;
                 document.body.classList.add('onb-active');
                 try { this._wirePricing(); } catch (_) {}
             }, pricing);
+            this._setView('plans');
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
             if (pricing) try { pricing.scrollIntoView({ block: 'start' }); } catch (_) {}
         },
@@ -7596,6 +7674,7 @@ ${this.buildContext()}`;
                 this.el.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('onb-active');
             };
+            this._setView('app');
             if (document.startViewTransition) { this._nav(mutate); return; }
             this._fadeOutThen(mutate);
         },
@@ -7701,6 +7780,7 @@ ${this.buildContext()}`;
                 document.body.classList.add('onb-active');
                 this._setMode(mode || 'login');
             }, document.getElementById('landing-authview'));
+            this._setView('auth');
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
             setTimeout(() => {
                 const f = (mode === 'register' && document.getElementById('auth-name')) || document.getElementById('auth-email');
@@ -7716,6 +7796,7 @@ ${this.buildContext()}`;
                 document.body.classList.add('onb-active');
                 this._syncLandingChrome();
             }, document.querySelector('.landing-inner'));
+            this._setView('home');
             try { this.el.scrollTo({ top: 0 }); } catch (_) {}
         },
         // Hook up the pricing CTAs. Free → scroll up + open register tab.
@@ -8142,6 +8223,60 @@ ${this.buildContext()}`;
     };
     // Expose so auth._msgFor + label re-applies can read the table.
     window.__landingI18n = landingI18n;
+
+    // ── Landing showcase carousel ──
+    // Wire every [data-carousel] block on the landing: prev/next buttons drive a
+    // scroll-snapping track; the scroll position (drag, wheel, keyboard) drives
+    // the dots + button-disabled state back. Idempotent — safe to call again.
+    function _wireLandingCarousels() {
+        document.querySelectorAll('[data-carousel]').forEach(root => {
+            if (root._wired) return;
+            const track = root.querySelector('[data-carousel-track]');
+            const prev = root.querySelector('[data-carousel-prev]');
+            const next = root.querySelector('[data-carousel-next]');
+            const dots = root.querySelector('[data-carousel-dots]');
+            if (!track) return;
+            const slides = track.children.length;
+            if (!slides) return;
+            root._wired = true;
+
+            // Build dots.
+            if (dots) {
+                dots.innerHTML = '';
+                for (let i = 0; i < slides; i++) {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.setAttribute('aria-label', 'Slide ' + (i + 1));
+                    b.addEventListener('click', () => goTo(i));
+                    dots.appendChild(b);
+                }
+            }
+
+            const currentIndex = () => {
+                const w = track.clientWidth || 1;
+                return Math.round(track.scrollLeft / w);
+            };
+            const sync = () => {
+                const i = currentIndex();
+                if (dots) [...dots.children].forEach((d, k) => d.classList.toggle('is-active', k === i));
+                if (prev) prev.disabled = (i <= 0);
+                if (next) next.disabled = (i >= slides - 1);
+            };
+            const goTo = (i) => {
+                const clamped = Math.max(0, Math.min(slides - 1, i));
+                track.scrollTo({ left: clamped * track.clientWidth, behavior: 'smooth' });
+            };
+
+            if (prev) prev.addEventListener('click', () => goTo(currentIndex() - 1));
+            if (next) next.addEventListener('click', () => goTo(currentIndex() + 1));
+            track.addEventListener('scroll', () => {
+                if (track._raf) return;
+                track._raf = requestAnimationFrame(() => { track._raf = null; sync(); });
+            });
+            window.addEventListener('resize', sync);
+            sync();
+        });
+    }
 
     // ── Landing logo: drop the PNG's black background ──
     // The brand logo.png is purple on an OPAQUE black background (not a
