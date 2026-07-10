@@ -7912,6 +7912,7 @@ ${this.buildContext()}`;
                 this._setStatus(_sfMsg('noneNew'));
             }
             this._clearStatus(8000);
+            return added;
         },
 
         // Add a batch of {type,value,name} suggestions. Tight loop with
@@ -7945,9 +7946,9 @@ ${this.buildContext()}`;
             // Strip diacritics so accented imperatives (añádeme, recomiéndame,
             // suscríbeme…) match the accent-free latin patterns below.
             const s = ' ' + String(q || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') + ' ';
-            const noun = /(fuente|source|canal|channel|feed|rss|telegram|noticier|medio|outlet|fonte|bron|kaynak|подписк|источник|来源|频道|قناة|مصدر|منبع|स्रोत)/i.test(s);
+            const noun = /(fuente|source|canal|channel|feed|rss|telegram|notici|notiz|news|nieuws|nouvelle|новост|haber|medio|outlet|periodic|diario|revista|magazine|\bweb|sitio|\bsite|blog|foro|forum|reddit|podcast|substack|fonte|bron|kaynak|подписк|источник|来源|频道|新闻|قناة|مصدر|منبع|أخبار|خبر|स्रोत|समाचार)/i.test(s);
             // Add OR remove intent — runForChat then classifies precisely.
-            const addVerb = /(anad|agreg|adicion|\badd\b|incorpor|mete|\bpon|dame|\bgive|busca|encuentr|\bfind\b|recomien|recommend|suscr|sigue|\bfollow\b|quiero|necesito|\bwant\b|voeg|ekle|添加|加入|推荐|أضف|اضف|जोड़|اضافه)/i.test(s);
+            const addVerb = /(anad|agreg|adicion|\badd\b|incorpor|mete|\bpon|dame|\bgive|busca|encuentr|\bfind\b|recomien|recommend|suscr|sigue|seguir|\bfollow\b|lee|leer|\bread\b|informa|quiero|necesit|interes|\bgust|\bwant\b|voeg|ekle|添加|加入|推荐|أضف|اضف|جोड़|اضافه)/i.test(s);
             const remVerb = /(quita|elimin|borra|\bremove\b|\bdelete\b|unsub|unfollow|retir|\bsaca|deja de|verwijder|kaldir|\bsil\b|удали|убер|отпис|删除|移除|取消|احذف|حذف|ازل|ازاله|हटा)/i.test(s);
             return noun && (addVerb || remVerb);
         },
@@ -8019,13 +8020,27 @@ ${this.buildContext()}`;
             }
 
             // ── Add ──
-            if (action === 'add' && Array.isArray(obj.items) && obj.items.length) {
+            if (action === 'add') {
                 let added = 0;
                 showSourceLoading();
                 try {
-                    added = this._addItems(obj.items).added;
-                    try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
-                    if (added > 0) { geoFeed.refresh(true).catch(() => {}); await geoFeed.onceNewsPass(9000); }
+                    if (Array.isArray(obj.items) && obj.items.length) {
+                        added = this._addItems(obj.items).added;
+                    }
+                    if (added > 0) {
+                        try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
+                        geoFeed.refresh(true).catch(() => {});
+                        await geoFeed.onceNewsPass(9000);
+                    } else {
+                        // The classify gave no usable items (none, all failed to
+                        // normalize, or all duplicates). Fall back to the richer
+                        // onboarding finder with the user's message as the topic —
+                        // it reliably returns real, valid sources. THIS is what
+                        // makes chat "add sources about X" actually work instead of
+                        // the assistant replying that it can't.
+                        try { added = (await this._run({ lang: currentLang }, [String(q || '').slice(0, 200)], [])) || 0; } catch (_) {}
+                        try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
+                    }
                 } finally { hideSourceLoading(); }
                 return { handled: true, action: 'add', added, removed: 0 };
             }
