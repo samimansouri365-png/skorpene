@@ -1234,7 +1234,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         # Build the Anthropic payload from a minimal client request.
         want_stream = bool(req_data.get('stream'))
         payload = {
-            'model': req_data.get('model', ANTHROPIC_MODEL),
+            'model': ANTHROPIC_MODEL,
             'max_tokens': req_data.get('max_tokens', 1024),
             'messages': req_data.get('messages', []),
         }

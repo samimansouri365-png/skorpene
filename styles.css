@@ -589,11 +589,18 @@ body.scale-light {
     flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
+    /* Flex (not block) so the inner wrapper is SIZED to this element. The old
+       `height:100%` on the inner didn't resolve (percentage against a block
+       flex item) and fell back to content height — the whole feed rendered
+       thousands of px tall, clipped by the panel, and news-body never
+       scrolled ("can't scroll the news panel" bug). */
+    display: flex;
+    flex-direction: column;
     transition: max-height .42s cubic-bezier(.22,.61,.36,1);
 }
 .news-collapsible-inner {
+    flex: 1 1 auto;
     min-height: 0;
-    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -629,17 +636,23 @@ body.scale-light {
     border-color: var(--border2);
 }
 
-/* Multi-select checkbox (appears on hover / when the item is selected). */
+/* Multi-select checkbox. ALWAYS visible (was opacity:0 + transparent check —
+   invisible on the dark cards, and even on hover you could barely tell it was
+   there). Now: a solid, clearly-outlined box on every item, an accent ring +
+   ghosted check on hover so it reads as "click to select", and a filled accent
+   box with a dark tick when selected. */
 .news-item-check {
     position: absolute; top: 7px; right: 7px; z-index: 2;
-    width: 18px; height: 18px; border-radius: 5px;
-    border: 1px solid var(--border2); background: rgba(10,12,16,0.65);
+    width: 21px; height: 21px; border-radius: 6px;
+    border: 1.5px solid var(--text2); background: var(--panel);
     color: transparent; cursor: pointer; padding: 0;
     display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    opacity: 0.6;
+    transition: opacity 0.15s, background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
 }
-.news-item:hover .news-item-check { opacity: 0.75; }
-.news-item-check:hover { opacity: 1; border-color: var(--accent); }
+.news-item:hover .news-item-check { opacity: 1; border-color: var(--accent); color: rgba(0, 229, 255, 0.4); }
+.news-item-check:hover { border-color: var(--accent); color: var(--accent); background: rgba(0, 229, 255, 0.16); transform: scale(1.08); }
 .news-item.is-selected { border-color: var(--accent); background: rgba(0, 229, 255, 0.06); }
 .news-item.is-selected .news-item-check {
     opacity: 1; background: var(--accent); border-color: var(--accent); color: #06222a;
@@ -2655,6 +2668,9 @@ video.news-media {
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 6px;
+    /* Clear the absolutely-positioned select checkbox (top-right) so the
+       timestamp never sits underneath it. */
+    padding-right: 22px;
 }
 
 .news-channel {
@@ -6325,7 +6341,7 @@ body.onb-active { overflow: hidden; }
     letter-spacing: 0.03em;
 }
 .fav-fab:hover { color: var(--text); border-color: var(--border2); }
-.fav-fab-ico { font-size: 0.95rem; }
+.fav-fab-ico { display: none; flex-shrink: 0; }
 
 /* ============ Favorite Topics Box overlay (full-screen, no map) ============ */
 .fav-overlay {
@@ -6476,8 +6492,30 @@ body.onb-active { overflow: hidden; }
     .fav-overlay { padding: 0; }
     .fav-panel { width: 100%; height: 100%; border-radius: 0; }
     .fav-feed { grid-template-columns: 1fr; padding-bottom: 100px; }
+    /* Label hides on narrow screens → show the feed icon so the button isn't
+       an empty box (that was "el recuadro de feed no se ve"). */
     .fav-fab-lbl { display: none; }
-    .fav-fab { padding: 0 9px; }
+    .fav-fab-ico { display: block; }
+    .fav-fab { padding: 0; width: 34px; justify-content: center; }
+}
+
+/* ── Narrow-phone top bar ──────────────────────────────────────────────
+   At ≤600px the logo text + full search + full profile chip overflowed the
+   bar and pushed the Feed + settings buttons off-screen entirely. Collapse
+   the low-priority chrome (logo text, profile name/plan) and let the search
+   flex, so every control — including Feed — always fits. */
+@media (max-width: 600px) {
+    #top-bar { padding: 0 10px; gap: 8px; }
+    .tb-left { gap: 8px; flex: 1 1 auto; min-width: 0; }
+    .tb-right { gap: 8px; flex-shrink: 0; }
+    .logo-text { display: none; }
+    .search-wrap { flex: 1 1 auto; min-width: 40px; }
+    .search-input, .search-input:focus { width: 100%; min-width: 0; }
+    /* Profile chip → avatar only, so Feed + settings stay on screen. */
+    .landing-profile-name, .landing-profile-plan { display: none; }
+    .landing-profile-btn { padding: 4px; gap: 0; }
+    /* News panel spans the width with even margins instead of a fixed 340px. */
+    #news-panel { left: 10px; right: 10px; width: auto; }
 }
 
 /* ============ AI assistant — bottom Dynamic Island ============ */

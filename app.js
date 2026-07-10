@@ -1239,19 +1239,19 @@
     Object.keys(AISRC_I18N).forEach(lng => { if (T[lng]) Object.assign(T[lng], AISRC_I18N[lng]); });
     // News context menu (right-click) + AI "analyze" greeting + source-removal, per language.
     const NEWSCTX_I18N = {
-        es:{ newsSelect:'Seleccionar', newsShowInFeed:'Mostrar en feed', newsAnalyzeOne:'Analizar noticia', newsAnalyzeN:'Analizar {n} noticias', aiAnalyzeGreet1:'¿Qué quieres saber sobre esta noticia?', aiAnalyzeGreetN:'¿Qué quieres saber sobre estas {n} noticias?', aiSourcesRemoved:'Listo: he quitado {n} fuentes de tu feed.', aiSourcesRemovedNone:'No encontré esas fuentes para quitar.' },
-        en:{ newsSelect:'Select', newsShowInFeed:'Show in feed', newsAnalyzeOne:'Analyze story', newsAnalyzeN:'Analyze {n} stories', aiAnalyzeGreet1:'What would you like to know about this story?', aiAnalyzeGreetN:'What would you like to know about these {n} stories?', aiSourcesRemoved:'Done: I removed {n} sources from your feed.', aiSourcesRemovedNone:'I couldn\'t find those sources to remove.' },
-        fr:{ newsSelect:'Sélectionner', newsShowInFeed:'Afficher dans le feed', newsAnalyzeOne:'Analyser l\'actu', newsAnalyzeN:'Analyser {n} actus', aiAnalyzeGreet1:'Que veux-tu savoir sur cette actu ?', aiAnalyzeGreetN:'Que veux-tu savoir sur ces {n} actus ?', aiSourcesRemoved:'C\'est fait : j\'ai retiré {n} sources de ton flux.', aiSourcesRemovedNone:'Je n\'ai pas trouvé ces sources à retirer.' },
-        ru:{ newsSelect:'Выбрать', newsShowInFeed:'Показать в ленте', newsAnalyzeOne:'Анализировать новость', newsAnalyzeN:'Анализировать {n} новостей', aiAnalyzeGreet1:'Что ты хочешь узнать об этой новости?', aiAnalyzeGreetN:'Что ты хочешь узнать об этих {n} новостях?', aiSourcesRemoved:'Готово: я удалил {n} источников из твоей ленты.', aiSourcesRemovedNone:'Не нашёл эти источники для удаления.' },
-        zh:{ newsSelect:'选择', newsShowInFeed:'在 Feed 中显示', newsAnalyzeOne:'分析这条新闻', newsAnalyzeN:'分析 {n} 条新闻', aiAnalyzeGreet1:'关于这条新闻你想了解什么？', aiAnalyzeGreetN:'关于这 {n} 条新闻你想了解什么？', aiSourcesRemoved:'完成：我已从你的资讯流移除 {n} 个来源。', aiSourcesRemovedNone:'没有找到要移除的那些来源。' },
-        tr:{ newsSelect:'Seç', newsShowInFeed:'Feed\'de göster', newsAnalyzeOne:'Haberi analiz et', newsAnalyzeN:'{n} haberi analiz et', aiAnalyzeGreet1:'Bu haber hakkında ne bilmek istersin?', aiAnalyzeGreetN:'Bu {n} haber hakkında ne bilmek istersin?', aiSourcesRemoved:'Tamam: akışından {n} kaynak kaldırdım.', aiSourcesRemovedNone:'Kaldıracak o kaynakları bulamadım.' },
-        ar:{ newsSelect:'تحديد', newsShowInFeed:'عرض في الـFeed', newsAnalyzeOne:'تحليل الخبر', newsAnalyzeN:'تحليل {n} أخبار', aiAnalyzeGreet1:'ماذا تريد أن تعرف عن هذا الخبر؟', aiAnalyzeGreetN:'ماذا تريد أن تعرف عن هذه الأخبار الـ{n}؟', aiSourcesRemoved:'تم: أزلت {n} مصادر من موجزك.', aiSourcesRemovedNone:'لم أجد تلك المصادر لإزالتها.' },
-        fa:{ newsSelect:'انتخاب', newsShowInFeed:'نمایش در Feed', newsAnalyzeOne:'تحلیل خبر', newsAnalyzeN:'تحلیل {n} خبر', aiAnalyzeGreet1:'می‌خواهی درباره این خبر چه بدانی؟', aiAnalyzeGreetN:'می‌خواهی درباره این {n} خبر چه بدانی؟', aiSourcesRemoved:'انجام شد: {n} منبع از فید تو حذف کردم.', aiSourcesRemovedNone:'آن منابع را برای حذف پیدا نکردم.' },
-        he:{ newsSelect:'בחר', newsShowInFeed:'הצג ב-Feed', newsAnalyzeOne:'נתח ידיעה', newsAnalyzeN:'נתח {n} ידיעות', aiAnalyzeGreet1:'מה תרצה לדעת על הידיעה הזו?', aiAnalyzeGreetN:'מה תרצה לדעת על {n} הידיעות האלה?', aiSourcesRemoved:'בוצע: הסרתי {n} מקורות מהפיד שלך.', aiSourcesRemovedNone:'לא מצאתי את המקורות האלה להסרה.' },
-        nl:{ newsSelect:'Selecteren', newsShowInFeed:'Toon in feed', newsAnalyzeOne:'Nieuws analyseren', newsAnalyzeN:'{n} nieuwsberichten analyseren', aiAnalyzeGreet1:'Wat wil je weten over dit nieuws?', aiAnalyzeGreetN:'Wat wil je weten over deze {n} nieuwsberichten?', aiSourcesRemoved:'Klaar: ik heb {n} bronnen uit je feed verwijderd.', aiSourcesRemovedNone:'Ik kon die bronnen niet vinden om te verwijderen.' },
-        it:{ newsSelect:'Seleziona', newsShowInFeed:'Mostra nel feed', newsAnalyzeOne:'Analizza notizia', newsAnalyzeN:'Analizza {n} notizie', aiAnalyzeGreet1:'Cosa vuoi sapere su questa notizia?', aiAnalyzeGreetN:'Cosa vuoi sapere su queste {n} notizie?', aiSourcesRemoved:'Fatto: ho rimosso {n} fonti dal tuo feed.', aiSourcesRemovedNone:'Non ho trovato quelle fonti da rimuovere.' },
-        pt:{ newsSelect:'Selecionar', newsShowInFeed:'Mostrar no feed', newsAnalyzeOne:'Analisar notícia', newsAnalyzeN:'Analisar {n} notícias', aiAnalyzeGreet1:'O que queres saber sobre esta notícia?', aiAnalyzeGreetN:'O que queres saber sobre estas {n} notícias?', aiSourcesRemoved:'Pronto: removi {n} fontes do teu feed.', aiSourcesRemovedNone:'Não encontrei essas fontes para remover.' },
-        hi:{ newsSelect:'चुनें', newsShowInFeed:'फ़ीड में दिखाएँ', newsAnalyzeOne:'खबर का विश्लेषण करें', newsAnalyzeN:'{n} खबरों का विश्लेषण करें', aiAnalyzeGreet1:'इस खबर के बारे में क्या जानना चाहते हो?', aiAnalyzeGreetN:'इन {n} खबरों के बारे में क्या जानना चाहते हो?', aiSourcesRemoved:'हो गया: मैंने तुम्हारे फ़ीड से {n} स्रोत हटा दिए।', aiSourcesRemovedNone:'हटाने के लिए वे स्रोत नहीं मिले।' },
+        es:{ newsSelect:'Seleccionar', newsShowInFeed:'Mostrar en feed', newsAnalyzeOne:'Analizar noticia', newsAnalyzeN:'Analizar {n} noticias', newsGeolocate:'Geolocalizar noticia', newsGeolocateN:'Geolocalizar {n} noticias', newsGeolocating:'Geolocalizando…', newsGeolocateFail:'No se pudo geolocalizar', aiAnalyzeGreet1:'¿Qué quieres saber sobre esta noticia?', aiAnalyzeGreetN:'¿Qué quieres saber sobre estas {n} noticias?', aiSourcesRemoved:'Listo: he quitado {n} fuentes de tu feed.', aiSourcesRemovedNone:'No encontré esas fuentes para quitar.' },
+        en:{ newsSelect:'Select', newsShowInFeed:'Show in feed', newsAnalyzeOne:'Analyze story', newsAnalyzeN:'Analyze {n} stories', newsGeolocate:'Geolocate story', newsGeolocateN:'Geolocate {n} stories', newsGeolocating:'Geolocating…', newsGeolocateFail:'Couldn\'t geolocate', aiAnalyzeGreet1:'What would you like to know about this story?', aiAnalyzeGreetN:'What would you like to know about these {n} stories?', aiSourcesRemoved:'Done: I removed {n} sources from your feed.', aiSourcesRemovedNone:'I couldn\'t find those sources to remove.' },
+        fr:{ newsSelect:'Sélectionner', newsShowInFeed:'Afficher dans le feed', newsAnalyzeOne:'Analyser l\'actu', newsAnalyzeN:'Analyser {n} actus', newsGeolocate:'Géolocaliser l\'actu', newsGeolocateN:'Géolocaliser {n} actus', newsGeolocating:'Géolocalisation…', newsGeolocateFail:'Géolocalisation impossible', aiAnalyzeGreet1:'Que veux-tu savoir sur cette actu ?', aiAnalyzeGreetN:'Que veux-tu savoir sur ces {n} actus ?', aiSourcesRemoved:'C\'est fait : j\'ai retiré {n} sources de ton flux.', aiSourcesRemovedNone:'Je n\'ai pas trouvé ces sources à retirer.' },
+        ru:{ newsSelect:'Выбрать', newsShowInFeed:'Показать в ленте', newsAnalyzeOne:'Анализировать новость', newsAnalyzeN:'Анализировать {n} новостей', newsGeolocate:'Определить местоположение', newsGeolocateN:'Определить местоположение {n} новостей', newsGeolocating:'Определяю местоположение…', newsGeolocateFail:'Не удалось определить местоположение', aiAnalyzeGreet1:'Что ты хочешь узнать об этой новости?', aiAnalyzeGreetN:'Что ты хочешь узнать об этих {n} новостях?', aiSourcesRemoved:'Готово: я удалил {n} источников из твоей ленты.', aiSourcesRemovedNone:'Не нашёл эти источники для удаления.' },
+        zh:{ newsSelect:'选择', newsShowInFeed:'在 Feed 中显示', newsAnalyzeOne:'分析这条新闻', newsAnalyzeN:'分析 {n} 条新闻', newsGeolocate:'定位这条新闻', newsGeolocateN:'定位 {n} 条新闻', newsGeolocating:'正在定位…', newsGeolocateFail:'无法定位', aiAnalyzeGreet1:'关于这条新闻你想了解什么？', aiAnalyzeGreetN:'关于这 {n} 条新闻你想了解什么？', aiSourcesRemoved:'完成：我已从你的资讯流移除 {n} 个来源。', aiSourcesRemovedNone:'没有找到要移除的那些来源。' },
+        tr:{ newsSelect:'Seç', newsShowInFeed:'Feed\'de göster', newsAnalyzeOne:'Haberi analiz et', newsAnalyzeN:'{n} haberi analiz et', newsGeolocate:'Haberi konumlandır', newsGeolocateN:'{n} haberi konumlandır', newsGeolocating:'Konumlandırılıyor…', newsGeolocateFail:'Konum bulunamadı', aiAnalyzeGreet1:'Bu haber hakkında ne bilmek istersin?', aiAnalyzeGreetN:'Bu {n} haber hakkında ne bilmek istersin?', aiSourcesRemoved:'Tamam: akışından {n} kaynak kaldırdım.', aiSourcesRemovedNone:'Kaldıracak o kaynakları bulamadım.' },
+        ar:{ newsSelect:'تحديد', newsShowInFeed:'عرض في الـFeed', newsAnalyzeOne:'تحليل الخبر', newsAnalyzeN:'تحليل {n} أخبار', newsGeolocate:'تحديد موقع الخبر', newsGeolocateN:'تحديد موقع {n} أخبار', newsGeolocating:'جارٍ تحديد الموقع…', newsGeolocateFail:'تعذر تحديد الموقع', aiAnalyzeGreet1:'ماذا تريد أن تعرف عن هذا الخبر؟', aiAnalyzeGreetN:'ماذا تريد أن تعرف عن هذه الأخبار الـ{n}؟', aiSourcesRemoved:'تم: أزلت {n} مصادر من موجزك.', aiSourcesRemovedNone:'لم أجد تلك المصادر لإزالتها.' },
+        fa:{ newsSelect:'انتخاب', newsShowInFeed:'نمایش در Feed', newsAnalyzeOne:'تحلیل خبر', newsAnalyzeN:'تحلیل {n} خبر', newsGeolocate:'مکان‌یابی خبر', newsGeolocateN:'مکان‌یابی {n} خبر', newsGeolocating:'در حال مکان‌یابی…', newsGeolocateFail:'مکان‌یابی ممکن نشد', aiAnalyzeGreet1:'می‌خواهی درباره این خبر چه بدانی؟', aiAnalyzeGreetN:'می‌خواهی درباره این {n} خبر چه بدانی؟', aiSourcesRemoved:'انجام شد: {n} منبع از فید تو حذف کردم.', aiSourcesRemovedNone:'آن منابع را برای حذف پیدا نکردم.' },
+        he:{ newsSelect:'בחר', newsShowInFeed:'הצג ב-Feed', newsAnalyzeOne:'נתח ידיעה', newsAnalyzeN:'נתח {n} ידיעות', newsGeolocate:'אתר מיקום הידיעה', newsGeolocateN:'אתר מיקום {n} ידיעות', newsGeolocating:'מאתר מיקום…', newsGeolocateFail:'לא ניתן לאתר מיקום', aiAnalyzeGreet1:'מה תרצה לדעת על הידיעה הזו?', aiAnalyzeGreetN:'מה תרצה לדעת על {n} הידיעות האלה?', aiSourcesRemoved:'בוצע: הסרתי {n} מקורות מהפיד שלך.', aiSourcesRemovedNone:'לא מצאתי את המקורות האלה להסרה.' },
+        nl:{ newsSelect:'Selecteren', newsShowInFeed:'Toon in feed', newsAnalyzeOne:'Nieuws analyseren', newsAnalyzeN:'{n} nieuwsberichten analyseren', newsGeolocate:'Nieuws geolokaliseren', newsGeolocateN:'{n} nieuwsberichten geolokaliseren', newsGeolocating:'Geolokaliseren…', newsGeolocateFail:'Kon niet geolokaliseren', aiAnalyzeGreet1:'Wat wil je weten over dit nieuws?', aiAnalyzeGreetN:'Wat wil je weten over deze {n} nieuwsberichten?', aiSourcesRemoved:'Klaar: ik heb {n} bronnen uit je feed verwijderd.', aiSourcesRemovedNone:'Ik kon die bronnen niet vinden om te verwijderen.' },
+        it:{ newsSelect:'Seleziona', newsShowInFeed:'Mostra nel feed', newsAnalyzeOne:'Analizza notizia', newsAnalyzeN:'Analizza {n} notizie', newsGeolocate:'Geolocalizza notizia', newsGeolocateN:'Geolocalizza {n} notizie', newsGeolocating:'Geolocalizzazione…', newsGeolocateFail:'Impossibile geolocalizzare', aiAnalyzeGreet1:'Cosa vuoi sapere su questa notizia?', aiAnalyzeGreetN:'Cosa vuoi sapere su queste {n} notizie?', aiSourcesRemoved:'Fatto: ho rimosso {n} fonti dal tuo feed.', aiSourcesRemovedNone:'Non ho trovato quelle fonti da rimuovere.' },
+        pt:{ newsSelect:'Selecionar', newsShowInFeed:'Mostrar no feed', newsAnalyzeOne:'Analisar notícia', newsAnalyzeN:'Analisar {n} notícias', newsGeolocate:'Geolocalizar notícia', newsGeolocateN:'Geolocalizar {n} notícias', newsGeolocating:'A geolocalizar…', newsGeolocateFail:'Não foi possível geolocalizar', aiAnalyzeGreet1:'O que queres saber sobre esta notícia?', aiAnalyzeGreetN:'O que queres saber sobre estas {n} notícias?', aiSourcesRemoved:'Pronto: removi {n} fontes do teu feed.', aiSourcesRemovedNone:'Não encontrei essas fontes para remover.' },
+        hi:{ newsSelect:'चुनें', newsShowInFeed:'फ़ीड में दिखाएँ', newsAnalyzeOne:'खबर का विश्लेषण करें', newsAnalyzeN:'{n} खबरों का विश्लेषण करें', newsGeolocate:'खबर की लोकेशन दिखाएँ', newsGeolocateN:'{n} खबरों की लोकेशन दिखाएँ', newsGeolocating:'लोकेशन खोजी जा रही है…', newsGeolocateFail:'लोकेशन नहीं मिली', aiAnalyzeGreet1:'इस खबर के बारे में क्या जानना चाहते हो?', aiAnalyzeGreetN:'इन {n} खबरों के बारे में क्या जानना चाहते हो?', aiSourcesRemoved:'हो गया: मैंने तुम्हारे फ़ीड से {n} स्रोत हटा दिए।', aiSourcesRemovedNone:'हटाने के लिए वे स्रोत नहीं मिले।' },
     };
     Object.keys(NEWSCTX_I18N).forEach(lng => { if (T[lng]) Object.assign(T[lng], NEWSCTX_I18N[lng]); });
     // Source-loading veil message, per language.
@@ -1632,17 +1632,12 @@
             try { if (labelState.cities) refreshVisibleCities(); } catch (_) {}
         });
 
-        // Left-click on the empty map: route to measurement / place panel. An
-        // open fan is intentionally left open (it only collapses via its beacon,
-        // Esc, or zooming out) so opening an article doesn't dismiss it.
+        // Left-click on the empty map: only the measurement tool uses it now.
+        // The place-info popup (name/country/coords on click) was REMOVED per the
+        // user's request — a plain map click no longer pops anything.
         map.on('click', (e) => {
             if (document.body.classList.contains('sim-picking')) return;
             if (measureActive) { try { handleMeasureClick(e); } catch (_) {} return; }
-            // The location info popup is only meaningful on the classic satellite
-            // layer (pure imagery with no built-in place labels). On the Google
-            // layers — which already label everything — clicking shouldn't pop it.
-            if (currentLayer !== 'satellite-esri') return;
-            try { fetchLocation(e.latlng, e.containerPoint); } catch (_) {}
         });
 
         // Right-click on the map background is now a no-op (measure tool removed).
@@ -4556,7 +4551,8 @@
             menu.hidden = true;
             menu.innerHTML =
                 `<button type="button" class="news-ctx-item" data-ctx="feed"><span class="news-ctx-ico">📰</span><span class="news-ctx-lbl"></span></button>` +
-                `<button type="button" class="news-ctx-item" data-ctx="analyze"><span class="news-ctx-ico">🧠</span><span class="news-ctx-lbl"></span></button>`;
+                `<button type="button" class="news-ctx-item" data-ctx="analyze"><span class="news-ctx-ico">🧠</span><span class="news-ctx-lbl"></span></button>` +
+                `<button type="button" class="news-ctx-item" data-ctx="geolocate"><span class="news-ctx-ico">📍</span><span class="news-ctx-lbl"></span></button>`;
             document.body.appendChild(menu);
             menu.addEventListener('click', (e) => {
                 const btn = e.target.closest('[data-ctx]');
@@ -4565,6 +4561,7 @@
                 this.close();
                 if (action === 'feed') this._showInFeed(this._primaryId);
                 else if (action === 'analyze') this._analyze(this._ids);
+                else if (action === 'geolocate') this._geolocate(this._ids);
             });
             // Dismiss on outside click, escape, scroll or resize.
             document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target)) this.close(); });
@@ -4589,6 +4586,9 @@
             menu.querySelector('[data-ctx="analyze"] .news-ctx-lbl').textContent = n > 1
                 ? (tr.newsAnalyzeN || 'Analizar {n} noticias').replace('{n}', n)
                 : (tr.newsAnalyzeOne || 'Analizar noticia');
+            menu.querySelector('[data-ctx="geolocate"] .news-ctx-lbl').textContent = n > 1
+                ? (tr.newsGeolocateN || 'Geolocalizar {n} noticias').replace('{n}', n)
+                : (tr.newsGeolocate || 'Geolocalizar noticia');
             // Show then position (needs measured size to clamp within the viewport).
             menu.hidden = false;
             menu.style.visibility = 'hidden';
@@ -4611,6 +4611,14 @@
             if (!items.length) return;
             try { aiAssistant.analyzeNews(items); } catch (_) {}
             this.clearSelection();
+        },
+        // "Geolocalizar": put the selected news on the map. Items already placed
+        // (or with cached geo) are free; only the rest go to the AI, in one call.
+        _geolocate(ids) {
+            const items = (ids || []).map(id => this._itemById(id)).filter(Boolean);
+            if (!items.length) return;
+            this.clearSelection();
+            try { geoFeed.geolocateNewsItems(items); } catch (_) {}
         },
     };
 
@@ -5933,8 +5941,10 @@ ${this.buildContext()}`;
         async _run() {
             if (this.running || this._failed) return;
             if (!isAiEnabled()) return;           // double-check at run time
-            // Events not yet curated.
-            const todo = Object.keys(eventsById).filter(id => !_aiIconCache[id]);
+            // Events not yet curated. geoFeed articles ('gf|') are excluded: they
+            // already carry the country-flag emoji from the local gazetteer, and
+            // sending every feed article here would burn AI credits per refresh.
+            const todo = Object.keys(eventsById).filter(id => !_aiIconCache[id] && id.indexOf('gf|') !== 0);
             if (!todo.length) return;
             this.running = true;
             const batch = todo.slice(0, 25);
@@ -5977,7 +5987,7 @@ ${this.buildContext()}`;
             } finally {
                 this.running = false;
                 // More to do? Continue after a short throttle.
-                if (!this._failed && Object.keys(eventsById).some(id => !_aiIconCache[id])) {
+                if (!this._failed && Object.keys(eventsById).some(id => !_aiIconCache[id] && id.indexOf('gf|') !== 0)) {
                     setTimeout(() => this._run(), 1500);
                 }
             }
@@ -6083,9 +6093,9 @@ ${this.buildContext()}`;
 
     // ── geoFeed: user-added Telegram channels / RSS feeds + built-in outlets, all
     //    plotted on the SAME map as the live Telegram events. Each article is
-    //    AI-geolocated once (cached) and given a timestamp so the existing 24h
-    //    expiry sweep removes it automatically. Outlets are filtered to the most
-    //    important stories; user-added sources show every geolocatable post. ──
+    //    geolocated once by TITLE against the local gazetteer above (cached, no
+    //    AI) and given a timestamp so the existing expiry sweep removes it
+    //    automatically. Titles that name no known place get no icon. ──
     // Default sources the app ships with (first run only — the user can delete
     // any of these and add their own; their choices are then persisted).
     // Outlets only — the live backend Telegram channels (Middle_East_Spectator,
@@ -6135,6 +6145,261 @@ ${this.buildContext()}`;
         'techcrunch':     { url: 'https://techcrunch.com/feed/', name: 'TechCrunch' },
         'tech crunch':    { url: 'https://techcrunch.com/feed/', name: 'TechCrunch' },
     };
+
+    // ── Local news geolocation (NO AI, zero cost) ──
+    // July 2026: the Claude-based geolocator was replaced with this built-in
+    // gazetteer. Each article's TITLE is matched against known country/city
+    // names (English + Spanish, unaccented); a title that names no known place
+    // simply doesn't get a map icon. That's the accepted trade-off for a
+    // geolocation path with zero API calls and zero per-refresh credit burn.
+    // Entry: ['name|alt|alt', lat, lng, iso2] — iso2 gives the flag emoji used
+    // as the marker. Countries/regions first, CITIES last: cities win over
+    // countries when both appear in a title ("…en Kyiv, Ucrania" → Kyiv).
+    const GAZ_COUNTRIES = [
+        ['afghanistan|afganistan', 33.9, 67.7, 'af'], ['albania', 41.2, 20.2, 'al'], ['germany|alemania', 51.2, 10.4, 'de'],
+        ['andorra', 42.5, 1.5, 'ad'], ['angola', -11.2, 17.9, 'ao'], ['argentina', -38.4, -63.6, 'ar'],
+        ['armenia', 40.1, 45.0, 'am'], ['australia', -25.3, 133.8, 'au'], ['austria', 47.5, 14.6, 'at'],
+        ['azerbaijan|azerbaiyan', 40.1, 47.6, 'az'], ['bahamas', 25.0, -77.4, 'bs'], ['bahrain|barein|bahrein', 26.0, 50.6, 'bh'],
+        ['bangladesh', 23.7, 90.4, 'bd'], ['barbados', 13.2, -59.5, 'bb'], ['belgium|belgica', 50.5, 4.5, 'be'],
+        ['belize|belice', 17.2, -88.5, 'bz'], ['benin', 9.3, 2.3, 'bj'], ['belarus|bielorrusia', 53.7, 27.9, 'by'],
+        ['bolivia', -16.3, -63.6, 'bo'], ['bosnia and herzegovina|bosnia', 43.9, 17.7, 'ba'], ['botswana|botsuana', -22.3, 24.7, 'bw'],
+        ['brazil|brasil', -10.3, -53.2, 'br'], ['brunei', 4.5, 114.7, 'bn'], ['bulgaria', 42.7, 25.5, 'bg'],
+        ['burkina faso|burkina', 12.2, -1.6, 'bf'], ['burundi', -3.4, 29.9, 'bi'], ['bhutan|butan', 27.5, 90.4, 'bt'],
+        ['cape verde|cabo verde', 15.1, -23.6, 'cv'], ['cambodia|camboya', 12.6, 105.0, 'kh'], ['cameroon|camerun', 5.7, 12.7, 'cm'],
+        ['canada', 56.1, -106.3, 'ca'], ['chad', 15.5, 18.7, 'td'], ['chile', -35.7, -71.5, 'cl'],
+        ['china', 35.0, 103.0, 'cn'], ['cyprus|chipre', 35.1, 33.4, 'cy'], ['colombia', 4.6, -74.1, 'co'],
+        ['comoros|comoras', -11.6, 43.3, 'km'], ['north korea|corea del norte', 40.3, 127.0, 'kp'],
+        ['south korea|corea del sur', 36.5, 127.8, 'kr'], ['korea|corea', 36.5, 127.8, 'kr'],
+        ['ivory coast|costa de marfil', 7.5, -5.5, 'ci'], ['costa rica', 9.9, -84.1, 'cr'], ['croatia|croacia', 45.1, 15.2, 'hr'],
+        ['cuba', 21.5, -79.5, 'cu'], ['denmark|dinamarca', 56.0, 9.5, 'dk'],
+        ['dominican republic|republica dominicana', 18.7, -70.2, 'do'], ['dominica', 15.4, -61.4, 'dm'],
+        ['ecuador', -1.8, -78.2, 'ec'], ['egypt|egipto', 26.8, 30.0, 'eg'], ['el salvador', 13.7, -88.9, 'sv'],
+        ['united arab emirates|emiratos arabes unidos|emiratos|uae', 24.0, 54.0, 'ae'], ['eritrea', 15.2, 39.0, 'er'],
+        ['slovakia|eslovaquia', 48.7, 19.7, 'sk'], ['slovenia|eslovenia', 46.1, 14.8, 'si'], ['spain|espana', 40.4, -3.7, 'es'],
+        ['united states|estados unidos|eeuu|ee.uu|usa|u.s.', 39.8, -98.6, 'us'], ['estonia', 58.6, 25.0, 'ee'],
+        ['eswatini|swaziland|suazilandia', -26.5, 31.5, 'sz'], ['ethiopia|etiopia', 9.1, 40.5, 'et'],
+        ['philippines|filipinas', 12.9, 121.8, 'ph'], ['finland|finlandia', 61.9, 25.7, 'fi'], ['fiji|fiyi', -17.7, 178.0, 'fj'],
+        ['france|francia', 46.6, 2.2, 'fr'], ['gabon', -0.8, 11.6, 'ga'], ['gambia', 13.4, -15.3, 'gm'],
+        ['georgia', 42.3, 43.4, 'ge'], ['ghana', 7.9, -1.0, 'gh'], ['greece|grecia', 39.1, 22.9, 'gr'],
+        ['grenada', 12.1, -61.7, 'gd'], ['guatemala', 15.8, -90.2, 'gt'],
+        ['guinea-bissau|guinea bissau', 11.8, -15.2, 'gw'], ['equatorial guinea|guinea ecuatorial', 1.6, 10.3, 'gq'],
+        ['papua new guinea|papua nueva guinea', -6.3, 143.9, 'pg'], ['guinea', 9.9, -11.3, 'gn'],
+        ['guyana', 4.9, -58.9, 'gy'], ['haiti', 18.9, -72.7, 'ht'], ['honduras', 14.7, -86.6, 'hn'],
+        ['hungary|hungria', 47.2, 19.5, 'hu'], ['india', 22.0, 79.0, 'in'], ['indonesia', -2.5, 118.0, 'id'],
+        ['iran', 32.4, 53.7, 'ir'], ['iraq|irak', 33.2, 43.7, 'iq'], ['ireland|irlanda', 53.2, -7.7, 'ie'],
+        ['iceland|islandia', 64.9, -18.6, 'is'], ['israel', 31.4, 35.0, 'il'], ['italy|italia', 42.8, 12.8, 'it'],
+        ['jamaica', 18.1, -77.3, 'jm'], ['japan|japon', 36.5, 138.0, 'jp'], ['jordan|jordania', 31.3, 36.4, 'jo'],
+        ['kazakhstan|kazajistan|kazajstan', 48.0, 66.9, 'kz'], ['kenya|kenia', 0.4, 37.9, 'ke'],
+        ['kyrgyzstan|kirguistan', 41.4, 74.6, 'kg'], ['kiribati', 1.9, -157.4, 'ki'], ['kosovo', 42.6, 20.9, 'xk'],
+        ['kuwait', 29.3, 47.5, 'kw'], ['laos', 19.9, 102.5, 'la'], ['lesotho|lesoto', -29.6, 28.2, 'ls'],
+        ['latvia|letonia', 56.9, 24.9, 'lv'], ['lebanon|libano', 33.9, 35.9, 'lb'], ['liberia', 6.5, -9.4, 'lr'],
+        ['libya|libia', 27.0, 17.0, 'ly'], ['liechtenstein', 47.2, 9.5, 'li'], ['lithuania|lituania', 55.2, 23.9, 'lt'],
+        ['luxembourg|luxemburgo', 49.8, 6.1, 'lu'], ['north macedonia|macedonia', 41.6, 21.7, 'mk'],
+        ['madagascar', -19.4, 46.7, 'mg'], ['malaysia|malasia', 4.2, 102.0, 'my'], ['malawi|malaui', -13.3, 34.3, 'mw'],
+        ['maldives|maldivas', 3.2, 73.2, 'mv'], ['mali', 17.6, -4.0, 'ml'], ['malta', 35.9, 14.4, 'mt'],
+        ['morocco|marruecos', 31.8, -7.1, 'ma'], ['mauritius|isla mauricio', -20.3, 57.6, 'mu'], ['mauritania', 20.3, -10.3, 'mr'],
+        ['mexico|mejico', 23.6, -102.6, 'mx'], ['micronesia', 6.9, 158.2, 'fm'], ['moldova|moldavia', 47.2, 28.5, 'md'],
+        ['monaco', 43.7, 7.4, 'mc'], ['mongolia', 46.9, 103.8, 'mn'], ['montenegro', 42.7, 19.4, 'me'],
+        ['mozambique', -18.7, 35.5, 'mz'], ['myanmar|birmania', 21.9, 96.1, 'mm'], ['namibia', -22.6, 17.1, 'na'],
+        ['nauru', -0.5, 166.9, 'nr'], ['nepal', 28.4, 84.1, 'np'], ['nicaragua', 12.9, -85.2, 'ni'],
+        ['nigeria', 9.1, 8.7, 'ng'], ['niger', 17.6, 8.1, 'ne'], ['norway|noruega', 61.0, 8.8, 'no'],
+        ['new zealand|nueva zelanda', -41.0, 173.0, 'nz'], ['oman', 21.5, 56.1, 'om'],
+        ['netherlands|paises bajos|holanda', 52.2, 5.3, 'nl'], ['pakistan|paquistan', 30.4, 69.4, 'pk'],
+        ['palau', 7.5, 134.6, 'pw'], ['palestine|palestina', 31.9, 35.2, 'ps'], ['panama', 8.5, -80.1, 'pa'],
+        ['paraguay', -23.4, -58.4, 'py'], ['peru', -9.2, -75.0, 'pe'], ['poland|polonia', 51.9, 19.1, 'pl'],
+        ['portugal', 39.6, -8.0, 'pt'], ['qatar|catar', 25.3, 51.2, 'qa'],
+        ['united kingdom|reino unido|great britain|gran bretana|uk', 54.0, -2.5, 'gb'],
+        ['england|inglaterra', 52.4, -1.5, 'gb'], ['scotland|escocia', 56.5, -4.0, 'gb'], ['wales|gales', 52.3, -3.6, 'gb'],
+        ['czech republic|republica checa|chequia|czechia', 49.8, 15.5, 'cz'],
+        ['central african republic|republica centroafricana', 6.6, 20.9, 'cf'],
+        ['democratic republic of the congo|republica democratica del congo|rd congo|dr congo|drc', -2.9, 23.6, 'cd'],
+        ['congo', -0.7, 15.2, 'cg'], ['rwanda|ruanda', -2.0, 29.9, 'rw'], ['romania|rumania', 45.9, 25.0, 'ro'],
+        ['russia|rusia', 56.0, 60.0, 'ru'], ['samoa', -13.8, -172.1, 'ws'], ['san marino', 43.9, 12.5, 'sm'],
+        ['saudi arabia|arabia saudita|arabia saudi', 23.9, 45.1, 'sa'], ['algeria|argelia', 28.0, 2.6, 'dz'],
+        ['senegal', 14.5, -14.5, 'sn'], ['serbia', 44.2, 21.0, 'rs'], ['seychelles', -4.7, 55.5, 'sc'],
+        ['sierra leone|sierra leona', 8.5, -11.8, 'sl'], ['singapore|singapur', 1.35, 103.8, 'sg'],
+        ['syria|siria', 35.0, 38.5, 'sy'], ['somalia', 5.2, 46.2, 'so'], ['sri lanka', 7.9, 80.8, 'lk'],
+        ['south africa|sudafrica', -29.0, 25.0, 'za'], ['south sudan|sudan del sur', 7.9, 30.0, 'ss'],
+        ['sudan', 15.5, 30.2, 'sd'], ['sweden|suecia', 62.2, 14.8, 'se'], ['switzerland|suiza', 46.8, 8.2, 'ch'],
+        ['suriname|surinam', 4.1, -55.9, 'sr'], ['thailand|tailandia', 15.0, 101.0, 'th'], ['taiwan', 23.7, 121.0, 'tw'],
+        ['tanzania', -6.4, 34.9, 'tz'], ['tajikistan|tayikistan', 38.9, 71.3, 'tj'],
+        ['east timor|timor oriental|timor-leste', -8.9, 125.7, 'tl'], ['togo', 8.6, 1.0, 'tg'], ['tonga', -21.2, -175.2, 'to'],
+        ['trinidad and tobago|trinidad y tobago', 10.5, -61.3, 'tt'], ['tunisia|tunez', 34.0, 9.5, 'tn'],
+        ['turkmenistan', 39.0, 59.5, 'tm'], ['turkey|turquia|turkiye', 39.0, 35.0, 'tr'], ['tuvalu', -7.5, 178.7, 'tv'],
+        ['ukraine|ucrania', 48.9, 31.5, 'ua'], ['uganda', 1.4, 32.3, 'ug'], ['uruguay', -32.8, -55.8, 'uy'],
+        ['uzbekistan', 41.6, 63.9, 'uz'], ['vanuatu', -15.4, 166.9, 'vu'], ['vatican|vaticano', 41.9, 12.45, 'va'],
+        ['venezuela', 7.1, -66.2, 've'], ['vietnam', 15.9, 106.0, 'vn'], ['yemen', 15.6, 47.9, 'ye'],
+        ['djibouti|yibuti', 11.8, 42.6, 'dj'], ['zambia', -13.5, 27.9, 'zm'], ['zimbabwe|zimbabue', -19.0, 29.9, 'zw'],
+        // Regions / territories
+        ['west bank|cisjordania', 31.9, 35.3, 'ps'], ['crimea', 45.3, 34.4, 'ua'], ['donbas|donbass', 48.3, 37.9, 'ua'],
+        ['kashmir|cachemira', 34.1, 74.8, ''], ['kurdistan', 36.4, 44.4, ''], ['sahel', 14.5, 0.0, ''],
+        ['balkans|balcanes', 43.0, 21.0, ''], ['greenland|groenlandia', 71.7, -42.6, 'gl'],
+        ['western sahara|sahara occidental', 24.6, -13.3, 'eh'], ['puerto rico', 18.2, -66.4, 'pr'],
+        ['catalonia|cataluna|catalunya', 41.8, 1.6, 'es'], ['pais vasco|euskadi', 43.0, -2.6, 'es'],
+        ['andalucia', 37.5, -4.7, 'es'], ['galicia', 42.8, -8.0, 'es'],
+        ['canary islands|islas canarias|canarias', 28.3, -16.5, 'es'],
+        ['siberia', 60.0, 100.0, 'ru'], ['tibet', 31.5, 88.0, 'cn'], ['xinjiang', 41.0, 85.0, 'cn'],
+        ['antarctica|antartida', -75.0, 0.0, 'aq'],
+        ['texas', 31.5, -99.4, 'us'], ['california', 36.8, -119.4, 'us'], ['florida', 28.6, -82.4, 'us'],
+        ['alaska', 64.7, -152.5, 'us'], ['hawaii|hawai', 20.9, -156.3, 'us'],
+    ];
+    const GAZ_CITIES = [
+        ['washington', 38.9, -77.0, 'us'], ['new york|nueva york', 40.7, -74.0, 'us'], ['los angeles', 34.05, -118.2, 'us'],
+        ['chicago', 41.9, -87.6, 'us'], ['houston', 29.8, -95.4, 'us'], ['miami', 25.8, -80.2, 'us'],
+        ['boston', 42.4, -71.06, 'us'], ['seattle', 47.6, -122.3, 'us'], ['san francisco', 37.8, -122.4, 'us'],
+        ['las vegas', 36.2, -115.1, 'us'], ['dallas', 32.8, -96.8, 'us'], ['atlanta', 33.7, -84.4, 'us'],
+        ['philadelphia|filadelfia', 40.0, -75.2, 'us'], ['detroit', 42.3, -83.05, 'us'], ['denver', 39.7, -105.0, 'us'],
+        ['phoenix', 33.4, -112.1, 'us'], ['austin', 30.3, -97.7, 'us'], ['new orleans|nueva orleans', 30.0, -90.1, 'us'],
+        ['baltimore', 39.3, -76.6, 'us'], ['pittsburgh', 40.4, -80.0, 'us'], ['minneapolis', 44.98, -93.3, 'us'],
+        ['san diego', 32.7, -117.2, 'us'], ['silicon valley', 37.4, -122.1, 'us'], ['hollywood', 34.1, -118.3, 'us'],
+        ['ottawa', 45.4, -75.7, 'ca'], ['toronto', 43.7, -79.4, 'ca'], ['montreal', 45.5, -73.6, 'ca'],
+        ['vancouver', 49.3, -123.1, 'ca'], ['quebec', 46.8, -71.2, 'ca'],
+        ['mexico city|ciudad de mexico|cdmx', 19.4, -99.1, 'mx'], ['guadalajara', 20.7, -103.3, 'mx'],
+        ['monterrey', 25.7, -100.3, 'mx'], ['tijuana', 32.5, -117.0, 'mx'], ['cancun', 21.2, -86.8, 'mx'],
+        ['buenos aires', -34.6, -58.4, 'ar'], ['sao paulo', -23.55, -46.6, 'br'], ['rio de janeiro', -22.9, -43.2, 'br'],
+        ['brasilia', -15.8, -47.9, 'br'], ['lima', -12.05, -77.05, 'pe'], ['bogota', 4.7, -74.1, 'co'],
+        ['medellin', 6.25, -75.6, 'co'], ['cali', 3.45, -76.5, 'co'], ['caracas', 10.5, -66.9, 've'],
+        ['quito', -0.2, -78.5, 'ec'], ['guayaquil', -2.2, -79.9, 'ec'], ['montevideo', -34.9, -56.2, 'uy'],
+        ['asuncion', -25.3, -57.6, 'py'], ['havana|la habana', 23.1, -82.4, 'cu'], ['santo domingo', 18.5, -69.9, 'do'],
+        ['tegucigalpa', 14.1, -87.2, 'hn'], ['managua', 12.1, -86.3, 'ni'], ['san salvador', 13.7, -89.2, 'sv'],
+        ['santiago de chile', -33.45, -70.7, 'cl'], ['santiago de compostela', 42.9, -8.5, 'es'],
+        ['london|londres', 51.5, -0.13, 'gb'], ['manchester', 53.5, -2.2, 'gb'], ['liverpool', 53.4, -3.0, 'gb'],
+        ['birmingham', 52.5, -1.9, 'gb'], ['glasgow', 55.9, -4.3, 'gb'], ['edinburgh|edimburgo', 55.95, -3.2, 'gb'],
+        ['cardiff', 51.5, -3.2, 'gb'], ['belfast', 54.6, -5.9, 'gb'], ['oxford', 51.75, -1.26, 'gb'],
+        ['cambridge', 52.2, 0.12, 'gb'],
+        ['paris', 48.86, 2.35, 'fr'], ['marseille|marsella', 43.3, 5.4, 'fr'], ['lyon', 45.75, 4.85, 'fr'],
+        ['toulouse', 43.6, 1.44, 'fr'], ['niza', 43.7, 7.27, 'fr'], ['bordeaux|burdeos', 44.84, -0.58, 'fr'],
+        ['strasbourg|estrasburgo', 48.58, 7.75, 'fr'], ['cannes', 43.55, 7.02, 'fr'], ['lille', 50.63, 3.06, 'fr'],
+        ['nantes', 47.2, -1.55, 'fr'],
+        ['berlin', 52.52, 13.4, 'de'], ['munich', 48.14, 11.58, 'de'], ['frankfurt|francfort', 50.11, 8.68, 'de'],
+        ['hamburg|hamburgo', 53.55, 10.0, 'de'], ['cologne', 50.94, 6.96, 'de'], ['dresden|dresde', 51.05, 13.74, 'de'],
+        ['stuttgart', 48.78, 9.18, 'de'], ['leipzig', 51.34, 12.37, 'de'], ['dusseldorf', 51.23, 6.78, 'de'],
+        ['madrid', 40.42, -3.7, 'es'], ['barcelona', 41.39, 2.17, 'es'], ['valencia', 39.47, -0.38, 'es'],
+        ['sevilla|seville', 37.39, -5.99, 'es'], ['bilbao', 43.26, -2.93, 'es'], ['zaragoza', 41.65, -0.88, 'es'],
+        ['malaga', 36.72, -4.42, 'es'], ['murcia', 37.99, -1.13, 'es'], ['palma de mallorca|mallorca', 39.57, 2.65, 'es'],
+        ['ibiza', 38.91, 1.43, 'es'], ['ceuta', 35.89, -5.32, 'es'], ['melilla', 35.29, -2.94, 'es'],
+        ['toledo', 39.86, -4.03, 'es'], ['gibraltar', 36.14, -5.35, 'gi'],
+        ['lisbon|lisboa', 38.72, -9.14, 'pt'], ['porto|oporto', 41.15, -8.61, 'pt'],
+        ['rome|roma', 41.9, 12.5, 'it'], ['milan', 45.46, 9.19, 'it'], ['naples|napoles', 40.85, 14.27, 'it'],
+        ['turin', 45.07, 7.69, 'it'], ['venice|venecia', 45.44, 12.34, 'it'], ['florence|florencia', 43.77, 11.26, 'it'],
+        ['genoa|genova', 44.41, 8.93, 'it'], ['palermo', 38.12, 13.36, 'it'],
+        ['amsterdam', 52.37, 4.9, 'nl'], ['rotterdam|roterdam', 51.92, 4.48, 'nl'], ['the hague|la haya', 52.08, 4.31, 'nl'],
+        ['brussels|bruselas', 50.85, 4.35, 'be'], ['antwerp|amberes', 51.22, 4.4, 'be'],
+        ['vienna|viena', 48.21, 16.37, 'at'], ['zurich', 47.37, 8.54, 'ch'], ['geneva|ginebra', 46.2, 6.14, 'ch'],
+        ['davos', 46.8, 9.84, 'ch'], ['bern|berna', 46.95, 7.45, 'ch'], ['basel|basilea', 47.56, 7.59, 'ch'],
+        ['stockholm|estocolmo', 59.33, 18.07, 'se'], ['gothenburg|gotemburgo', 57.7, 11.97, 'se'],
+        ['oslo', 59.91, 10.75, 'no'], ['copenhagen|copenhague', 55.68, 12.57, 'dk'], ['helsinki', 60.17, 24.94, 'fi'],
+        ['reykjavik|reikiavik', 64.15, -21.94, 'is'], ['dublin', 53.35, -6.26, 'ie'],
+        ['warsaw|varsovia', 52.23, 21.01, 'pl'], ['krakow|cracovia', 50.06, 19.94, 'pl'], ['prague|praga', 50.08, 14.44, 'cz'],
+        ['budapest', 47.5, 19.04, 'hu'], ['bucharest|bucarest', 44.43, 26.1, 'ro'], ['athens|atenas', 37.98, 23.73, 'gr'],
+        ['thessaloniki|salonica', 40.64, 22.94, 'gr'], ['belgrade|belgrado', 44.79, 20.45, 'rs'], ['zagreb', 45.81, 15.98, 'hr'],
+        ['sarajevo', 43.86, 18.41, 'ba'], ['skopje', 42.0, 21.43, 'mk'], ['tirana', 41.33, 19.82, 'al'],
+        ['pristina', 42.66, 21.17, 'xk'], ['podgorica', 42.44, 19.26, 'me'], ['ljubljana', 46.06, 14.51, 'si'],
+        ['bratislava', 48.15, 17.11, 'sk'], ['chisinau', 47.01, 28.86, 'md'], ['minsk', 53.9, 27.57, 'by'],
+        ['vilnius|vilna', 54.69, 25.28, 'lt'], ['riga', 56.95, 24.11, 'lv'], ['tallinn|tallin', 59.44, 24.75, 'ee'],
+        ['kyiv|kiev', 50.45, 30.52, 'ua'], ['kharkiv|jarkov', 49.99, 36.23, 'ua'], ['odesa|odessa', 46.48, 30.73, 'ua'],
+        ['lviv', 49.84, 24.03, 'ua'], ['mariupol', 47.1, 37.55, 'ua'], ['donetsk', 48.0, 37.8, 'ua'],
+        ['luhansk|lugansk', 48.57, 39.3, 'ua'], ['kherson|jerson', 46.64, 32.61, 'ua'],
+        ['zaporizhzhia|zaporiyia', 47.84, 35.14, 'ua'], ['sevastopol', 44.6, 33.53, 'ua'],
+        ['moscow|moscu', 55.76, 37.62, 'ru'], ['saint petersburg|st petersburg|san petersburgo', 59.93, 30.36, 'ru'],
+        ['vladivostok', 43.12, 131.9, 'ru'], ['tbilisi', 41.72, 44.79, 'ge'], ['yerevan|erevan', 40.18, 44.51, 'am'],
+        ['baku', 40.41, 49.87, 'az'], ['astana', 51.17, 71.43, 'kz'], ['almaty', 43.24, 76.95, 'kz'],
+        ['tashkent|taskent', 41.3, 69.24, 'uz'], ['bishkek', 42.87, 74.59, 'kg'], ['dushanbe', 38.56, 68.79, 'tj'],
+        ['ashgabat', 37.95, 58.38, 'tm'], ['ulaanbaatar|ulan bator', 47.89, 106.9, 'mn'],
+        ['istanbul|estambul', 41.01, 28.98, 'tr'], ['ankara', 39.93, 32.86, 'tr'], ['izmir|esmirna', 38.42, 27.13, 'tr'],
+        ['jerusalem|jerusalen', 31.78, 35.22, 'il'], ['tel aviv', 32.08, 34.78, 'il'], ['gaza|franja de gaza', 31.4, 34.4, 'ps'],
+        ['ramallah|ramala', 31.9, 35.2, 'ps'], ['hebron', 31.53, 35.1, 'ps'], ['rafah', 31.29, 34.25, 'ps'],
+        ['beirut', 33.89, 35.5, 'lb'], ['damascus|damasco', 33.51, 36.29, 'sy'], ['aleppo|alepo', 36.2, 37.16, 'sy'],
+        ['idlib', 35.93, 36.63, 'sy'], ['amman', 31.95, 35.93, 'jo'], ['baghdad|bagdad', 33.31, 44.37, 'iq'],
+        ['mosul', 36.34, 43.13, 'iq'], ['basra|basora', 30.51, 47.78, 'iq'], ['tehran|teheran', 35.69, 51.39, 'ir'],
+        ['isfahan', 32.65, 51.68, 'ir'], ['riyadh|riad', 24.71, 46.68, 'sa'], ['jeddah|yeda', 21.49, 39.19, 'sa'],
+        ['mecca|la meca', 21.39, 39.86, 'sa'], ['dubai', 25.2, 55.27, 'ae'], ['abu dhabi|abu dabi', 24.45, 54.38, 'ae'],
+        ['doha', 25.29, 51.53, 'qa'], ['manama', 26.23, 50.59, 'bh'], ['muscat|mascate', 23.59, 58.41, 'om'],
+        ['sanaa', 15.35, 44.21, 'ye'], ['aden', 12.79, 45.03, 'ye'], ['kabul', 34.53, 69.17, 'af'],
+        ['kandahar', 31.62, 65.72, 'af'], ['islamabad', 33.69, 73.06, 'pk'], ['karachi', 24.86, 67.0, 'pk'],
+        ['lahore', 31.55, 74.34, 'pk'], ['new delhi|nueva delhi|delhi', 28.61, 77.21, 'in'],
+        ['mumbai|bombay', 19.08, 72.88, 'in'], ['kolkata|calcuta', 22.57, 88.36, 'in'],
+        ['bangalore|bengaluru', 12.97, 77.59, 'in'], ['chennai', 13.08, 80.27, 'in'], ['dhaka', 23.81, 90.41, 'bd'],
+        ['colombo', 6.93, 79.85, 'lk'], ['kathmandu|katmandu', 27.72, 85.32, 'np'],
+        ['beijing|pekin', 39.9, 116.4, 'cn'], ['shanghai', 31.23, 121.47, 'cn'], ['shenzhen', 22.54, 114.06, 'cn'],
+        ['guangzhou', 23.13, 113.26, 'cn'], ['wuhan', 30.59, 114.31, 'cn'], ['hong kong', 22.3, 114.2, 'hk'],
+        ['taipei', 25.03, 121.57, 'tw'], ['tokyo|tokio', 35.68, 139.69, 'jp'], ['osaka', 34.69, 135.5, 'jp'],
+        ['kyoto|kioto', 35.01, 135.77, 'jp'], ['hiroshima', 34.39, 132.46, 'jp'], ['nagasaki', 32.75, 129.88, 'jp'],
+        ['fukushima', 37.75, 140.47, 'jp'], ['okinawa', 26.33, 127.8, 'jp'], ['seoul|seul', 37.57, 126.98, 'kr'],
+        ['pyongyang', 39.03, 125.75, 'kp'], ['jakarta|yakarta', -6.21, 106.85, 'id'], ['bali', -8.34, 115.09, 'id'],
+        ['manila', 14.6, 120.98, 'ph'], ['bangkok', 13.76, 100.5, 'th'], ['hanoi', 21.03, 105.85, 'vn'],
+        ['ho chi minh|saigon', 10.82, 106.63, 'vn'], ['kuala lumpur', 3.14, 101.69, 'my'],
+        ['phnom penh', 11.55, 104.92, 'kh'], ['yangon|rangun', 16.87, 96.2, 'mm'],
+        ['sydney|sidney', -33.87, 151.21, 'au'], ['melbourne', -37.81, 144.96, 'au'], ['canberra', -35.28, 149.13, 'au'],
+        ['brisbane', -27.47, 153.03, 'au'], ['perth', -31.95, 115.86, 'au'], ['auckland', -36.85, 174.76, 'nz'],
+        ['wellington', -41.29, 174.78, 'nz'],
+        ['cairo|el cairo', 30.04, 31.24, 'eg'], ['alexandria|alejandria', 31.2, 29.92, 'eg'],
+        ['casablanca', 33.57, -7.59, 'ma'], ['rabat', 34.02, -6.84, 'ma'], ['marrakech|marraquech', 31.63, -8.0, 'ma'],
+        ['algiers|argel', 36.75, 3.06, 'dz'], ['tripoli', 32.89, 13.19, 'ly'], ['benghazi|bengasi', 32.12, 20.07, 'ly'],
+        ['khartoum|jartum', 15.5, 32.56, 'sd'], ['mogadishu|mogadiscio', 2.05, 45.32, 'so'],
+        ['addis ababa|addis abeba', 9.02, 38.75, 'et'], ['nairobi', -1.29, 36.82, 'ke'], ['mombasa', -4.04, 39.67, 'ke'],
+        ['kampala', 0.35, 32.58, 'ug'], ['kigali', -1.94, 30.06, 'rw'], ['dar es salaam', -6.79, 39.21, 'tz'],
+        ['johannesburg|johannesburgo', -26.2, 28.05, 'za'], ['cape town|ciudad del cabo', -33.92, 18.42, 'za'],
+        ['pretoria', -25.75, 28.19, 'za'], ['durban', -29.86, 31.02, 'za'], ['lagos', 6.52, 3.38, 'ng'],
+        ['abuja', 9.06, 7.49, 'ng'], ['accra', 5.6, -0.19, 'gh'], ['dakar', 14.72, -17.47, 'sn'],
+        ['abidjan|abiyan', 5.36, -4.01, 'ci'], ['bamako', 12.64, -8.0, 'ml'], ['ouagadougou|uagadugu', 12.37, -1.52, 'bf'],
+        ['niamey', 13.51, 2.13, 'ne'], ['kinshasa', -4.44, 15.27, 'cd'], ['luanda', -8.84, 13.23, 'ao'],
+        ['lusaka', -15.39, 28.32, 'zm'], ['harare', -17.83, 31.05, 'zw'], ['maputo', -25.97, 32.57, 'mz'],
+        ['antananarivo', -18.88, 47.51, 'mg'],
+    ];
+
+    // Flat index built once on first use: {name, lat, lng, iso, kind, display}.
+    let _gazIndex = null;
+    function _gazNorm(s) {
+        return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+    function _gazFlag(iso) {
+        if (!iso || iso.length !== 2) return '📰';
+        return String.fromCodePoint(...[...iso.toUpperCase()].map(c => 127397 + c.charCodeAt(0)));
+    }
+    function _gazBuild() {
+        _gazIndex = [];
+        const add = (rows, kind) => rows.forEach(([names, lat, lng, iso]) => {
+            const variants = names.split('|');
+            // Display name = first variant, title-cased ("new york" → "New York").
+            const display = variants[0].replace(/\b\p{L}/gu, c => c.toUpperCase());
+            variants.forEach(name => _gazIndex.push({ name, lat, lng, iso, kind, display }));
+        });
+        add(GAZ_COUNTRIES, 0);
+        add(GAZ_CITIES, 1);   // cities win over countries on a tie
+    }
+    const _GAZ_LETTER = /[\p{L}\p{N}]/u;
+    // Whole-word occurrence of `name` in normalized `text` → position, else -1.
+    function _gazHit(text, name) {
+        let i = text.indexOf(name);
+        while (i !== -1) {
+            const b = i > 0 ? text[i - 1] : '';
+            const a = text[i + name.length] || '';
+            if (!(b && _GAZ_LETTER.test(b)) && !(a && _GAZ_LETTER.test(a))) return i;
+            i = text.indexOf(name, i + 1);
+        }
+        return -1;
+    }
+    // Best place named in a headline → {lat,lng,place,emoji,importance} or null.
+    // Preference: city over country, then earliest mention, then longest name
+    // (so "Guinea-Bissau" beats "Guinea", "South Sudan" beats "Sudan").
+    function localGeolocate(title) {
+        const text = _gazNorm(title);
+        if (!text) return null;
+        if (!_gazIndex) _gazBuild();
+        let best = null, bestPos = -1;
+        for (const e of _gazIndex) {
+            const pos = _gazHit(text, e.name);
+            if (pos === -1) continue;
+            if (!best ||
+                e.kind > best.kind ||
+                (e.kind === best.kind && (pos < bestPos || (pos === bestPos && e.name.length > best.name.length)))) {
+                best = e; bestPos = pos;
+            }
+        }
+        if (!best) return null;
+        return { lat: best.lat, lng: best.lng, place: best.display, emoji: _gazFlag(best.iso), importance: 5 };
+    }
 
     const FREE_MAX_SOURCES = 5;   // free plan: up to 5 sources; Pro/Team unlimited
     const geoFeed = {
@@ -6427,9 +6692,9 @@ ${this.buildContext()}`;
         },
 
         // ── "News pass done" signal ──
-        // A refresh does a FAST pass (fetch + list the articles) then a SLOW pass
-        // (AI geolocation, batched). A source-loading veil should drop after the
-        // fast pass, not block on the slow one. refresh() calls _signalNewsPass()
+        // A refresh does a FAST pass (fetch + list the articles) then a second
+        // pass (local geolocation). A source-loading veil should drop after the
+        // fast pass, not block on the second. refresh() calls _signalNewsPass()
         // between the two; onceNewsPass() lets a caller await just the fast pass
         // (or a timeout), so the UI never freezes behind the veil for ~35s.
         _newsPassWaiters: [],
@@ -6523,81 +6788,48 @@ ${this.buildContext()}`;
                     if (ts < cut) continue;
                     (bySrc[art.sourceId] = bySrc[art.sourceId] || []).push({ art, ts });
                 }
-                const todo = [];
+                // Hybrid geolocation to FILL each source's icon quota: the local
+                // gazetteer runs first (free — titles that name a known place),
+                // and the AI only geolocates the REMAINDER needed to reach the
+                // user's icons-per-source setting. Each article is sent to the
+                // AI at most once EVER (misses are cached as skip), so the
+                // steady-state cost is a few small calls per day, not per refresh.
+                const aiTodo = [];
+                let changed = 0;
                 Object.keys(bySrc).forEach(sid => {
                     const arr = bySrc[sid].sort((a, b) => b.ts - a.ts);   // newest first
                     let need = cap - (placedBySrc[sid] || 0);
                     for (const { art, ts } of arr) {
                         if (need <= 0) break;
-                        const geo = this.geoCache[art.id];
-                        if (geo && geo.skip) continue;             // known un-locatable → don't waste a slot, try the next
-                        if (geo) { this._place(art, geo, ts); need--; }   // cached placement (free)
-                        else { todo.push(art); need--; }           // needs AI geolocation
+                        const cached = this.geoCache[art.id];
+                        if (cached && cached.skip) continue;       // AI already said un-locatable
+                        if (cached) { this._place(art, cached, ts); need--; continue; }
+                        const local = localGeolocate(art.title);   // free pass, no API
+                        if (local) {
+                            this.geoCache[art.id] = local; changed++;
+                            this._place(art, local, ts); need--; continue;
+                        }
+                        aiTodo.push(art); need--;                  // AI fills this slot below
                     }
                 });
-                if (!todo.length) return;
-                if (!isAiEnabled()) return;
-                const byId = new Map(todo.map(a => [a.id, a]));
-                const system =
-                    'You are a precise news geolocator. For each item (a headline + short summary) decide ' +
-                    'WHERE on Earth the story actually takes place, using your full world knowledge and the ' +
-                    'CONTEXT of the item — not just surface words.\n' +
-                    'Think about what the story is really about: the people, organizations, events and places ' +
-                    'named, and resolve ambiguous names using context. Example: "the White House" / "Casa ' +
-                    'Blanca" in a story about US politics or a fight/event there is the White House in ' +
-                    'Washington DC, USA — NOT the city of Casablanca in Morocco. A name can be a building, an ' +
-                    'organization, or a person; infer the REAL place it refers to.\n' +
-                    'STRICT RULES:\n' +
-                    '- Accuracy matters far more than coverage. Only return a location you are genuinely ' +
-                    'confident is correct.\n' +
-                    '- If the item is ambiguous, generic, or has no clearly locatable place, OMIT it entirely. ' +
-                    'Do NOT guess and do NOT force a country. Returning fewer items than given is expected and good.\n' +
-                    '- If there is only a partial hint (a region, province or town), use it only if you can ' +
-                    'place it confidently; otherwise omit.\n' +
-                    '- Prefer the most specific correct place (city > region > country).\n' +
-                    'Reply ONLY with a JSON array, no extra text:\n' +
-                    '[{"id":"<id>","place":"<city or country, English>","lat":<number>,"lng":<number>,' +
-                    '"emoji":"<one emoji for the topic>","confidence":<0-10 how sure you are about the LOCATION>,' +
-                    '"importance":<0-10 newsworthiness>}]\n' +
-                    'Include an item ONLY if its location confidence is 7 or higher. Omit everything else.';
-                // Small batches so the JSON reply never gets truncated by the token cap.
-                const BATCH = 12;
-                let changed = 0;
-                for (let b = 0; b < todo.length && b < 96; b += BATCH) {
-                    const slice = todo.slice(b, b + BATCH);
-                    const items = slice.map(a => ({
+                if (changed) this._saveGeo();
+                if (!aiTodo.length || !isAiEnabled()) return;
+                // AI pass — small batches with a hard per-refresh ceiling, so a
+                // first load with many sources can't burn a pile of credits at
+                // once; leftovers simply fill in over the next refreshes.
+                const BATCH = 10, MAX_PER_REFRESH = 30;
+                for (let b = 0; b < aiTodo.length && b < MAX_PER_REFRESH; b += BATCH) {
+                    const slice = aiTodo.slice(b, b + BATCH);
+                    const got = await this._aiGeolocate(slice.map(a => ({
                         id: a.id, text: [a.title, a.summary].filter(Boolean).join(' — ').slice(0, 280),
-                    }));
-                    let arr = null;
-                    try {
-                        // claudeComplete retries transient overloads, so icons still
-                        // get placed during the API's busy spikes.
-                        const txt = await claudeComplete({ system, max_tokens: 4000, messages: [{ role: 'user', content: JSON.stringify(items) }] });
-                        if (txt == null) continue;
-                        arr = this._parseGeoArray(txt);
-                    } catch (_) { continue; }
-                    if (!Array.isArray(arr)) continue;
-                    // Track which ids the AI confidently placed; everything else in
-                    // this batch is treated as "un-locatable" and cached as a skip so
-                    // we never force a wrong marker and never re-query it every refresh.
-                    const placedIds = new Set();
-                    arr.forEach(g => {
-                        if (!g || !g.id || typeof g.lat !== 'number' || typeof g.lng !== 'number' || !byId.has(g.id)) return;
-                        // Confidence gate — correctness over coverage. Skip low-confidence
-                        // guesses (this is what stops "Casa Blanca" → Casablanca errors).
-                        const conf = typeof g.confidence === 'number' ? g.confidence : 0;
-                        if (conf < 7) return;
-                        const geo = { lat: g.lat, lng: g.lng, place: g.place || '', emoji: g.emoji || '📰', importance: typeof g.importance === 'number' ? g.importance : 5 };
-                        this.geoCache[g.id] = geo; changed++;
-                        placedIds.add(g.id);
-                        const art = byId.get(g.id);
-                        this._place(art, geo, this._articleTs(art.published));
-                    });
-                    // Cache un-locatable items so they don't get re-queried forever.
+                    })));
+                    if (!got) return;   // AI unreachable — leave uncached, retry on a later refresh
                     slice.forEach(a => {
-                        if (!placedIds.has(a.id) && !this.geoCache[a.id]) { this.geoCache[a.id] = { skip: true }; changed++; }
+                        const geo = got[a.id];
+                        if (geo) { this.geoCache[a.id] = geo; this._place(a, geo, this._articleTs(a.published)); }
+                        else this.geoCache[a.id] = { skip: true };   // asked once, never re-asked
                     });
-                    if (changed) this._saveGeo();
+                    this._saveGeo();
                 }
             } finally {
                 this._busy = false;
@@ -6609,28 +6841,155 @@ ${this.buildContext()}`;
             }
         },
 
+        _articleTs(published) {
+            if (!published) return Date.now();
+            const ms = Date.parse(published);
+            return isFinite(ms) ? ms : Date.now();
+        },
+
+        // ── Shared AI geolocation call ──
+        // entries = [{id, text}]. Returns {id → {lat,lng,place,emoji,importance}}
+        // (possibly empty = AI answered but placed none) or null if the AI is
+        // unreachable/off. The marker emoji is the country flag (iso2), so
+        // AI-placed icons look exactly like gazetteer-placed ones.
+        async _aiGeolocate(entries) {
+            if (!isAiEnabled() || !entries.length) return null;
+            const system =
+                'You are a precise news geolocator. For each item decide WHERE on Earth the story takes ' +
+                'place, resolving ambiguous names from context (e.g. "Casa Blanca" in a US-politics story ' +
+                'is the White House in Washington DC, not Casablanca). Prefer the most specific correct ' +
+                'place (city > region > country). Accuracy beats coverage: OMIT any item you cannot place ' +
+                'with high confidence — never guess. Reply ONLY with a JSON array, no other text:\n' +
+                '[{"id":"<id>","place":"<city or country, in English>","lat":<number>,"lng":<number>,' +
+                '"iso2":"<2-letter country code>"}]';
+            let txt = null;
+            try {
+                txt = await claudeComplete({ system, max_tokens: 1500, messages: [{ role: 'user', content: JSON.stringify(entries) }] });
+            } catch (_) { return null; }
+            if (txt == null) return null;
+            const arr = this._parseGeoArray(txt);
+            const out = {};
+            (Array.isArray(arr) ? arr : []).forEach(g => {
+                if (!g || !g.id || typeof g.lat !== 'number' || typeof g.lng !== 'number') return;
+                out[g.id] = { lat: g.lat, lng: g.lng, place: g.place || '', emoji: _gazFlag(g.iso2 || ''), importance: 5 };
+            });
+            return out;
+        },
+
         // Robust extraction of a JSON array from Claude's reply: strips ```json
         // fences, and if the array is truncated, salvages whole {...} objects.
         _parseGeoArray(txt) {
             if (!txt) return null;
-            let s = txt.replace(/```json/gi, '').replace(/```/g, '').trim();
+            const s = txt.replace(/```json/gi, '').replace(/```/g, '').trim();
             const start = s.indexOf('[');
             if (start === -1) return null;
             const end = s.lastIndexOf(']');
             if (end > start) {
                 try { return JSON.parse(s.slice(start, end + 1)); } catch (_) {}
             }
-            // Truncated: pull out individual {...} objects.
             const objs = s.slice(start).match(/\{[^{}]*\}/g) || [];
             const out = [];
             objs.forEach(o => { try { out.push(JSON.parse(o)); } catch (_) {} });
             return out.length ? out : null;
         },
 
-        _articleTs(published) {
-            if (!published) return Date.now();
-            const ms = Date.parse(published);
-            return isFinite(ms) ? ms : Date.now();
+        // ── Explicit "Geolocalizar" from the news context menu ──
+        // Free when possible (items already on the map + cached geo); ONE small
+        // AI call for the rest. Ends by flying the map to the result(s), or
+        // showing a brief "couldn't geolocate" note in the news-status strip.
+        async geolocateNewsItems(items) {
+            const tr = T[currentLang] || T.en;
+            const status = document.getElementById('news-status');
+            const placed = [];      // {id, lat, lng}
+            const todo = [];
+            for (const it of (items || [])) {
+                if (it.lat != null && it.lng != null) { placed.push({ id: it.event_id, lat: it.lat, lng: it.lng }); continue; }
+                const aid = this._articleIdForItem(it);
+                const cached = aid ? this.geoCache[aid] : null;
+                if (cached && !cached.skip) {
+                    this._placeNewsItem(it, cached);
+                    placed.push({ id: it.event_id, lat: cached.lat, lng: cached.lng });
+                    continue;
+                }
+                // Local gazetteer FIRST (free) — a title/summary that names a known
+                // place is placed with zero AI cost. Only what the gazetteer can't
+                // resolve falls through to the one AI call below.
+                const local = localGeolocate(_cleanMessage(it.message || '').replace(/\s+/g, ' '));
+                if (local) {
+                    if (aid) { this.geoCache[aid] = local; this._saveGeo(); }
+                    this._placeNewsItem(it, local);
+                    placed.push({ id: it.event_id, lat: local.lat, lng: local.lng });
+                    continue;
+                }
+                todo.push(it);
+            }
+            if (todo.length && isAiEnabled()) {
+                if (status) { status.textContent = tr.newsGeolocating || ''; status.style.color = 'var(--muted)'; }
+                const slice = todo.slice(0, 12);
+                const entries = slice.map((it, i) => ({ id: String(i), text: _cleanMessage(it.message || '').replace(/\s+/g, ' ').slice(0, 300) }));
+                const got = await this._aiGeolocate(entries);
+                slice.forEach((it, i) => {
+                    const geo = got && got[String(i)];
+                    if (!geo) return;
+                    const aid = this._articleIdForItem(it);
+                    if (aid) { this.geoCache[aid] = geo; this._saveGeo(); }
+                    this._placeNewsItem(it, geo);
+                    placed.push({ id: it.event_id, lat: geo.lat, lng: geo.lng });
+                });
+                if (status && status.textContent === (tr.newsGeolocating || '')) status.textContent = '';
+            }
+            if (!placed.length) {
+                if (status) {
+                    const msg = tr.newsGeolocateFail || 'No se pudo geolocalizar';
+                    status.textContent = msg;
+                    status.style.color = 'var(--muted)';
+                    setTimeout(() => { if (status.textContent === msg) status.textContent = ''; }, 4000);
+                }
+                return;
+            }
+            // Fly to the result: one item → full focus (zoom + highlight);
+            // several → fit them all in view.
+            try {
+                if (placed.length === 1 && placed[0].id) focusEventOnMap(placed[0].id);
+                else if (map) map.flyToBounds(L.latLngBounds(placed.map(p => [p.lat, p.lng])), { padding: [70, 70], maxZoom: 6 });
+            } catch (_) {}
+        },
+
+        // The geoCache key for a news item (geoFeed articles only): the cache is
+        // keyed by article id = link-or-title, recoverable from 'gf|<src>|<id>'.
+        _articleIdForItem(it) {
+            const eid = (it && it.event_id) || '';
+            if (eid.indexOf('gf|') !== 0) return '';
+            const key = eid.slice(3);
+            const cut = key.indexOf('|');
+            return cut === -1 ? '' : key.slice(cut + 1);
+        },
+
+        // Put ANY news item on the map at the given geo. Explicit user action:
+        // not subject to the per-source icon cap. Updates the feed entry too so
+        // the news item ↔ map icon linkage works both ways.
+        _placeNewsItem(item, geo) {
+            if (!item.event_id) {
+                item.event_id = 'gf|ctx|' + Math.random().toString(36).slice(2);
+                try { indexNewsByEvent(item); } catch (_) {}
+            }
+            item.lat = geo.lat; item.lng = geo.lng;
+            item.location = geo.place || item.location || '';
+            if (geo.emoji) item.event_icon = geo.emoji;
+            const ts = this._articleTs(item.timestamp);
+            upsertEventMarker({
+                event_id: item.event_id, event_type: 'news', event_icon: item.event_icon || '📰',
+                event_label: item.channel || geo.place || '', event_cat: 'news', event_status: '',
+                lat: geo.lat, lng: geo.lng, location: geo.place || '', loc_tier: '',
+                timestamp: item.timestamp || new Date(ts).toISOString(),
+                channels: [item.channel || ''], channels_count: 1, event_importance: 5,
+            }, true);
+            // Register geoFeed articles so prune/cap accounting sees the marker.
+            if (item.event_id.indexOf('gf|') === 0) {
+                const key = item.event_id.slice(3);
+                this.markers[key] = { eventId: item.event_id, ts, sourceId: key.split('|')[0] };
+            }
+            scheduleNewsRender();
         },
 
         // ── Icons-per-source cap (Settings slider) ──
@@ -8741,8 +9100,12 @@ ${this.buildContext()}`;
                 collap.style.maxHeight = '0px';
                 void collap.offsetHeight;
                 collap.style.maxHeight = collap.scrollHeight + 'px';
-                collap._tEnd = () => { collap.style.maxHeight = ''; collap.removeEventListener('transitionend', collap._tEnd); };
+                collap._tEnd = () => { collap.style.maxHeight = ''; collap.removeEventListener('transitionend', collap._tEnd); collap._tEnd = null; };
                 collap.addEventListener('transitionend', collap._tEnd);
+                // Background tabs pause CSS transitions, so transitionend may never
+                // fire — clear the pixel cap anyway once the animation must be done,
+                // or the panel stays frozen at this height forever.
+                setTimeout(() => { if (collap._tEnd && !panel.classList.contains('collapsed')) collap._tEnd(); }, 700);
             }
         });
     }
@@ -10109,12 +10472,9 @@ ${this.buildContext()}`;
                 icon: L.divIcon({ className: 'geo-marker', html, iconSize: [0, 0], iconAnchor: [0, 0] })
             });
             marker._labelMinZoom = wb.minZ;
-            marker.on('click', e => {
-                L.DomEvent.stopPropagation(e);
-                if (currentLayer !== 'satellite-esri') return;   // info popup: classic satellite only
-                const cp = map.latLngToContainerPoint(e.latlng);
-                fetchLocation(e.latlng, { x: cp.x, y: cp.y });
-            });
+            // Place-info popup removed per user request — clicking a water label
+            // no longer pops anything (it just swallows the click).
+            marker.on('click', e => { L.DomEvent.stopPropagation(e); });
             waterLabelGroup.addLayer(marker);
         });
         waterLabelGroup.addTo(map);
