@@ -5410,6 +5410,25 @@
         if (p.topicsText) topics.push(String(p.topicsText));
         return { topics, hasSources: ((geoFeed.sources || []).length > 0) };
     }
+    // Shared with both assistants (map island + Feed box). Lets the STREAMING
+    // model itself add/remove sources by replying with an inline directive the
+    // client executes — this is what makes "add sources about X" work with ANY
+    // phrasing/typo/language ("ad one source about soccer in morocco") instead
+    // of only the ones the quick regex gate catches. Zero extra API calls: the
+    // directive rides the normal answer.
+    const AI_SOURCES_DIRECTIVE = `
+SOURCE MANAGEMENT — you CAN add and remove the user's news sources yourself:
+• If the user asks you to ADD sources (add / find / follow / subscribe to feeds, channels or sites
+  about some topic), reply with ONLY this single line — no other words before or after it:
+  ##SOURCES## {"action":"add","items":[{"type":"telegram","value":"@handle","name":"Display Name"},{"type":"rss","value":"https://feed-url","name":"Display Name"}]}
+  Pick REAL, active, well-known sources that match what they asked (type "rss": value MUST be the
+  feed URL). Honor an explicit count if the user names one ("one source", "3 fuentes") — return
+  exactly that many; otherwise return 6-10.
+• If the user asks you to REMOVE / stop following sources, reply with ONLY:
+  ##SOURCES## {"action":"remove","ids":["<source name or handle exactly as the user refers to it>"]}
+• NEVER claim you cannot add or remove sources — you can, via that directive. Do not mention the
+  directive in normal answers, and never emit it unless the user is clearly asking for it.`;
+
     function _aiSystemPrompt(context) {
         const lang = _aiLangName();
         const prof = _userProfileForAI();
@@ -5436,6 +5455,7 @@
 sources the user cares about. You are a warm, knowledgeable, genuinely helpful assistant — like a smart
 friend the user can ask anything. You are NOT a geopolitics-only tool; do not assume the user's interests.
 ${framing}${noSourcesNudge}
+${AI_SOURCES_DIRECTIVE}
 
 HOW TO ANSWER — this matters a lot:
 • Write like a real person talking, not like a report. Warm, direct, confident. No corporate hedging.
@@ -5628,9 +5648,24 @@ ${context}`;
             try {
                 const answer = stripMarkdown((await streamClaude(
                     { system, max_tokens: 2048, count_quota: true, messages: msgs },
-                    (sofar) => typer.push(stripMarkdown(sofar))
+                    // Hold the typewriter back while the reply may be an inline
+                    // ##SOURCES## directive — raw JSON must never be shown.
+                    (sofar) => { if (/^#/.test(sofar.trimStart())) return; typer.push(stripMarkdown(sofar)); }
                 )).trim());
                 if (!answer) { fail(t('aiError') || 'Error'); return; }
+                // Inline source directive: the robust add/remove path for any
+                // phrasing the quick regex gate missed. Execute it and show the
+                // localized confirmation instead of the raw reply.
+                if (answer.indexOf('##SOURCES##') === 0) {
+                    typer.stop();
+                    const dObj = aiSourceFinder._parseObj(answer.slice(11));
+                    const dRes = dObj ? await aiSourceFinder.applyDirective(dObj) : { handled: false };
+                    this.history[this.history.length - 1].content =
+                        dRes.handled ? _sourceActionMsg(dRes) : (t('aiError') || 'Error');
+                    bubble = this._renderConvo();
+                    this._scrollConvo();
+                    return;
+                }
                 typer.finish(answer);
                 this.history[this.history.length - 1].content = answer;
             } catch (e) {
@@ -5819,6 +5854,7 @@ ${context}`;
             return `You are the assistant inside the user's "Favorite Topics Box" in Skorpene. Below is
 the live feed of news from the sources the user themselves chose. Your job is to help them explore
 and truly understand THIS news.
+${AI_SOURCES_DIRECTIVE}
 
 HOW TO ANSWER:
 • Read the items below, reason over them, connect them, and explain what they mean. When the user
@@ -5895,9 +5931,23 @@ ${this.buildContext()}`;
             try {
                 const answer = stripMarkdown((await streamClaude(
                     { system: this._systemPrompt(), max_tokens: 1500, count_quota: true, messages: msgs },
-                    (sofar) => typer.push(stripMarkdown(sofar))
+                    // Hold the typewriter back while the reply may be an inline
+                    // ##SOURCES## directive — raw JSON must never be shown.
+                    (sofar) => { if (/^#/.test(sofar.trimStart())) return; typer.push(stripMarkdown(sofar)); }
                 )).trim());
                 if (!answer) { fail(tr.favError || 'Error'); return; }
+                // Inline source directive (same as the map assistant).
+                if (answer.indexOf('##SOURCES##') === 0) {
+                    typer.stop();
+                    const dObj = aiSourceFinder._parseObj(answer.slice(11));
+                    const dRes = dObj ? await aiSourceFinder.applyDirective(dObj) : { handled: false };
+                    this.history[this.history.length - 1].content =
+                        dRes.handled ? _sourceActionMsg(dRes) : (tr.favError || 'Error');
+                    bubble = this._renderConvo();
+                    this._scrollConvo();
+                    try { this.renderFeed(); } catch (_) {}
+                    return;
+                }
                 typer.finish(answer);
                 this.history[this.history.length - 1].content = answer;
             } catch (e) {
@@ -6439,6 +6489,17 @@ ${this.buildContext()}`;
                 });
             }
             this._saveSrc();
+            // One-time purge (v2): the short-lived gazetteer hybrid cached
+            // context-blind (often wrong) coords in this same cache, and cached
+            // entries are trusted forever — so bad placements survived the code
+            // revert. Indistinguishable from AI entries, so wipe once and let the
+            // capped AI batches refill (small one-time cost, correct forever).
+            try {
+                if (localStorage.getItem(this.LS_GEO + '_v') !== '2') {
+                    localStorage.removeItem(this.LS_GEO);
+                    localStorage.setItem(this.LS_GEO + '_v', '2');
+                }
+            } catch (_) {}
             try { this.geoCache = JSON.parse(localStorage.getItem(this.LS_GEO) || '{}') || {}; } catch (_) { this.geoCache = {}; }
             try { this.hidden = JSON.parse(localStorage.getItem(this.LS_HIDDEN) || '{}') || {}; } catch (_) { this.hidden = {}; }
         },
@@ -8045,6 +8106,34 @@ ${this.buildContext()}`;
                 return { handled: true, action: 'add', added, removed: 0 };
             }
 
+            return { handled: false };
+        },
+
+        // Execute an inline ##SOURCES## directive the STREAMING assistant put in
+        // its reply (see AI_SOURCES_DIRECTIVE). Same behavior as runForChat's
+        // add/remove paths, but with NO extra classify call — the intent already
+        // came inside the normal answer, so this path costs zero extra credits.
+        async applyDirective(obj) {
+            if (!obj || !obj.action) return { handled: false };
+            if (obj.action === 'remove' && Array.isArray(obj.ids) && obj.ids.length) {
+                const removed = this._removeItems(obj.ids);
+                try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
+                if (removed > 0) { try { geoFeed.refresh(true); } catch (_) {} }
+                return { handled: true, action: 'remove', added: 0, removed };
+            }
+            if (obj.action === 'add' && Array.isArray(obj.items) && obj.items.length) {
+                let added = 0;
+                showSourceLoading();
+                try {
+                    added = this._addItems(obj.items).added;
+                    if (added > 0) {
+                        try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
+                        geoFeed.refresh(true).catch(() => {});
+                        await geoFeed.onceNewsPass(9000);
+                    }
+                } finally { hideSourceLoading(); }
+                return { handled: true, action: 'add', added, removed: 0 };
+            }
             return { handled: false };
         },
     };
