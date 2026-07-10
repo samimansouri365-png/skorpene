@@ -6973,8 +6973,19 @@ ${this.buildContext()}`;
             // Fly to the result: one item → full focus (zoom + highlight);
             // several → fit them all in view.
             try {
-                if (placed.length === 1 && placed[0].id) focusEventOnMap(placed[0].id);
-                else if (map) map.flyToBounds(L.latLngBounds(placed.map(p => [p.lat, p.lng])), { padding: [70, 70], maxZoom: 6 });
+                if (!map || !placed.length) { /* nothing to fly to */ }
+                else if (placed.length === 1) {
+                    // Fly straight to the coordinates (we always have them) so the
+                    // map ALWAYS moves — focusEventOnMap alone silently no-ops when
+                    // the just-placed marker isn't in the event index yet (this is
+                    // why "geolocate" only flew for some items). Then, once the
+                    // marker has settled, focus it for the pulse + tooltip.
+                    const p = placed[0];
+                    map.flyTo([p.lat, p.lng], Math.max(map.getZoom(), EVENT_FOCUS_ZOOM), { duration: 0.8 });
+                    if (p.id) setTimeout(() => { try { focusEventOnMap(p.id); } catch (_) {} }, 350);
+                } else {
+                    map.flyToBounds(L.latLngBounds(placed.map(p => [p.lat, p.lng])), { padding: [70, 70], maxZoom: 6 });
+                }
             } catch (_) {}
         },
 
@@ -7762,6 +7773,30 @@ ${this.buildContext()}`;
     // think-tanks, regional outlets…) matching the user's topics + regions,
     // then adds them to geoFeed. Status is shown in the news-status strip.
     // ───────────────────────────────────────────────────────────────────────
+
+    // Localized status strings for the source finder (news-status strip). These
+    // used to be hardcoded Spanish, so they showed in Spanish for every UI
+    // language — this table + _sfMsg() fix that across all 13 languages.
+    const SF_I18N = {
+        es: { searching:'🤖 Buscando fuentes para ti…', busy:'⚠️ No se pudieron buscar fuentes ahora (IA saturada). Reinténtalo en unos segundos.', invalid:'⚠️ La IA no devolvió fuentes válidas.', addedSearching:'✓ {n} fuentes añadidas — buscando noticias…', addedDone:'✓ {n} fuentes añadidas y noticias cargadas', noneNew:'⚠️ No se añadió ninguna fuente nueva (ya las tenías).' },
+        en: { searching:'🤖 Finding sources for you…', busy:'⚠️ Couldn\'t find sources right now (AI overloaded). Try again in a few seconds.', invalid:'⚠️ The AI didn\'t return valid sources.', addedSearching:'✓ {n} sources added — finding news…', addedDone:'✓ {n} sources added and news loaded', noneNew:'⚠️ No new source added (you already had them).' },
+        fr: { searching:'🤖 Recherche de sources pour toi…', busy:'⚠️ Impossible de trouver des sources maintenant (IA surchargée). Réessaie dans quelques secondes.', invalid:'⚠️ L\'IA n\'a pas renvoyé de sources valides.', addedSearching:'✓ {n} sources ajoutées — recherche d\'actus…', addedDone:'✓ {n} sources ajoutées et actus chargées', noneNew:'⚠️ Aucune nouvelle source ajoutée (tu les avais déjà).' },
+        ru: { searching:'🤖 Ищу источники для вас…', busy:'⚠️ Сейчас не удалось найти источники (ИИ перегружен). Повторите через несколько секунд.', invalid:'⚠️ ИИ не вернул допустимые источники.', addedSearching:'✓ Добавлено источников: {n} — ищу новости…', addedDone:'✓ Добавлено источников: {n}, новости загружены', noneNew:'⚠️ Новых источников не добавлено (они уже были).' },
+        zh: { searching:'🤖 正在为你查找来源…', busy:'⚠️ 现在无法查找来源（AI 过载）。请几秒后重试。', invalid:'⚠️ AI 未返回有效来源。', addedSearching:'✓ 已添加 {n} 个来源 — 正在查找新闻…', addedDone:'✓ 已添加 {n} 个来源，新闻已加载', noneNew:'⚠️ 未添加新来源（你已经有了）。' },
+        tr: { searching:'🤖 Senin için kaynaklar aranıyor…', busy:'⚠️ Şu anda kaynak bulunamadı (yapay zeka yoğun). Birkaç saniye sonra tekrar dene.', invalid:'⚠️ Yapay zeka geçerli kaynak döndürmedi.', addedSearching:'✓ {n} kaynak eklendi — haberler aranıyor…', addedDone:'✓ {n} kaynak eklendi ve haberler yüklendi', noneNew:'⚠️ Yeni kaynak eklenmedi (zaten vardı).' },
+        ar: { searching:'🤖 جارٍ البحث عن مصادر لك…', busy:'⚠️ تعذّر البحث عن مصادر الآن (الذكاء الاصطناعي مثقل). أعد المحاولة بعد ثوانٍ.', invalid:'⚠️ لم يُرجِع الذكاء الاصطناعي مصادر صالحة.', addedSearching:'✓ تمت إضافة {n} مصدرًا — جارٍ جلب الأخبار…', addedDone:'✓ تمت إضافة {n} مصدرًا وتحميل الأخبار', noneNew:'⚠️ لم تتم إضافة أي مصدر جديد (كانت لديك بالفعل).' },
+        fa: { searching:'🤖 در حال یافتن منابع برای شما…', busy:'⚠️ اکنون نمی‌توان منابع را جست‌وجو کرد (هوش مصنوعی مشغول است). چند ثانیه دیگر دوباره تلاش کنید.', invalid:'⚠️ هوش مصنوعی منابع معتبری برنگرداند.', addedSearching:'✓ {n} منبع افزوده شد — در حال یافتن اخبار…', addedDone:'✓ {n} منبع افزوده شد و اخبار بارگذاری شد', noneNew:'⚠️ منبع جدیدی افزوده نشد (قبلاً داشتید).' },
+        he: { searching:'🤖 מחפש מקורות עבורך…', busy:'⚠️ לא ניתן לחפש מקורות כעת (ה-AI עמוס). נסה שוב בעוד כמה שניות.', invalid:'⚠️ ה-AI לא החזיר מקורות תקינים.', addedSearching:'✓ נוספו {n} מקורות — מחפש חדשות…', addedDone:'✓ נוספו {n} מקורות והחדשות נטענו', noneNew:'⚠️ לא נוסף מקור חדש (כבר היו לך).' },
+        nl: { searching:'🤖 Bronnen zoeken voor jou…', busy:'⚠️ Kon nu geen bronnen vinden (AI overbelast). Probeer het over enkele seconden opnieuw.', invalid:'⚠️ De AI gaf geen geldige bronnen terug.', addedSearching:'✓ {n} bronnen toegevoegd — nieuws zoeken…', addedDone:'✓ {n} bronnen toegevoegd en nieuws geladen', noneNew:'⚠️ Geen nieuwe bron toegevoegd (had je al).' },
+        it: { searching:'🤖 Ricerca di fonti per te…', busy:'⚠️ Impossibile cercare fonti ora (IA sovraccarica). Riprova tra qualche secondo.', invalid:'⚠️ L\'IA non ha restituito fonti valide.', addedSearching:'✓ {n} fonti aggiunte — ricerca notizie…', addedDone:'✓ {n} fonti aggiunte e notizie caricate', noneNew:'⚠️ Nessuna nuova fonte aggiunta (le avevi già).' },
+        pt: { searching:'🤖 A procurar fontes para ti…', busy:'⚠️ Não foi possível procurar fontes agora (IA sobrecarregada). Tenta novamente em alguns segundos.', invalid:'⚠️ A IA não devolveu fontes válidas.', addedSearching:'✓ {n} fontes adicionadas — a procurar notícias…', addedDone:'✓ {n} fontes adicionadas e notícias carregadas', noneNew:'⚠️ Nenhuma fonte nova adicionada (já as tinhas).' },
+        hi: { searching:'🤖 आपके लिए स्रोत खोज रहे हैं…', busy:'⚠️ अभी स्रोत नहीं खोजे जा सके (AI व्यस्त)। कुछ सेकंड में पुनः प्रयास करें।', invalid:'⚠️ AI ने मान्य स्रोत नहीं लौटाए।', addedSearching:'✓ {n} स्रोत जोड़े गए — समाचार खोज रहे हैं…', addedDone:'✓ {n} स्रोत जोड़े गए और समाचार लोड हुए', noneNew:'⚠️ कोई नया स्रोत नहीं जोड़ा गया (आपके पास पहले से थे)।' },
+    };
+    function _sfMsg(key, n) {
+        const tbl = SF_I18N[currentLang] || SF_I18N.en;
+        return String(tbl[key] || SF_I18N.en[key] || '').replace('{n}', n != null ? n : '');
+    }
+
     const aiSourceFinder = {
         // Resolve a topic id (or free-text token) to its English label so the
         // prompt is unambiguous regardless of the user's UI language.
@@ -7807,7 +7842,7 @@ ${this.buildContext()}`;
             finally { hideSourceLoading(); }
         },
         async _run(profile, topics, regions) {
-            this._setStatus('🤖 Buscando fuentes para ti…');
+            this._setStatus(_sfMsg('searching'));
 
             const system = [
                 'You are a research assistant. The user wants to discover information',
@@ -7844,7 +7879,7 @@ ${this.buildContext()}`;
             // veil flashed and no news loaded).
             const raw = await claudeComplete({ system, max_tokens: 2048, messages: [{ role: 'user', content: user }] });
             if (raw == null) {
-                this._setStatus('⚠️ No se pudieron buscar fuentes ahora (IA saturada). Reinténtalo en unos segundos.');
+                this._setStatus(_sfMsg('busy'));
                 this._clearStatus(); return;
             }
             const text = raw.trim();
@@ -7858,7 +7893,7 @@ ${this.buildContext()}`;
                 if (m) { try { arr = JSON.parse(m[0]); } catch (_) {} }
             }
             if (!Array.isArray(arr) || !arr.length) {
-                this._setStatus('⚠️ La IA no devolvió fuentes válidas.');
+                this._setStatus(_sfMsg('invalid'));
                 this._clearStatus(); return;
             }
 
@@ -7866,15 +7901,15 @@ ${this.buildContext()}`;
             try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
 
             if (added > 0) {
-                this._setStatus(`✓ ${added} fuentes añadidas — buscando noticias…`);
+                this._setStatus(_sfMsg('addedSearching', added));
                 // Kick the refresh and keep the veil up only until the news list is
                 // populated (fast pass); geolocation continues in the background so
                 // the UI is never frozen behind the veil for ~35s.
                 geoFeed.refresh(true).catch(() => {});
                 await geoFeed.onceNewsPass(9000);
-                this._setStatus(`✓ ${added} fuentes añadidas y noticias cargadas`);
+                this._setStatus(_sfMsg('addedDone', added));
             } else {
-                this._setStatus('⚠️ No se añadió ninguna fuente nueva (ya las tenías).');
+                this._setStatus(_sfMsg('noneNew'));
             }
             this._clearStatus(8000);
         },
