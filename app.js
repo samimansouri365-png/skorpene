@@ -6788,48 +6788,81 @@ ${this.buildContext()}`;
                     if (ts < cut) continue;
                     (bySrc[art.sourceId] = bySrc[art.sourceId] || []).push({ art, ts });
                 }
-                // Hybrid geolocation to FILL each source's icon quota: the local
-                // gazetteer runs first (free — titles that name a known place),
-                // and the AI only geolocates the REMAINDER needed to reach the
-                // user's icons-per-source setting. Each article is sent to the
-                // AI at most once EVER (misses are cached as skip), so the
-                // steady-state cost is a few small calls per day, not per refresh.
-                const aiTodo = [];
-                let changed = 0;
+                const todo = [];
                 Object.keys(bySrc).forEach(sid => {
                     const arr = bySrc[sid].sort((a, b) => b.ts - a.ts);   // newest first
                     let need = cap - (placedBySrc[sid] || 0);
                     for (const { art, ts } of arr) {
                         if (need <= 0) break;
-                        const cached = this.geoCache[art.id];
-                        if (cached && cached.skip) continue;       // AI already said un-locatable
-                        if (cached) { this._place(art, cached, ts); need--; continue; }
-                        const local = localGeolocate(art.title);   // free pass, no API
-                        if (local) {
-                            this.geoCache[art.id] = local; changed++;
-                            this._place(art, local, ts); need--; continue;
-                        }
-                        aiTodo.push(art); need--;                  // AI fills this slot below
+                        const geo = this.geoCache[art.id];
+                        if (geo && geo.skip) continue;             // known un-locatable → don't waste a slot, try the next
+                        if (geo) { this._place(art, geo, ts); need--; }   // cached placement (free)
+                        else { todo.push(art); need--; }           // needs AI geolocation
                     }
                 });
-                if (changed) this._saveGeo();
-                if (!aiTodo.length || !isAiEnabled()) return;
-                // AI pass — small batches with a hard per-refresh ceiling, so a
-                // first load with many sources can't burn a pile of credits at
-                // once; leftovers simply fill in over the next refreshes.
-                const BATCH = 10, MAX_PER_REFRESH = 30;
-                for (let b = 0; b < aiTodo.length && b < MAX_PER_REFRESH; b += BATCH) {
-                    const slice = aiTodo.slice(b, b + BATCH);
-                    const got = await this._aiGeolocate(slice.map(a => ({
+                if (!todo.length) return;
+                if (!isAiEnabled()) return;
+                const byId = new Map(todo.map(a => [a.id, a]));
+                const system =
+                    'You are a precise news geolocator. For each item (a headline + short summary) decide ' +
+                    'WHERE on Earth the story actually takes place, using your full world knowledge and the ' +
+                    'CONTEXT of the item — not just surface words.\n' +
+                    'Think about what the story is really about: the people, organizations, events and places ' +
+                    'named, and resolve ambiguous names using context. Example: "the White House" / "Casa ' +
+                    'Blanca" in a story about US politics or a fight/event there is the White House in ' +
+                    'Washington DC, USA — NOT the city of Casablanca in Morocco. A name can be a building, an ' +
+                    'organization, or a person; infer the REAL place it refers to.\n' +
+                    'STRICT RULES:\n' +
+                    '- Accuracy matters far more than coverage. Only return a location you are genuinely ' +
+                    'confident is correct.\n' +
+                    '- If the item is ambiguous, generic, or has no clearly locatable place, OMIT it entirely. ' +
+                    'Do NOT guess and do NOT force a country. Returning fewer items than given is expected and good.\n' +
+                    '- If there is only a partial hint (a region, province or town), use it only if you can ' +
+                    'place it confidently; otherwise omit.\n' +
+                    '- Prefer the most specific correct place (city > region > country).\n' +
+                    'Reply ONLY with a JSON array, no extra text:\n' +
+                    '[{"id":"<id>","place":"<city or country, English>","lat":<number>,"lng":<number>,' +
+                    '"emoji":"<one emoji for the topic>","confidence":<0-10 how sure you are about the LOCATION>,' +
+                    '"importance":<0-10 newsworthiness>}]\n' +
+                    'Include an item ONLY if its location confidence is 7 or higher. Omit everything else.';
+                // Small batches so the JSON reply never gets truncated by the token cap.
+                const BATCH = 12;
+                let changed = 0;
+                for (let b = 0; b < todo.length && b < 96; b += BATCH) {
+                    const slice = todo.slice(b, b + BATCH);
+                    const items = slice.map(a => ({
                         id: a.id, text: [a.title, a.summary].filter(Boolean).join(' — ').slice(0, 280),
-                    })));
-                    if (!got) return;   // AI unreachable — leave uncached, retry on a later refresh
-                    slice.forEach(a => {
-                        const geo = got[a.id];
-                        if (geo) { this.geoCache[a.id] = geo; this._place(a, geo, this._articleTs(a.published)); }
-                        else this.geoCache[a.id] = { skip: true };   // asked once, never re-asked
+                    }));
+                    let arr = null;
+                    try {
+                        // claudeComplete retries transient overloads, so icons still
+                        // get placed during the API's busy spikes.
+                        const txt = await claudeComplete({ system, max_tokens: 4000, messages: [{ role: 'user', content: JSON.stringify(items) }] });
+                        if (txt == null) continue;
+                        arr = this._parseGeoArray(txt);
+                    } catch (_) { continue; }
+                    if (!Array.isArray(arr)) continue;
+                    // Track which ids the AI confidently placed; everything else in
+                    // this batch is treated as "un-locatable" and cached as a skip so
+                    // we never force a wrong marker and never re-query it every refresh.
+                    const placedIds = new Set();
+                    arr.forEach(g => {
+                        if (!g || !g.id || typeof g.lat !== 'number' || typeof g.lng !== 'number' || !byId.has(g.id)) return;
+                        // Confidence gate — correctness over coverage. Skip low-confidence
+                        // guesses (this is what stops "Casa Blanca" → Casablanca errors).
+                        const conf = typeof g.confidence === 'number' ? g.confidence : 0;
+                        if (conf < 7) return;
+                        const geo = { lat: g.lat, lng: g.lng, place: g.place || '', emoji: g.emoji || '📰', importance: typeof g.importance === 'number' ? g.importance : 5 };
+                        this.geoCache[g.id] = geo; changed++;
+                        placedIds.add(g.id);
+                        const art = byId.get(g.id);
+                        this._place(art, geo, this._articleTs(art.published));
                     });
-                    this._saveGeo();
+                    // Cache un-locatable items so they don't get re-queried forever.
+                    slice.forEach(a => {
+                        if (!placedIds.has(a.id) && !this.geoCache[a.id]) { this.geoCache[a.id] = { skip: true }; changed++; }
+                    });
+                    if (changed) this._saveGeo();
                 }
             } finally {
                 this._busy = false;
@@ -6909,16 +6942,6 @@ ${this.buildContext()}`;
                 if (cached && !cached.skip) {
                     this._placeNewsItem(it, cached);
                     placed.push({ id: it.event_id, lat: cached.lat, lng: cached.lng });
-                    continue;
-                }
-                // Local gazetteer FIRST (free) — a title/summary that names a known
-                // place is placed with zero AI cost. Only what the gazetteer can't
-                // resolve falls through to the one AI call below.
-                const local = localGeolocate(_cleanMessage(it.message || '').replace(/\s+/g, ' '));
-                if (local) {
-                    if (aid) { this.geoCache[aid] = local; this._saveGeo(); }
-                    this._placeNewsItem(it, local);
-                    placed.push({ id: it.event_id, lat: local.lat, lng: local.lng });
                     continue;
                 }
                 todo.push(it);
