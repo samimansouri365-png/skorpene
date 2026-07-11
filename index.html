@@ -18,12 +18,14 @@
     <meta name="twitter:title" content="Skorpene — Personalized real-time feed with map">
     <meta name="twitter:description" content="A real-time map with a personalized feed of the topics you love — sports, markets, tech, your hobbies, or any combination of them — with AI assistance.">
 
-    <!-- Favicon: Skorpene scorpion on black. Absolute paths + explicit sizes
-         so browsers pick the right one for the tab (some skip <link rel=icon>
-         if href is relative from a nested URL, others need /favicon.ico at root). -->
-    <link rel="icon" href="/favicon.ico?v=20260702d" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260702d">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png?v=20260702d">
+    <!-- Favicon: Skorpene scorpion on black. Absolute paths + REAL sizes (the
+         old block declared the 512px PNG as 32x32 AND 192x192 — contradictory
+         metadata that can make Google's favicon picker skip it). favicon-192
+         is a true 192x192 (multiple of 48px, Google Search's preferred size);
+         favicon.png is the true 512x512. Keep these URLs stable. -->
+    <link rel="icon" href="/favicon.ico?v=20260702d" sizes="32x32">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260711">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png?v=20260702d">
     <link rel="shortcut icon" href="/favicon.ico?v=20260702d">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260702d">
 
