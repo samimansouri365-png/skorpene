@@ -84,32 +84,34 @@ def _safe_json(blob):
         return None
 
 # Plan limits enforced server-side (the client mirrors these for UX only).
-#   free → no AI at all          pro → PRO_AI_DAILY assistant queries/day
+#   free → no AI at all     pro → PRO_AI_DAILY assistant uses per rolling 24h
 #   team → unlimited AI
-PRO_AI_DAILY = 20
+PRO_AI_DAILY = 10
+_AI_QUOTA_WINDOW = 24 * 3600   # rolling window: a true 24-hour wait, not a midnight reset
 
 
 def _ai_quota(user_id):
-    """How many assistant queries this user has used today + the cap reached
-    flag is computed by the caller. Returns the integer count for the UTC day."""
-    day = time.strftime('%Y-%m-%d', time.gmtime())
+    """Assistant uses inside the rolling last 24 hours. When the cap is hit,
+    each slot frees up exactly 24h after the use that consumed it — the user
+    literally waits 24 hours, which is what was asked for."""
+    cutoff = time.time() - _AI_QUOTA_WINDOW
     with _auth_db() as conn:
         row = conn.execute(
-            'SELECT n FROM ai_usage WHERE user_id=? AND day=?', (user_id, day)).fetchone()
+            'SELECT COUNT(*) AS n FROM ai_events WHERE user_id=? AND ts>?',
+            (user_id, cutoff)).fetchone()
     return int(row['n']) if row else 0
 
 
 def _ai_quota_consume(user_id):
-    """Atomically record one assistant query for today and return the new count."""
-    day = time.strftime('%Y-%m-%d', time.gmtime())
+    """Record one assistant use now (pruning events older than the window for
+    every user — the table stays tiny) and return the in-window count."""
+    now = time.time()
     with _AUTH_LOCK, _auth_db() as conn:
-        conn.execute(
-            'INSERT INTO ai_usage (user_id, day, n) VALUES (?,?,1) '
-            'ON CONFLICT(user_id, day) DO UPDATE SET n = n + 1',
-            (user_id, day))
+        conn.execute('DELETE FROM ai_events WHERE ts<?', (now - _AI_QUOTA_WINDOW,))
+        conn.execute('INSERT INTO ai_events (user_id, ts) VALUES (?,?)', (user_id, now))
         conn.commit()
         row = conn.execute(
-            'SELECT n FROM ai_usage WHERE user_id=? AND day=?', (user_id, day)).fetchone()
+            'SELECT COUNT(*) AS n FROM ai_events WHERE user_id=?', (user_id,)).fetchone()
     return int(row['n']) if row else 1
 
 
@@ -142,13 +144,21 @@ def _auth_init():
             token TEXT PRIMARY KEY,
             user_id INTEGER NOT NULL,
             created REAL NOT NULL)''')
-        # Daily AI-assistant usage, for enforcing the Pro plan's 20 queries/day.
-        # One row per (user, UTC day); team is unlimited so it never writes here.
+        # LEGACY day-keyed AI usage (kept so old DBs load; no longer written).
         conn.execute('''CREATE TABLE IF NOT EXISTS ai_usage (
             user_id INTEGER NOT NULL,
             day TEXT NOT NULL,
             n INTEGER NOT NULL DEFAULT 0,
             PRIMARY KEY (user_id, day))''')
+        # Rolling-24h AI usage: one row per counted assistant use (chat message
+        # or chat source add/remove). The Pro cap counts rows in the last 24h,
+        # so a maxed-out user waits a true 24 hours per freed slot. Team never
+        # writes here (unlimited); rows older than the window are pruned.
+        conn.execute('''CREATE TABLE IF NOT EXISTS ai_events (
+            user_id INTEGER NOT NULL,
+            ts REAL NOT NULL)''')
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_ai_events_user_ts '
+                     'ON ai_events (user_id, ts)')
         # Billing columns. Added with try/except so re-runs on an existing DB
         # don't error — SQLite has no "ADD COLUMN IF NOT EXISTS" before 3.35.
         for col_sql in (
@@ -1223,9 +1233,10 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         plan = (user['plan'] or 'free').lower()
         if plan not in ('pro', 'team'):
             self._json_response(403, {'error': 'plan_required'}); return
-        # The 20/day cap applies to assistant queries (tagged count_quota) on the
-        # Pro plan only. Team is unlimited; untagged calls (translation, source
-        # resolving) require a paid plan but don't burn the daily assistant quota.
+        # The Pro cap (PRO_AI_DAILY uses per ROLLING 24h) applies to assistant
+        # uses tagged count_quota: chat messages and chat source add/remove.
+        # Team is unlimited; untagged calls (background geolocation, onboarding
+        # source search) require a paid plan but don't burn the allowance.
         if plan == 'pro' and req_data.get('count_quota'):
             if _ai_quota(user['id']) >= PRO_AI_DAILY:
                 self._json_response(429, {'error': 'quota_exceeded', 'limit': PRO_AI_DAILY}); return

@@ -1283,19 +1283,19 @@
     // ── Plan-gating strings (Free vs Pro/Team) ── shown when a free account hits
     // the AI lock, the daily Pro quota, or the 5-source Free cap.
     const PLAN_GATE_I18N = {
-        es:{ aiLockTitle:'Asistente IA — Pro', aiLockBody:'El asistente de IA está disponible en los planes Pro y Team. Mejora para preguntarle lo que quieras sobre tus noticias.', aiLockCta:'Mejorar a Pro', aiPlanRequired:'El asistente de IA es una función de pago. Mejora a Pro para usarlo.', aiQuotaReached:'Has alcanzado tu límite de 20 consultas de IA de hoy. Pásate a Team para uso ilimitado.', srcLimitFree:'Has alcanzado el límite de 5 fuentes del plan Free. Mejora a Pro para fuentes ilimitadas.' },
-        en:{ aiLockTitle:'AI assistant — Pro', aiLockBody:'The AI assistant is available on the Pro and Team plans. Upgrade to ask it anything about your news.', aiLockCta:'Upgrade to Pro', aiPlanRequired:'The AI assistant is a paid feature. Upgrade to Pro to use it.', aiQuotaReached:'You\'ve reached your 20 AI queries for today. Move up to Team for unlimited use.', srcLimitFree:'You\'ve reached the Free plan limit of 5 sources. Upgrade to Pro for unlimited sources.' },
-        fr:{ aiLockTitle:'Assistant IA — Pro', aiLockBody:'L\'assistant IA est disponible sur les plans Pro et Team. Passe à un plan supérieur pour tout lui demander sur tes actualités.', aiLockCta:'Passer à Pro', aiPlanRequired:'L\'assistant IA est une fonction payante. Passe à Pro pour l\'utiliser.', aiQuotaReached:'Tu as atteint tes 20 requêtes IA du jour. Passe à Team pour un usage illimité.', srcLimitFree:'Tu as atteint la limite de 5 sources du plan Free. Passe à Pro pour des sources illimitées.' },
-        ru:{ aiLockTitle:'ИИ-ассистент — Pro', aiLockBody:'ИИ-ассистент доступен в планах Pro и Team. Перейдите на платный план, чтобы спрашивать его о ваших новостях.', aiLockCta:'Перейти на Pro', aiPlanRequired:'ИИ-ассистент — платная функция. Перейдите на Pro, чтобы пользоваться им.', aiQuotaReached:'Вы исчерпали 20 запросов к ИИ на сегодня. Перейдите на Team для безлимита.', srcLimitFree:'Достигнут лимит в 5 источников плана Free. Перейдите на Pro для безлимитных источников.' },
-        zh:{ aiLockTitle:'AI 助手 — Pro', aiLockBody:'AI 助手在 Pro 和 Team 方案中可用。升级即可询问关于你新闻的任何问题。', aiLockCta:'升级到 Pro', aiPlanRequired:'AI 助手是付费功能。升级到 Pro 即可使用。', aiQuotaReached:'你已用完今天的 20 次 AI 查询。升级到 Team 可无限使用。', srcLimitFree:'你已达到 Free 方案的 5 个来源上限。升级到 Pro 可获得无限来源。' },
-        tr:{ aiLockTitle:'YZ asistanı — Pro', aiLockBody:'YZ asistanı Pro ve Team planlarında mevcuttur. Haberlerin hakkında her şeyi sormak için yükselt.', aiLockCta:'Pro\'ya geç', aiPlanRequired:'YZ asistanı ücretli bir özelliktir. Kullanmak için Pro\'ya geç.', aiQuotaReached:'Bugünkü 20 YZ sorgu hakkını doldurdun. Sınırsız kullanım için Team\'e geç.', srcLimitFree:'Free planının 5 kaynak sınırına ulaştın. Sınırsız kaynak için Pro\'ya geç.' },
-        ar:{ aiLockTitle:'مساعد الذكاء الاصطناعي — Pro', aiLockBody:'مساعد الذكاء الاصطناعي متاح في خطتي Pro و Team. قم بالترقية لتسأله أي شيء عن أخبارك.', aiLockCta:'الترقية إلى Pro', aiPlanRequired:'مساعد الذكاء الاصطناعي ميزة مدفوعة. قم بالترقية إلى Pro لاستخدامه.', aiQuotaReached:'لقد وصلت إلى حد 20 استفسارًا للذكاء الاصطناعي اليوم. انتقل إلى Team للاستخدام غير المحدود.', srcLimitFree:'لقد وصلت إلى حد 5 مصادر في خطة Free. قم بالترقية إلى Pro للحصول على مصادر غير محدودة.' },
-        fa:{ aiLockTitle:'دستیار هوش مصنوعی — Pro', aiLockBody:'دستیار هوش مصنوعی در پلن‌های Pro و Team در دسترس است. ارتقا بده تا هر چیزی درباره اخبارت بپرسی.', aiLockCta:'ارتقا به Pro', aiPlanRequired:'دستیار هوش مصنوعی یک قابلیت پولی است. برای استفاده به Pro ارتقا بده.', aiQuotaReached:'به سقف ۲۰ پرسش هوش مصنوعی امروز رسیدی. برای استفاده نامحدود به Team برو.', srcLimitFree:'به محدودیت ۵ منبع پلن Free رسیدی. برای منابع نامحدود به Pro ارتقا بده.' },
-        he:{ aiLockTitle:'עוזר AI — Pro', aiLockBody:'עוזר ה-AI זמין בתוכניות Pro ו-Team. שדרג כדי לשאול אותו כל דבר על החדשות שלך.', aiLockCta:'שדרג ל-Pro', aiPlanRequired:'עוזר ה-AI הוא תכונה בתשלום. שדרג ל-Pro כדי להשתמש בו.', aiQuotaReached:'הגעת ל-20 שאילתות ה-AI של היום. עבור ל-Team לשימוש ללא הגבלה.', srcLimitFree:'הגעת למגבלת 5 המקורות של תוכנית Free. שדרג ל-Pro למקורות ללא הגבלה.' },
-        nl:{ aiLockTitle:'AI-assistent — Pro', aiLockBody:'De AI-assistent is beschikbaar in de Pro- en Team-plannen. Upgrade om alles over je nieuws te vragen.', aiLockCta:'Upgraden naar Pro', aiPlanRequired:'De AI-assistent is een betaalde functie. Upgrade naar Pro om hem te gebruiken.', aiQuotaReached:'Je hebt je 20 AI-vragen van vandaag bereikt. Stap over op Team voor onbeperkt gebruik.', srcLimitFree:'Je hebt de limiet van 5 bronnen van het Free-plan bereikt. Upgrade naar Pro voor onbeperkte bronnen.' },
-        it:{ aiLockTitle:'Assistente IA — Pro', aiLockBody:'L\'assistente IA è disponibile nei piani Pro e Team. Passa a un piano superiore per chiedergli qualsiasi cosa sulle tue notizie.', aiLockCta:'Passa a Pro', aiPlanRequired:'L\'assistente IA è una funzione a pagamento. Passa a Pro per usarlo.', aiQuotaReached:'Hai raggiunto le 20 richieste IA di oggi. Passa a Team per un uso illimitato.', srcLimitFree:'Hai raggiunto il limite di 5 fonti del piano Free. Passa a Pro per fonti illimitate.' },
-        pt:{ aiLockTitle:'Assistente IA — Pro', aiLockBody:'O assistente de IA está disponível nos planos Pro e Team. Faz upgrade para lhe perguntar tudo sobre as tuas notícias.', aiLockCta:'Obter Pro', aiPlanRequired:'O assistente de IA é uma função paga. Faz upgrade para Pro para o usar.', aiQuotaReached:'Atingiste as tuas 20 consultas de IA de hoje. Passa para Team para uso ilimitado.', srcLimitFree:'Atingiste o limite de 5 fontes do plano Free. Faz upgrade para Pro para fontes ilimitadas.' },
-        hi:{ aiLockTitle:'AI सहायक — Pro', aiLockBody:'AI सहायक Pro और Team प्लान में उपलब्ध है। अपनी खबरों के बारे में कुछ भी पूछने के लिए अपग्रेड करें।', aiLockCta:'Pro में अपग्रेड करें', aiPlanRequired:'AI सहायक एक सशुल्क सुविधा है। इसे उपयोग करने के लिए Pro में अपग्रेड करें।', aiQuotaReached:'आपने आज की 20 AI क्वेरी पूरी कर ली हैं। असीमित उपयोग के लिए Team में जाएँ।', srcLimitFree:'आप Free प्लान की 5 स्रोतों की सीमा तक पहुँच गए हैं। असीमित स्रोतों के लिए Pro में अपग्रेड करें।' },
+        es:{ aiLockTitle:'Asistente IA — Pro', aiLockBody:'El asistente de IA está disponible en los planes Pro y Team. Mejora para preguntarle lo que quieras sobre tus noticias.', aiLockCta:'Mejorar a Pro', aiPlanRequired:'El asistente de IA es una función de pago. Mejora a Pro para usarlo.', aiQuotaReached:'Has alcanzado tu límite de 10 consultas de IA de hoy. Pásate a Team para uso ilimitado.', srcLimitFree:'Has alcanzado el límite de 5 fuentes del plan Free. Mejora a Pro para fuentes ilimitadas.' },
+        en:{ aiLockTitle:'AI assistant — Pro', aiLockBody:'The AI assistant is available on the Pro and Team plans. Upgrade to ask it anything about your news.', aiLockCta:'Upgrade to Pro', aiPlanRequired:'The AI assistant is a paid feature. Upgrade to Pro to use it.', aiQuotaReached:'You\'ve reached your 10 AI queries for today. Move up to Team for unlimited use.', srcLimitFree:'You\'ve reached the Free plan limit of 5 sources. Upgrade to Pro for unlimited sources.' },
+        fr:{ aiLockTitle:'Assistant IA — Pro', aiLockBody:'L\'assistant IA est disponible sur les plans Pro et Team. Passe à un plan supérieur pour tout lui demander sur tes actualités.', aiLockCta:'Passer à Pro', aiPlanRequired:'L\'assistant IA est une fonction payante. Passe à Pro pour l\'utiliser.', aiQuotaReached:'Tu as atteint tes 10 requêtes IA du jour. Passe à Team pour un usage illimité.', srcLimitFree:'Tu as atteint la limite de 5 sources du plan Free. Passe à Pro pour des sources illimitées.' },
+        ru:{ aiLockTitle:'ИИ-ассистент — Pro', aiLockBody:'ИИ-ассистент доступен в планах Pro и Team. Перейдите на платный план, чтобы спрашивать его о ваших новостях.', aiLockCta:'Перейти на Pro', aiPlanRequired:'ИИ-ассистент — платная функция. Перейдите на Pro, чтобы пользоваться им.', aiQuotaReached:'Вы исчерпали 10 запросов к ИИ на сегодня. Перейдите на Team для безлимита.', srcLimitFree:'Достигнут лимит в 5 источников плана Free. Перейдите на Pro для безлимитных источников.' },
+        zh:{ aiLockTitle:'AI 助手 — Pro', aiLockBody:'AI 助手在 Pro 和 Team 方案中可用。升级即可询问关于你新闻的任何问题。', aiLockCta:'升级到 Pro', aiPlanRequired:'AI 助手是付费功能。升级到 Pro 即可使用。', aiQuotaReached:'你已用完今天的 10 次 AI 查询。升级到 Team 可无限使用。', srcLimitFree:'你已达到 Free 方案的 5 个来源上限。升级到 Pro 可获得无限来源。' },
+        tr:{ aiLockTitle:'YZ asistanı — Pro', aiLockBody:'YZ asistanı Pro ve Team planlarında mevcuttur. Haberlerin hakkında her şeyi sormak için yükselt.', aiLockCta:'Pro\'ya geç', aiPlanRequired:'YZ asistanı ücretli bir özelliktir. Kullanmak için Pro\'ya geç.', aiQuotaReached:'Bugünkü 10 YZ sorgu hakkını doldurdun. Sınırsız kullanım için Team\'e geç.', srcLimitFree:'Free planının 5 kaynak sınırına ulaştın. Sınırsız kaynak için Pro\'ya geç.' },
+        ar:{ aiLockTitle:'مساعد الذكاء الاصطناعي — Pro', aiLockBody:'مساعد الذكاء الاصطناعي متاح في خطتي Pro و Team. قم بالترقية لتسأله أي شيء عن أخبارك.', aiLockCta:'الترقية إلى Pro', aiPlanRequired:'مساعد الذكاء الاصطناعي ميزة مدفوعة. قم بالترقية إلى Pro لاستخدامه.', aiQuotaReached:'لقد وصلت إلى حد 10 استفسارًا للذكاء الاصطناعي اليوم. انتقل إلى Team للاستخدام غير المحدود.', srcLimitFree:'لقد وصلت إلى حد 5 مصادر في خطة Free. قم بالترقية إلى Pro للحصول على مصادر غير محدودة.' },
+        fa:{ aiLockTitle:'دستیار هوش مصنوعی — Pro', aiLockBody:'دستیار هوش مصنوعی در پلن‌های Pro و Team در دسترس است. ارتقا بده تا هر چیزی درباره اخبارت بپرسی.', aiLockCta:'ارتقا به Pro', aiPlanRequired:'دستیار هوش مصنوعی یک قابلیت پولی است. برای استفاده به Pro ارتقا بده.', aiQuotaReached:'به سقف ۱۰ پرسش هوش مصنوعی امروز رسیدی. برای استفاده نامحدود به Team برو.', srcLimitFree:'به محدودیت ۵ منبع پلن Free رسیدی. برای منابع نامحدود به Pro ارتقا بده.' },
+        he:{ aiLockTitle:'עוזר AI — Pro', aiLockBody:'עוזר ה-AI זמין בתוכניות Pro ו-Team. שדרג כדי לשאול אותו כל דבר על החדשות שלך.', aiLockCta:'שדרג ל-Pro', aiPlanRequired:'עוזר ה-AI הוא תכונה בתשלום. שדרג ל-Pro כדי להשתמש בו.', aiQuotaReached:'הגעת ל-10 שאילתות ה-AI של היום. עבור ל-Team לשימוש ללא הגבלה.', srcLimitFree:'הגעת למגבלת 5 המקורות של תוכנית Free. שדרג ל-Pro למקורות ללא הגבלה.' },
+        nl:{ aiLockTitle:'AI-assistent — Pro', aiLockBody:'De AI-assistent is beschikbaar in de Pro- en Team-plannen. Upgrade om alles over je nieuws te vragen.', aiLockCta:'Upgraden naar Pro', aiPlanRequired:'De AI-assistent is een betaalde functie. Upgrade naar Pro om hem te gebruiken.', aiQuotaReached:'Je hebt je 10 AI-vragen van vandaag bereikt. Stap over op Team voor onbeperkt gebruik.', srcLimitFree:'Je hebt de limiet van 5 bronnen van het Free-plan bereikt. Upgrade naar Pro voor onbeperkte bronnen.' },
+        it:{ aiLockTitle:'Assistente IA — Pro', aiLockBody:'L\'assistente IA è disponibile nei piani Pro e Team. Passa a un piano superiore per chiedergli qualsiasi cosa sulle tue notizie.', aiLockCta:'Passa a Pro', aiPlanRequired:'L\'assistente IA è una funzione a pagamento. Passa a Pro per usarlo.', aiQuotaReached:'Hai raggiunto le 10 richieste IA di oggi. Passa a Team per un uso illimitato.', srcLimitFree:'Hai raggiunto il limite di 5 fonti del piano Free. Passa a Pro per fonti illimitate.' },
+        pt:{ aiLockTitle:'Assistente IA — Pro', aiLockBody:'O assistente de IA está disponível nos planos Pro e Team. Faz upgrade para lhe perguntar tudo sobre as tuas notícias.', aiLockCta:'Obter Pro', aiPlanRequired:'O assistente de IA é uma função paga. Faz upgrade para Pro para o usar.', aiQuotaReached:'Atingiste as tuas 10 consultas de IA de hoje. Passa para Team para uso ilimitado.', srcLimitFree:'Atingiste o limite de 5 fontes do plano Free. Faz upgrade para Pro para fontes ilimitadas.' },
+        hi:{ aiLockTitle:'AI सहायक — Pro', aiLockBody:'AI सहायक Pro और Team प्लान में उपलब्ध है। अपनी खबरों के बारे में कुछ भी पूछने के लिए अपग्रेड करें।', aiLockCta:'Pro में अपग्रेड करें', aiPlanRequired:'AI सहायक एक सशुल्क सुविधा है। इसे उपयोग करने के लिए Pro में अपग्रेड करें।', aiQuotaReached:'आपने आज की 10 AI क्वेरी पूरी कर ली हैं। असीमित उपयोग के लिए Team में जाएँ।', srcLimitFree:'आप Free प्लान की 5 स्रोतों की सीमा तक पहुँच गए हैं। असीमित स्रोतों के लिए Pro में अपग्रेड करें।' },
     };
     Object.keys(PLAN_GATE_I18N).forEach(lng => { if (T[lng]) Object.assign(T[lng], PLAN_GATE_I18N[lng]); });
     // ── Dutch / Italian / Hindi / Portuguese — consolidated translations for the
@@ -5482,6 +5482,33 @@ ${context}`;
     // ── AI assistant (Claude via the /api/claude backend proxy) ──
     // The user asks questions; we send the current map/news data as context and
     // render Claude's answer. The API key lives ONLY on the server (env var).
+    // ── Conversation persistence ── both assistant chats survive a tab reload
+    // (user request: "toda la conversación desaparece al recargar"). Saved
+    // per-account (key suffixed with the user id) only at points where a turn
+    // has its FINAL text — never the "Pensando…" placeholder — and restored on
+    // init, capped to the last 30 turns.
+    function _convoKey(base) {
+        let uid = 'anon';
+        try {
+            const u = JSON.parse(localStorage.getItem('geoscope_auth_user') || 'null');
+            if (u && (u.id != null || u.email)) uid = String(u.id != null ? u.id : u.email);
+        } catch (_) {}
+        return base + ':' + uid;
+    }
+    function _saveConvo(base, history) {
+        try {
+            const h = (history || []).filter(m =>
+                m && (m.role === 'user' || m.role === 'assistant' || m.role === 'analyze')).slice(-30);
+            localStorage.setItem(_convoKey(base), JSON.stringify(h));
+        } catch (_) {}
+    }
+    function _loadConvo(base) {
+        try {
+            const arr = JSON.parse(localStorage.getItem(_convoKey(base)) || 'null');
+            return Array.isArray(arr) ? arr.slice(-30) : [];
+        } catch (_) { return []; }
+    }
+
     const aiAssistant = {
         history: [],          // [{role, content}] conversation turns
         busy: false,
@@ -5510,6 +5537,13 @@ ${context}`;
                 island.classList.toggle('collapsed');
                 this._scrollConvo();
             });
+            // Restore the conversation from before the reload. Collapsed on
+            // purpose: it unfolds when the user focuses the input again.
+            this.history = _loadConvo('geoscope_ai_convo');
+            if (this.history.length) {
+                this._renderConvo();
+                island.classList.add('has-convo', 'collapsed');
+            }
         },
         // Build grounding context: the user's live news feed (primary) + the map
         // events. This is what lets the assistant actually read and explain the
@@ -5617,6 +5651,7 @@ ${context}`;
                     const res = await aiSourceFinder.runForChat(q);
                     if (res.handled) {
                         this.history[this.history.length - 1].content = _sourceActionMsg(res);
+                        _saveConvo('geoscope_ai_convo', this.history);
                         bubble = this._renderConvo();
                         if (bubble) bubble.classList.remove('ai-msg-pending');
                         this._scrollConvo();
@@ -5639,6 +5674,7 @@ ${context}`;
             const system = _aiSystemPrompt(this.buildContext());
             const fail = (msg) => {
                 this.history[this.history.length - 1].content = msg;
+                _saveConvo('geoscope_ai_convo', this.history);
                 bubble = this._renderConvo();
                 if (bubble) bubble.classList.add('ai-msg-error');
                 this._scrollConvo();
@@ -5662,12 +5698,14 @@ ${context}`;
                     const dRes = dObj ? await aiSourceFinder.applyDirective(dObj) : { handled: false };
                     this.history[this.history.length - 1].content =
                         dRes.handled ? _sourceActionMsg(dRes) : (t('aiError') || 'Error');
+                    _saveConvo('geoscope_ai_convo', this.history);
                     bubble = this._renderConvo();
                     this._scrollConvo();
                     return;
                 }
                 typer.finish(answer);
                 this.history[this.history.length - 1].content = answer;
+                _saveConvo('geoscope_ai_convo', this.history);
             } catch (e) {
                 typer.stop();
                 if (e && e.planRequired) fail(t('aiPlanRequired') || 'Función de pago.');
@@ -5695,6 +5733,7 @@ ${context}`;
             // A visual news card, then the assistant's greeting.
             this.history.push({ role: 'analyze', items: items.slice() });
             this.history.push({ role: 'assistant', content: greet });
+            _saveConvo('geoscope_ai_convo', this.history);
             this._renderConvo();
             this._scrollConvo();
             const input = document.getElementById('ai-island-input');
@@ -5744,6 +5783,13 @@ ${context}`;
             });
             // Re-render the reader live as new posts arrive while it's open.
             this._renderHook = () => { if (overlay && overlay.style.display !== 'none') this.renderFeed(); };
+            // Restore the conversation from before the reload (same as the map
+            // island): collapsed until the user focuses the input again.
+            this.history = _loadConvo('geoscope_fav_convo');
+            if (this.history.length) {
+                this._renderConvo();
+                if (island) island.classList.add('has-convo', 'collapsed');
+            }
         },
         open() {
             const overlay = document.getElementById('fav-overlay');
@@ -5909,6 +5955,7 @@ ${this.buildContext()}`;
                     const res = await aiSourceFinder.runForChat(q);
                     if (res.handled) {
                         this.history[this.history.length - 1].content = _sourceActionMsg(res);
+                        _saveConvo('geoscope_fav_convo', this.history);
                         bubble = this._renderConvo();
                         if (bubble) bubble.classList.remove('fav-island-pending');
                         this._scrollConvo();
@@ -5922,6 +5969,7 @@ ${this.buildContext()}`;
             const msgs = this.history.slice(0, -1).slice(-10);
             const fail = (msg) => {
                 this.history[this.history.length - 1].content = msg;
+                _saveConvo('geoscope_fav_convo', this.history);
                 bubble = this._renderConvo();
                 if (bubble) bubble.classList.add('fav-island-error');
                 this._scrollConvo();
@@ -5943,6 +5991,7 @@ ${this.buildContext()}`;
                     const dRes = dObj ? await aiSourceFinder.applyDirective(dObj) : { handled: false };
                     this.history[this.history.length - 1].content =
                         dRes.handled ? _sourceActionMsg(dRes) : (tr.favError || 'Error');
+                    _saveConvo('geoscope_fav_convo', this.history);
                     bubble = this._renderConvo();
                     this._scrollConvo();
                     try { this.renderFeed(); } catch (_) {}
@@ -5950,6 +5999,7 @@ ${this.buildContext()}`;
                 }
                 typer.finish(answer);
                 this.history[this.history.length - 1].content = answer;
+                _saveConvo('geoscope_fav_convo', this.history);
             } catch (e) {
                 typer.stop();
                 if (e && e.planRequired) fail(tr.aiPlanRequired || 'Función de pago.');
@@ -7963,11 +8013,11 @@ ${this.buildContext()}`;
 
             if (added > 0) {
                 this._setStatus(_sfMsg('addedSearching', added));
-                // Kick the refresh and keep the veil up only until the news list is
-                // populated (fast pass); geolocation continues in the background so
-                // the UI is never frozen behind the veil for ~35s.
-                geoFeed.refresh(true).catch(() => {});
-                await geoFeed.onceNewsPass(9000);
+                // Keep the blur veil up until the icons are actually ON the map
+                // (user request): await the FULL refresh — news pass + the AI
+                // geolocation batches — with a hard 60s cap so a hung network
+                // can never freeze the app behind the veil forever.
+                await _refreshAndWait(60000);
                 this._setStatus(_sfMsg('addedDone', added));
             } else {
                 this._setStatus(_sfMsg('noneNew'));
@@ -8065,7 +8115,10 @@ ${this.buildContext()}`;
             ].join('\n');
             const user = `CURRENT SOURCES:\n${cur}\n\nUser message: "${String(q || '').slice(0, 500)}"\nReturn the JSON now.`;
             let raw = null;
-            try { raw = await claudeComplete({ system, max_tokens: 2048, messages: [{ role: 'user', content: user }] }); }
+            // count_quota: a chat-initiated source add/remove burns one unit of
+            // the Pro allowance, exactly like a normal assistant message (the
+            // user asked that source operations count too).
+            try { raw = await claudeComplete({ system, max_tokens: 2048, count_quota: true, messages: [{ role: 'user', content: user }] }); }
             catch (_) { return { handled: false }; }
             if (raw == null) return { handled: false };
             const obj = this._parseObj(raw);
@@ -8090,8 +8143,8 @@ ${this.buildContext()}`;
                     }
                     if (added > 0) {
                         try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
-                        geoFeed.refresh(true).catch(() => {});
-                        await geoFeed.onceNewsPass(9000);
+                        // Veil stays until the icons are on the map (60s cap).
+                        await _refreshAndWait(60000);
                     } else {
                         // The classify gave no usable items (none, all failed to
                         // normalize, or all duplicates). Fall back to the richer
@@ -8128,8 +8181,8 @@ ${this.buildContext()}`;
                     added = this._addItems(obj.items).added;
                     if (added > 0) {
                         try { if (typeof renderUserSourcesList === 'function') renderUserSourcesList(); } catch (_) {}
-                        geoFeed.refresh(true).catch(() => {});
-                        await geoFeed.onceNewsPass(9000);
+                        // Veil stays until the icons are on the map (60s cap).
+                        await _refreshAndWait(60000);
                     }
                 } finally { hideSourceLoading(); }
                 return { handled: true, action: 'add', added, removed: 0 };
