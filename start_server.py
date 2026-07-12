@@ -219,19 +219,41 @@ def _stripe_request(method, path, form=None):
         return json.load(resp)
 
 
-def _send_password_reset_email(email, reset_token, brevo_api_key):
-    """Send password reset email via Brevo API. Returns True on success."""
+# Password-reset email copy in all 13 UI languages. Keys: subject, heading,
+# body, button, expiry, rights. Falls back to 'en' for unknown/missing langs.
+_RESET_EMAIL_I18N = {
+    'es': {'subject': 'Restablecer tu contraseña en Skorpene', 'heading': 'Restablecer tu contraseña', 'body': 'Haz clic en el botón para cambiar tu contraseña:', 'button': 'Restablecer contraseña', 'expiry': 'Este enlace expira en 1 hora.', 'rights': 'Todos los derechos reservados.'},
+    'en': {'subject': 'Reset your password on Skorpene', 'heading': 'Reset your password', 'body': 'Click the button to change your password:', 'button': 'Reset password', 'expiry': 'This link expires in 1 hour.', 'rights': 'All rights reserved.'},
+    'fr': {'subject': 'Réinitialisez votre mot de passe sur Skorpene', 'heading': 'Réinitialiser votre mot de passe', 'body': 'Cliquez sur le bouton pour changer votre mot de passe :', 'button': 'Réinitialiser le mot de passe', 'expiry': 'Ce lien expire dans 1 heure.', 'rights': 'Tous droits réservés.'},
+    'ru': {'subject': 'Сброс пароля в Skorpene', 'heading': 'Сбросить пароль', 'body': 'Нажмите на кнопку, чтобы изменить пароль:', 'button': 'Сбросить пароль', 'expiry': 'Эта ссылка действительна 1 час.', 'rights': 'Все права защищены.'},
+    'zh': {'subject': '在 Skorpene 上重置密码', 'heading': '重置密码', 'body': '点击按钮更改密码：', 'button': '重置密码', 'expiry': '此链接将在1小时后失效。', 'rights': '保留所有权利。'},
+    'tr': {'subject': "Skorpene'de şifreni sıfırla", 'heading': 'Şifreni sıfırla', 'body': 'Şifreni değiştirmek için butona tıkla:', 'button': 'Şifreyi sıfırla', 'expiry': 'Bu bağlantının süresi 1 saat içinde dolacak.', 'rights': 'Tüm hakları saklıdır.'},
+    'ar': {'subject': 'إعادة تعيين كلمة المرور في Skorpene', 'heading': 'إعادة تعيين كلمة المرور', 'body': 'انقر فوق الزر لتغيير كلمة المرور:', 'button': 'إعادة تعيين كلمة المرور', 'expiry': 'تنتهي صلاحية هذا الرابط خلال ساعة واحدة.', 'rights': 'جميع الحقوق محفوظة.', 'rtl': True},
+    'fa': {'subject': 'بازنشانی رمز عبور در Skorpene', 'heading': 'بازنشانی رمز عبور', 'body': 'برای تغییر رمز عبور روی دکمه کلیک کن:', 'button': 'بازنشانی رمز عبور', 'expiry': 'این لینک تا ۱ ساعت دیگر منقضی می‌شود.', 'rights': 'تمامی حقوق محفوظ است.', 'rtl': True},
+    'he': {'subject': 'איפוס הסיסמה שלך ב-Skorpene', 'heading': 'איפוס הסיסמה שלך', 'body': 'לחץ על הכפתור כדי לשנות את הסיסמה שלך:', 'button': 'איפוס סיסמה', 'expiry': 'קישור זה יפוג בעוד שעה אחת.', 'rights': 'כל הזכויות שמורות.', 'rtl': True},
+    'nl': {'subject': 'Wachtwoord opnieuw instellen op Skorpene', 'heading': 'Wachtwoord opnieuw instellen', 'body': 'Klik op de knop om je wachtwoord te wijzigen:', 'button': 'Wachtwoord opnieuw instellen', 'expiry': 'Deze link verloopt over 1 uur.', 'rights': 'Alle rechten voorbehouden.'},
+    'it': {'subject': 'Reimposta la password su Skorpene', 'heading': 'Reimposta la tua password', 'body': 'Clicca sul pulsante per cambiare la tua password:', 'button': 'Reimposta password', 'expiry': 'Questo link scade tra 1 ora.', 'rights': 'Tutti i diritti riservati.'},
+    'pt': {'subject': 'Repor a palavra-passe no Skorpene', 'heading': 'Repor a tua palavra-passe', 'body': 'Clica no botão para mudar a tua palavra-passe:', 'button': 'Repor palavra-passe', 'expiry': 'Este link expira em 1 hora.', 'rights': 'Todos os direitos reservados.'},
+    'hi': {'subject': 'Skorpene पर अपना पासवर्ड रीसेट करें', 'heading': 'अपना पासवर्ड रीसेट करें', 'body': 'अपना पासवर्ड बदलने के लिए बटन पर क्लिक करें:', 'button': 'पासवर्ड रीसेट करें', 'expiry': 'यह लिंक 1 घंटे में समाप्त हो जाएगा।', 'rights': 'सर्वाधिकार सुरक्षित।'},
+}
+
+
+def _send_password_reset_email(email, reset_token, brevo_api_key, lang='en'):
+    """Send password reset email via Brevo API, localized to `lang` (falls
+    back to English for unsupported/missing codes). Returns True on success."""
     if not brevo_api_key or not reset_token:
         return False
     try:
+        t = _RESET_EMAIL_I18N.get((lang or '').lower(), _RESET_EMAIL_I18N['en'])
+        dir_attr = ' dir="rtl"' if t.get('rtl') else ''
         reset_url = f"https://www.skorpene.com/?reset={reset_token}"
         sender = {"name": "Skorpene", "email": "noreply@skorpene.com"}
         to = [{"email": email}]
-        subject = "Restablecer tu contraseña en Skorpene"
+        subject = t['subject']
 
         html_content = f"""
         <!DOCTYPE html>
-        <html>
+        <html{dir_attr}>
         <head>
             <meta charset="UTF-8">
             <style>
@@ -249,15 +271,15 @@ def _send_password_reset_email(email, reset_token, brevo_api_key):
         <body>
             <div class="container">
                 <div class="content">
-                    <h2>Restablecer tu contraseña</h2>
-                    <p>Haz clic en el botón para cambiar tu contraseña:</p>
+                    <h2>{t['heading']}</h2>
+                    <p>{t['body']}</p>
                     <div class="button">
-                        <a href="{reset_url}">Restablecer contraseña</a>
+                        <a href="{reset_url}">{t['button']}</a>
                     </div>
-                    <p style="text-align: center; color: #999; font-size: 12px;">Este enlace expira en 1 hora.</p>
+                    <p style="text-align: center; color: #999; font-size: 12px;">{t['expiry']}</p>
                 </div>
                 <div class="footer">
-                    <p>© Skorpene. All rights reserved.</p>
+                    <p>© Skorpene. {t['rights']}</p>
                 </div>
             </div>
         </body>
@@ -1105,6 +1127,9 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         email = (body.get('email') or '').strip().lower()
         if not email:
             self._json_response(400, {'error': 'email_required'}); return
+        lang = (body.get('lang') or 'en').strip().lower()
+        if lang not in _RESET_EMAIL_I18N:
+            lang = 'en'
 
         brevo_key = os.environ.get('BREVO_API_KEY', '').strip()
         if not brevo_key:
@@ -1126,7 +1151,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             conn.commit()
 
         # Send email with Brevo.
-        if _send_password_reset_email(email, reset_token, brevo_key):
+        if _send_password_reset_email(email, reset_token, brevo_key, lang):
             self._json_response(200, {'ok': True, 'message': 'Revisa tu email para restablecer la contraseña'})
         else:
             self._json_response(500, {'error': 'email_send_failed'})

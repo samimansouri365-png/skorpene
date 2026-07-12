@@ -9233,7 +9233,7 @@ ${this.buildContext()}`;
             try {
                 await fetch('/api/auth/request-password-reset', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: (vals.email || '').trim() }),
+                    body: JSON.stringify({ email: (vals.email || '').trim(), lang: currentLang }),
                 });
             } catch (_) { /* still show the neutral notice below */ }
             await skDialog.notice({ icon: '📩', title: tk('pwSentTitle'), body: tk('pwSentBody'), okText: tk('mdGotIt') });
