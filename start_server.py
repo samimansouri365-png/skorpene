@@ -229,27 +229,47 @@ def _send_password_reset_email(email, reset_token, brevo_api_key):
         to = [{"email": email}]
         subject = "Restablecer tu contraseña en Skorpene"
 
-        # Load and encode logo as base64 for embedding in email
-        logo_b64 = ""
-        try:
-            import base64
-            logo_path = os.path.join(os.path.dirname(__file__), 'logo.png')
-            if os.path.exists(logo_path):
-                with open(logo_path, 'rb') as f:
-                    logo_b64 = base64.b64encode(f.read()).decode('utf-8')
-        except Exception:
-            pass
-
-        logo_html = f'<img src="data:image/png;base64,{logo_b64}" alt="Skorpene" style="max-width:150px;margin-bottom:20px;">' if logo_b64 else ""
+        # Logo served as static file URL (Gmail blocks base64 for security)
+        logo_url = "https://www.skorpene.com/logo.png"
 
         html_content = f"""
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-            {logo_html}
-            <h2 style="color:#333;">Restablecer contraseña</h2>
-            <p style="color:#666;line-height:1.6;">Haz clic en el enlace para cambiar tu contraseña:</p>
-            <p><a href="{reset_url}" style="background:#8b5cf6;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;display:inline-block;">Restablecer contraseña</a></p>
-            <p style="color:#999;font-size:12px;">Este enlace expira en 1 hora.</p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 40px 20px; }}
+                .logo {{ text-align: center; margin-bottom: 30px; }}
+                .logo img {{ max-width: 120px; height: auto; }}
+                .content {{ background: #f9f9f9; padding: 30px; border-radius: 8px; }}
+                h2 {{ color: #333; margin-top: 0; }}
+                p {{ color: #666; line-height: 1.6; margin: 15px 0; }}
+                .button {{ text-align: center; margin: 25px 0; }}
+                .button a {{ background: #8b5cf6; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold; font-size: 16px; }}
+                .button a:hover {{ background: #7c3aed; }}
+                .footer {{ text-align: center; color: #999; font-size: 12px; margin-top: 20px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="logo">
+                    <img src="{logo_url}" alt="Skorpene" width="120">
+                </div>
+                <div class="content">
+                    <h2>Restablecer tu contraseña</h2>
+                    <p>Haz clic en el botón para cambiar tu contraseña:</p>
+                    <div class="button">
+                        <a href="{reset_url}">Restablecer contraseña</a>
+                    </div>
+                    <p style="text-align: center; color: #999; font-size: 12px;">Este enlace expira en 1 hora.</p>
+                </div>
+                <div class="footer">
+                    <p>© Skorpene. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
         """
         payload = {
             "sender": sender,
