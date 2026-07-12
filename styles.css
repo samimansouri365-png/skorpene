@@ -424,6 +424,83 @@ body.plan-locked .map-lock { display: flex; }
 }
 .map-lock-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(109, 40, 217, 0.6); }
 
+/* ── Skorpene dialog (skDialog) ── In-app confirm/notice that replaces the
+   native browser confirm()/alert(). Mirrors the .map-lock-card look so cancel
+   flows feel native to Skorpene, not to the browser. Above everything incl.
+   the profile menus (z 100050). */
+.sk-modal {
+    position: fixed; inset: 0; z-index: 100060;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(10, 8, 20, 0.55);
+    backdrop-filter: blur(14px) saturate(0.8);
+    -webkit-backdrop-filter: blur(14px) saturate(0.8);
+    opacity: 0; pointer-events: none;
+    transition: opacity .18s ease;
+}
+.sk-modal.open { opacity: 1; pointer-events: auto; }
+.sk-modal[hidden] { display: none; }
+.sk-modal-card {
+    max-width: 400px; width: 100%;
+    text-align: center;
+    background: rgba(24, 18, 42, 0.92);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    border-radius: 18px;
+    padding: 28px 26px 22px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+    transform: translateY(8px) scale(0.985);
+    transition: transform .2s cubic-bezier(.2,.7,.2,1);
+}
+.sk-modal.open .sk-modal-card { transform: none; }
+.sk-modal-icon { font-size: 28px; line-height: 1; margin-bottom: 12px; }
+.sk-modal-icon:empty { display: none; }
+.sk-modal-title {
+    font-size: 19px; font-weight: 700; color: #f4f2fb; margin: 0 0 10px;
+    letter-spacing: -0.01em;
+}
+.sk-modal-title:empty { display: none; }
+.sk-modal-body { font-size: 13.5px; line-height: 1.55; color: #cbc5e0; margin: 0 0 22px; }
+.sk-modal-body:empty { display: none; }
+.sk-modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.sk-modal-btn {
+    flex: 1 1 auto; min-width: 128px;
+    border: 0; cursor: pointer;
+    font-family: var(--font); font-size: 14px; font-weight: 600;
+    padding: 11px 20px; border-radius: 11px;
+    transition: transform .15s, box-shadow .15s, background .15s, color .15s;
+}
+.sk-modal-primary {
+    color: #fff;
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    box-shadow: 0 8px 24px rgba(109, 40, 217, 0.45);
+}
+.sk-modal-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(109, 40, 217, 0.6); }
+.sk-modal-primary.is-danger {
+    background: linear-gradient(135deg, #f0587d, #c0304f);
+    box-shadow: 0 8px 24px rgba(192, 48, 79, 0.42);
+}
+.sk-modal-primary.is-danger:hover { box-shadow: 0 10px 30px rgba(192, 48, 79, 0.6); }
+.sk-modal-ghost {
+    color: #cbc5e0; background: transparent;
+    border: 1px solid rgba(255,255,255,0.16);
+}
+.sk-modal-ghost:hover { background: rgba(255,255,255,0.06); color: #f4f2fb; }
+.sk-modal-ghost[hidden] { display: none; }
+/* Light theme: flip the card to light-on-dark-text like the rest of the UI. */
+[data-theme="light"] .sk-modal { background: rgba(20, 18, 30, 0.32); }
+[data-theme="light"] .sk-modal-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(94, 106, 210, 0.28);
+    box-shadow: 0 18px 60px rgba(30, 20, 60, 0.22);
+}
+[data-theme="light"] .sk-modal-title { color: #201c2e; }
+[data-theme="light"] .sk-modal-body { color: #4a4560; }
+[data-theme="light"] .sk-modal-ghost { color: #4a4560; border-color: rgba(0,0,0,0.14); }
+[data-theme="light"] .sk-modal-ghost:hover { background: rgba(0,0,0,0.04); color: #201c2e; }
+@media (prefers-reduced-motion: reduce) {
+    .sk-modal, .sk-modal-card { transition: none; }
+}
+
 /* #12 — Force pointer/default cursor on the map. Never show the zoom cursor. */
 .leaflet-container {
     cursor: default !important;

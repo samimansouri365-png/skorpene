@@ -1084,8 +1084,8 @@
     Object.keys(SIM_I18N_CARD).forEach(lng => { if (T[lng]) Object.assign(T[lng], SIM_I18N_CARD[lng]); });
     // AI assistant strings — all 9 languages.
     const AI_I18N = {
-        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',subCancel:'Cancelar suscripción',subResume:'Reanudar suscripción',subCancelConfirm:'¿Seguro que quieres cancelar tu suscripción? Mantendrás tu plan hasta el final del periodo ya pagado.',subCancelDone:'Suscripción cancelada. Tu plan sigue activo hasta el {date}.',subCancelNow:'Suscripción cancelada. Tu cuenta ahora es Free.',subResumeDone:'Suscripción reanudada ✓',subErr:'No se pudo completar la operación. Inténtalo de nuevo.',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app',backHome:'Volver a inicio',welcomeTitle:'Bienvenido a Skorpene',welcomeSub:'Preparando tu mundo…',proLockedHint:'🔒 Disponible en Pro (mapa en vivo)' },
-        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',subCancel:'Cancel subscription',subResume:'Resume subscription',subCancelConfirm:'Cancel your subscription? You keep your plan until the end of the period you already paid for.',subCancelDone:'Subscription canceled. Your plan stays active until {date}.',subCancelNow:'Subscription canceled. Your account is now Free.',subResumeDone:'Subscription resumed ✓',subErr:'Something went wrong. Please try again.',logoutLabel:'Log out',enterApp:'Enter app',backHome:'Back to home',welcomeTitle:'Welcome to Skorpene',welcomeSub:'Preparing your world…',proLockedHint:'🔒 Available on Pro (live map)' },
+        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',subCancel:'Cancelar suscripción',subResume:'Reanudar suscripción',subCancelConfirm:'¿Seguro que quieres cancelar tu suscripción? Mantendrás tu plan hasta el final del periodo ya pagado.',subCancelDone:'Suscripción cancelada. Tu plan sigue activo hasta el {date}.',subCancelNow:'Suscripción cancelada. Tu cuenta ahora es Free.',subResumeDone:'Suscripción reanudada ✓',subErr:'No se pudo completar la operación. Inténtalo de nuevo.',subCancelTitle:'¿Cancelar suscripción?',subKeep:'Mantener plan',mdGotIt:'Entendido',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app',backHome:'Volver a inicio',welcomeTitle:'Bienvenido a Skorpene',welcomeSub:'Preparando tu mundo…',proLockedHint:'🔒 Disponible en Pro (mapa en vivo)' },
+        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',subCancel:'Cancel subscription',subResume:'Resume subscription',subCancelConfirm:'Cancel your subscription? You keep your plan until the end of the period you already paid for.',subCancelDone:'Subscription canceled. Your plan stays active until {date}.',subCancelNow:'Subscription canceled. Your account is now Free.',subResumeDone:'Subscription resumed ✓',subErr:'Something went wrong. Please try again.',subCancelTitle:'Cancel subscription?',subKeep:'Keep plan',mdGotIt:'Got it',logoutLabel:'Log out',enterApp:'Enter app',backHome:'Back to home',welcomeTitle:'Welcome to Skorpene',welcomeSub:'Preparing your world…',proLockedHint:'🔒 Available on Pro (live map)' },
         fr:{ aiTitle:'Assistant IA',aiWelcome:'Bonjour 👋 Posez-moi des questions sur les événements de la carte.',aiPlaceholder:'Question sur la carte…',aiAskPh:'Demandez à l\'IA…',aiThinking:'Réflexion…',aiError:'Impossible de contacter l\'IA. Vérifiez que le serveur (start_server.py) est en marche.',srcTelegram:'Telegram',srcOutlets:'Médias',outletsLoading:'Chargement…',outletsError:'Impossible de charger les médias.',outletsEmpty:'Aucun article disponible.',newsTitle:'ACTUALITÉS EN DIRECT',translatingNews:'Traduction…',translateDone:'Actualités traduites',showMore:'Afficher plus',showLess:'Afficher moins' },
         ru:{ aiTitle:'ИИ Ассистент',aiWelcome:'Привет 👋 Задайте мне вопросы о событиях на карте.',aiPlaceholder:'Вопрос о карте…',aiAskPh:'Спросите ИИ…',aiThinking:'Думаю…',aiError:'Не удалось связаться с ИИ. Проверьте, что сервер (start_server.py) запущен.',srcTelegram:'Телеграм',srcOutlets:'СМИ',outletsLoading:'Загрузка…',outletsError:'Не удалось загрузить СМИ.',outletsEmpty:'Нет доступных статей.',newsTitle:'НОВОСТИ В ПРЯМОМ ЭФИРЕ',translatingNews:'Перевод…',translateDone:'Новости переведены',showMore:'Показать больше',showLess:'Показать меньше' },
         zh:{ aiTitle:'AI 助手',aiWelcome:'你好 👋 随时可以问我地图上的事件。',aiPlaceholder:'询问地图…',aiAskPh:'询问 AI…',aiThinking:'思考中…',aiError:'无法联系 AI。请确认服务器 (start_server.py) 正在运行。',srcTelegram:'Telegram',srcOutlets:'新闻媒体',outletsLoading:'加载中…',outletsError:'无法加载新闻媒体。',outletsEmpty:'暂无文章。',newsTitle:'实时新闻',translatingNews:'翻译中…',translateDone:'新闻已翻译',showMore:'显示更多',showLess:'显示更少' },
@@ -4881,6 +4881,26 @@
     };
     for (const _l in _UI_EXTRA) { T[_l] = Object.assign(T[_l] || {}, _UI_EXTRA[_l]); }
 
+    // Dialog button/title strings for the skDialog confirm + notices, in all 13
+    // langs (es/en also here so the table is the single source; identical merge
+    // is a no-op over the inline es/en keys).
+    const _DIALOG_I18N = {
+        es: { subCancelTitle:'¿Cancelar suscripción?', subKeep:'Mantener plan', mdGotIt:'Entendido' },
+        en: { subCancelTitle:'Cancel subscription?', subKeep:'Keep plan', mdGotIt:'Got it' },
+        fr: { subCancelTitle:"Annuler l'abonnement ?", subKeep:'Garder le plan', mdGotIt:'Compris' },
+        ru: { subCancelTitle:'Отменить подписку?', subKeep:'Оставить план', mdGotIt:'Понятно' },
+        zh: { subCancelTitle:'取消订阅？', subKeep:'保留方案', mdGotIt:'知道了' },
+        tr: { subCancelTitle:'Abonelik iptal edilsin mi?', subKeep:'Planı koru', mdGotIt:'Anladım' },
+        ar: { subCancelTitle:'إلغاء الاشتراك؟', subKeep:'الإبقاء على الخطة', mdGotIt:'حسنًا' },
+        fa: { subCancelTitle:'لغو اشتراک؟', subKeep:'نگه‌داشتن پلن', mdGotIt:'متوجه شدم' },
+        he: { subCancelTitle:'לבטל את המנוי?', subKeep:'להשאיר את התוכנית', mdGotIt:'הבנתי' },
+        nl: { subCancelTitle:'Abonnement opzeggen?', subKeep:'Plan behouden', mdGotIt:'Begrepen' },
+        it: { subCancelTitle:"Annullare l'abbonamento?", subKeep:'Mantieni il piano', mdGotIt:'Ho capito' },
+        pt: { subCancelTitle:'Cancelar subscrição?', subKeep:'Manter plano', mdGotIt:'Entendido' },
+        hi: { subCancelTitle:'सदस्यता रद्द करें?', subKeep:'प्लान रखें', mdGotIt:'समझ गया' },
+    };
+    for (const _l in _DIALOG_I18N) { T[_l] = Object.assign(T[_l] || {}, _DIALOG_I18N[_l]); }
+
     function applyLang() {
         const lang = T[currentLang] || T.es;
         // Per-key fallback: chosen language → English → Spanish. This lets newly
@@ -5139,6 +5159,86 @@
     }
     window.applyPlanGating = applyPlanGating;
 
+    // ── Skorpene dialog ── Promise-based confirm / notice that matches the app's
+    // look (dark-violet card, Inter, theme + RTL aware), replacing the native
+    // confirm()/alert() whose browser-chrome styling broke the aesthetic. It is
+    // fully functional: confirm() resolves true/false, notice() resolves once
+    // dismissed. Backdrop click and Escape both cancel; the button is focused so
+    // Enter activates it natively. One reused DOM node, built lazily.
+    const skDialog = {
+        _el: null, _resolver: null, _prevFocus: null, _onKey: null,
+        _build() {
+            if (this._el) return this._el;
+            const ov = document.createElement('div');
+            ov.className = 'sk-modal';
+            ov.setAttribute('hidden', '');
+            const card = document.createElement('div');
+            card.className = 'sk-modal-card';
+            card.setAttribute('role', 'dialog');
+            card.setAttribute('aria-modal', 'true');
+            card.innerHTML =
+                '<div class="sk-modal-icon" aria-hidden="true"></div>' +
+                '<h2 class="sk-modal-title"></h2>' +
+                '<p class="sk-modal-body"></p>' +
+                '<div class="sk-modal-actions">' +
+                  '<button type="button" class="sk-modal-btn sk-modal-ghost"></button>' +
+                  '<button type="button" class="sk-modal-btn sk-modal-primary"></button>' +
+                '</div>';
+            ov.appendChild(card);
+            document.body.appendChild(ov);
+            this._icon = card.querySelector('.sk-modal-icon');
+            this._title = card.querySelector('.sk-modal-title');
+            this._bodyEl = card.querySelector('.sk-modal-body');
+            this._ghost = card.querySelector('.sk-modal-ghost');
+            this._primary = card.querySelector('.sk-modal-primary');
+            this._ghost.addEventListener('click', () => this._done(false));
+            this._primary.addEventListener('click', () => this._done(true));
+            ov.addEventListener('click', (e) => { if (e.target === ov) this._done(false); });
+            this._el = ov;
+            return ov;
+        },
+        _done(val) {
+            if (!this._resolver) return;
+            const resolve = this._resolver; this._resolver = null;
+            this._el.classList.remove('open');
+            if (this._onKey) { document.removeEventListener('keydown', this._onKey, true); this._onKey = null; }
+            const prev = this._prevFocus; this._prevFocus = null;
+            setTimeout(() => {
+                if (!this._resolver && this._el) this._el.setAttribute('hidden', '');
+                try { prev && prev.focus && prev.focus(); } catch (_) {}
+            }, 200);
+            resolve(val);
+        },
+        open(opts) {
+            opts = opts || {};
+            return new Promise((resolve) => {
+                if (this._resolver) this._done(false);   // supersede any open dialog
+                this._build();
+                this._icon.textContent = opts.icon || '';
+                this._title.textContent = opts.title || '';
+                this._bodyEl.textContent = opts.body || '';
+                const isConfirm = opts.mode === 'confirm';
+                this._ghost.hidden = !isConfirm;
+                this._ghost.textContent = opts.cancelText || '';
+                this._primary.textContent = opts.okText || 'OK';
+                this._primary.classList.toggle('is-danger', !!opts.danger);
+                this._prevFocus = document.activeElement;
+                this._resolver = resolve;
+                this._el.removeAttribute('hidden');
+                void this._el.offsetWidth;                // reflow so .open transition plays
+                this._el.classList.add('open');
+                // Focus the SAFE button on a destructive confirm, else the primary.
+                const focusEl = (isConfirm && opts.danger) ? this._ghost : this._primary;
+                try { focusEl.focus(); } catch (_) {}
+                this._onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); this._done(false); } };
+                document.addEventListener('keydown', this._onKey, true);
+            });
+        },
+        confirm(o) { return this.open(Object.assign({ mode: 'confirm' }, o)); },
+        notice(o) { return this.open(Object.assign({ mode: 'notice' }, o)); },
+    };
+    window.skDialog = skDialog;
+
     // ── Subscription self-service ──
     // Cancel (and un-cancel) the paid plan WITHOUT leaving Skorpene: one button
     // in both profile menus talks to /api/subscription/*. Cancelling keeps the
@@ -5194,22 +5294,35 @@
                 return r.ok ? d : null;
             } catch (_) { return null; }
         },
+        _err() { return skDialog.notice({ icon: '⚠️', body: this._tk('subErr'), okText: this._tk('mdGotIt') }); },
         async cancel() {
             if (this._busy) return;
             this._closeMenus();
-            try { if (!confirm(this._tk('subCancelConfirm'))) return; } catch (_) {}
+            const ok = await skDialog.confirm({
+                icon: '⚠️',
+                title: this._tk('subCancelTitle'),
+                body: this._tk('subCancelConfirm'),
+                okText: this._tk('subCancel'),
+                cancelText: this._tk('subKeep'),
+                danger: true,
+            });
+            if (!ok) return;
             this._busy = true;
             try {
                 const d = await this._post('/api/subscription/cancel');
-                if (!d || !d.ok) { alert(this._tk('subErr')); return; }
+                if (!d || !d.ok) { await this._err(); return; }
                 const u = this._user();
                 u.plan = d.plan || u.plan;
                 u.planUntil = d.until || null;
                 this._saveUser(u);
                 this._refreshUi();
-                alert(d.until
-                    ? this._tk('subCancelDone').replace('{date}', this._fmtDate(d.until))
-                    : this._tk('subCancelNow'));
+                await skDialog.notice({
+                    icon: '✓',
+                    body: d.until
+                        ? this._tk('subCancelDone').replace('{date}', this._fmtDate(d.until))
+                        : this._tk('subCancelNow'),
+                    okText: this._tk('mdGotIt'),
+                });
             } finally { this._busy = false; }
         },
         async resume() {
@@ -5218,12 +5331,12 @@
             this._busy = true;
             try {
                 const d = await this._post('/api/subscription/resume');
-                if (!d || !d.ok) { alert(this._tk('subErr')); return; }
+                if (!d || !d.ok) { await this._err(); return; }
                 const u = this._user();
                 u.planUntil = null;
                 this._saveUser(u);
                 this._refreshUi();
-                alert(this._tk('subResumeDone'));
+                await skDialog.notice({ icon: '✓', body: this._tk('subResumeDone'), okText: this._tk('mdGotIt') });
             } finally { this._busy = false; }
         },
         _refreshUi() {
