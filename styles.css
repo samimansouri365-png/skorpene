@@ -461,6 +461,28 @@ body.plan-locked .map-lock { display: flex; }
 .sk-modal-title:empty { display: none; }
 .sk-modal-body { font-size: 13.5px; line-height: 1.55; color: #cbc5e0; margin: 0 0 22px; }
 .sk-modal-body:empty { display: none; }
+/* Input fields (prompt mode: password reset request + new password). */
+.sk-modal-fields { display: flex; flex-direction: column; gap: 10px; margin: 0 0 14px; }
+.sk-modal-fields:empty { display: none; margin: 0; }
+.sk-modal-input {
+    width: 100%; font-family: var(--font); font-size: 14px; color: #f4f2fb;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(139,92,246,0.28);
+    border-radius: 10px; padding: 12px 13px; transition: border-color .15s, box-shadow .15s;
+}
+.sk-modal-input::placeholder { color: #9089a8; }
+.sk-modal-input:focus {
+    outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,0.22);
+}
+.sk-modal-error {
+    font-size: 12.5px; color: #ff8a8a; line-height: 1.4; margin: 0 0 12px;
+    min-height: 0;
+}
+.sk-modal-error:empty { display: none; }
+[data-theme="light"] .sk-modal-input {
+    color: #201c2e; background: rgba(94,106,210,0.05); border-color: rgba(94,106,210,0.30);
+}
+[data-theme="light"] .sk-modal-input::placeholder { color: #8b86a0; }
+[data-theme="light"] .sk-modal-error { color: #c0304f; }
 .sk-modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 .sk-modal-btn {
     flex: 1 1 auto; min-width: 128px;
@@ -7129,6 +7151,14 @@ body.onb-active { overflow: hidden; }
 }
 .auth-only-register { display: none; }
 .landing[data-mode="register"] .auth-only-register { display: flex; }
+/* "Forgot password?" link — only in login mode, right-aligned + subtle. */
+.auth-forgot {
+    display: none; align-self: flex-end; margin: -4px 2px 0;
+    background: none; border: none; cursor: pointer; padding: 0;
+    color: var(--skp-purple2); font-family: var(--font); font-size: 12.5px; font-weight: 500;
+}
+.auth-forgot:hover { text-decoration: underline; }
+.landing[data-mode="login"] .auth-forgot { display: block; }
 .auth-error {
     display: none; font-size: 12.5px; color: #ff8a8a; line-height: 1.4;
     background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.25);

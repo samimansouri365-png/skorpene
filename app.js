@@ -4901,6 +4901,26 @@
     };
     for (const _l in _DIALOG_I18N) { T[_l] = Object.assign(T[_l] || {}, _DIALOG_I18N[_l]); }
 
+    // Password-reset strings (forgot-password link, request dialog, reset form,
+    // confirmations, errors) in all 13 langs. Standing i18n rule: every UI string
+    // gets all 13 languages.
+    const _PWRESET_I18N = {
+        es: { pwForgot:'¿Olvidaste tu contraseña?', pwResetTitle:'Restablecer contraseña', pwResetBody:'Introduce tu email y te enviaremos un enlace para restablecerla.', pwSend:'Enviar enlace', pwCancel:'Cancelar', pwSentTitle:'Revisa tu email', pwSentBody:'Si existe una cuenta con ese email, recibirás un enlace para restablecer tu contraseña.', pwNewTitle:'Nueva contraseña', pwNewBody:'Introduce tu nueva contraseña.', pwNewPh:'Nueva contraseña', pwConfirmPh:'Confirmar contraseña', pwSave:'Cambiar contraseña', pwDoneTitle:'Contraseña actualizada', pwDoneBody:'Ya puedes iniciar sesión con tu nueva contraseña.', pwErrEmail:'Introduce un email válido.', pwErrShort:'La contraseña debe tener al menos 6 caracteres.', pwErrMatch:'Las contraseñas no coinciden.', pwErrToken:'El enlace no es válido o ha caducado. Solicita uno nuevo.', pwErrGeneric:'No se pudo completar. Inténtalo de nuevo.' },
+        en: { pwForgot:'Forgot your password?', pwResetTitle:'Reset password', pwResetBody:'Enter your email and we\'ll send you a link to reset it.', pwSend:'Send link', pwCancel:'Cancel', pwSentTitle:'Check your email', pwSentBody:'If an account exists for that email, you\'ll get a link to reset your password.', pwNewTitle:'New password', pwNewBody:'Enter your new password.', pwNewPh:'New password', pwConfirmPh:'Confirm password', pwSave:'Change password', pwDoneTitle:'Password updated', pwDoneBody:'You can now log in with your new password.', pwErrEmail:'Enter a valid email.', pwErrShort:'Password must be at least 6 characters.', pwErrMatch:'Passwords do not match.', pwErrToken:'The link is invalid or has expired. Request a new one.', pwErrGeneric:'Could not complete. Please try again.' },
+        fr: { pwForgot:'Mot de passe oublié ?', pwResetTitle:'Réinitialiser le mot de passe', pwResetBody:'Saisis ton email et nous t\'enverrons un lien pour le réinitialiser.', pwSend:'Envoyer le lien', pwCancel:'Annuler', pwSentTitle:'Vérifie ton email', pwSentBody:'Si un compte existe pour cet email, tu recevras un lien pour réinitialiser ton mot de passe.', pwNewTitle:'Nouveau mot de passe', pwNewBody:'Saisis ton nouveau mot de passe.', pwNewPh:'Nouveau mot de passe', pwConfirmPh:'Confirmer le mot de passe', pwSave:'Changer le mot de passe', pwDoneTitle:'Mot de passe mis à jour', pwDoneBody:'Tu peux maintenant te connecter avec ton nouveau mot de passe.', pwErrEmail:'Saisis un email valide.', pwErrShort:'Le mot de passe doit faire au moins 6 caractères.', pwErrMatch:'Les mots de passe ne correspondent pas.', pwErrToken:'Le lien est invalide ou a expiré. Demandes-en un nouveau.', pwErrGeneric:'Impossible de terminer. Réessaie.' },
+        ru: { pwForgot:'Забыли пароль?', pwResetTitle:'Сброс пароля', pwResetBody:'Введите email, и мы пришлём ссылку для сброса.', pwSend:'Отправить ссылку', pwCancel:'Отмена', pwSentTitle:'Проверьте почту', pwSentBody:'Если аккаунт с таким email существует, вы получите ссылку для сброса пароля.', pwNewTitle:'Новый пароль', pwNewBody:'Введите новый пароль.', pwNewPh:'Новый пароль', pwConfirmPh:'Подтвердите пароль', pwSave:'Сменить пароль', pwDoneTitle:'Пароль обновлён', pwDoneBody:'Теперь можно войти с новым паролем.', pwErrEmail:'Введите корректный email.', pwErrShort:'Пароль должен быть не короче 6 символов.', pwErrMatch:'Пароли не совпадают.', pwErrToken:'Ссылка недействительна или истекла. Запросите новую.', pwErrGeneric:'Не удалось выполнить. Попробуйте снова.' },
+        zh: { pwForgot:'忘记密码？', pwResetTitle:'重置密码', pwResetBody:'输入你的邮箱，我们会发送重置链接。', pwSend:'发送链接', pwCancel:'取消', pwSentTitle:'查看你的邮箱', pwSentBody:'如果该邮箱存在账户，你将收到重置密码的链接。', pwNewTitle:'新密码', pwNewBody:'输入你的新密码。', pwNewPh:'新密码', pwConfirmPh:'确认密码', pwSave:'更改密码', pwDoneTitle:'密码已更新', pwDoneBody:'现在可以用新密码登录了。', pwErrEmail:'请输入有效的邮箱。', pwErrShort:'密码至少需要 6 个字符。', pwErrMatch:'两次密码不一致。', pwErrToken:'链接无效或已过期。请重新申请。', pwErrGeneric:'无法完成，请重试。' },
+        tr: { pwForgot:'Şifreni mi unuttun?', pwResetTitle:'Şifreyi sıfırla', pwResetBody:'E-postanı gir, sıfırlama bağlantısı gönderelim.', pwSend:'Bağlantı gönder', pwCancel:'İptal', pwSentTitle:'E-postanı kontrol et', pwSentBody:'Bu e-postayla bir hesap varsa, şifreni sıfırlamak için bir bağlantı alacaksın.', pwNewTitle:'Yeni şifre', pwNewBody:'Yeni şifreni gir.', pwNewPh:'Yeni şifre', pwConfirmPh:'Şifreyi onayla', pwSave:'Şifreyi değiştir', pwDoneTitle:'Şifre güncellendi', pwDoneBody:'Artık yeni şifrenle giriş yapabilirsin.', pwErrEmail:'Geçerli bir e-posta gir.', pwErrShort:'Şifre en az 6 karakter olmalı.', pwErrMatch:'Şifreler eşleşmiyor.', pwErrToken:'Bağlantı geçersiz veya süresi dolmuş. Yenisini iste.', pwErrGeneric:'Tamamlanamadı. Tekrar dene.' },
+        ar: { pwForgot:'هل نسيت كلمة المرور؟', pwResetTitle:'إعادة تعيين كلمة المرور', pwResetBody:'أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة التعيين.', pwSend:'إرسال الرابط', pwCancel:'إلغاء', pwSentTitle:'تحقق من بريدك', pwSentBody:'إذا كان هناك حساب بهذا البريد، ستتلقى رابطًا لإعادة تعيين كلمة المرور.', pwNewTitle:'كلمة مرور جديدة', pwNewBody:'أدخل كلمة المرور الجديدة.', pwNewPh:'كلمة مرور جديدة', pwConfirmPh:'تأكيد كلمة المرور', pwSave:'تغيير كلمة المرور', pwDoneTitle:'تم تحديث كلمة المرور', pwDoneBody:'يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.', pwErrEmail:'أدخل بريدًا إلكترونيًا صحيحًا.', pwErrShort:'يجب ألا تقلّ كلمة المرور عن 6 أحرف.', pwErrMatch:'كلمتا المرور غير متطابقتين.', pwErrToken:'الرابط غير صالح أو منتهي الصلاحية. اطلب رابطًا جديدًا.', pwErrGeneric:'تعذّر الإتمام. حاول مرة أخرى.' },
+        fa: { pwForgot:'رمز عبورت را فراموش کردی؟', pwResetTitle:'بازنشانی رمز عبور', pwResetBody:'ایمیلت را وارد کن تا لینک بازنشانی برایت بفرستیم.', pwSend:'ارسال لینک', pwCancel:'لغو', pwSentTitle:'ایمیلت را بررسی کن', pwSentBody:'اگر حسابی با این ایمیل وجود داشته باشد، لینکی برای بازنشانی رمز عبور دریافت می‌کنی.', pwNewTitle:'رمز عبور جدید', pwNewBody:'رمز عبور جدیدت را وارد کن.', pwNewPh:'رمز عبور جدید', pwConfirmPh:'تأیید رمز عبور', pwSave:'تغییر رمز عبور', pwDoneTitle:'رمز عبور به‌روزرسانی شد', pwDoneBody:'حالا می‌توانی با رمز عبور جدیدت وارد شوی.', pwErrEmail:'یک ایمیل معتبر وارد کن.', pwErrShort:'رمز عبور باید حداقل ۶ نویسه باشد.', pwErrMatch:'رمزهای عبور مطابقت ندارند.', pwErrToken:'لینک نامعتبر یا منقضی شده است. یکی جدید درخواست کن.', pwErrGeneric:'تکمیل ممکن نشد. دوباره تلاش کن.' },
+        he: { pwForgot:'שכחת את הסיסמה?', pwResetTitle:'איפוס סיסמה', pwResetBody:'הזן את האימייל שלך ונשלח לך קישור לאיפוס.', pwSend:'שלח קישור', pwCancel:'ביטול', pwSentTitle:'בדוק את האימייל שלך', pwSentBody:'אם קיים חשבון עם האימייל הזה, תקבל קישור לאיפוס הסיסמה.', pwNewTitle:'סיסמה חדשה', pwNewBody:'הזן את הסיסמה החדשה שלך.', pwNewPh:'סיסמה חדשה', pwConfirmPh:'אישור סיסמה', pwSave:'שנה סיסמה', pwDoneTitle:'הסיסמה עודכנה', pwDoneBody:'עכשיו אפשר להתחבר עם הסיסמה החדשה.', pwErrEmail:'הזן אימייל תקין.', pwErrShort:'הסיסמה חייבת להיות לפחות 6 תווים.', pwErrMatch:'הסיסמאות אינן תואמות.', pwErrToken:'הקישור אינו תקין או פג. בקש קישור חדש.', pwErrGeneric:'לא הצליח. נסה שוב.' },
+        nl: { pwForgot:'Wachtwoord vergeten?', pwResetTitle:'Wachtwoord opnieuw instellen', pwResetBody:'Voer je e-mail in en we sturen je een link om het opnieuw in te stellen.', pwSend:'Link versturen', pwCancel:'Annuleren', pwSentTitle:'Controleer je e-mail', pwSentBody:'Als er een account met dat e-mailadres bestaat, ontvang je een link om je wachtwoord opnieuw in te stellen.', pwNewTitle:'Nieuw wachtwoord', pwNewBody:'Voer je nieuwe wachtwoord in.', pwNewPh:'Nieuw wachtwoord', pwConfirmPh:'Bevestig wachtwoord', pwSave:'Wachtwoord wijzigen', pwDoneTitle:'Wachtwoord bijgewerkt', pwDoneBody:'Je kunt nu inloggen met je nieuwe wachtwoord.', pwErrEmail:'Voer een geldig e-mailadres in.', pwErrShort:'Wachtwoord moet minstens 6 tekens hebben.', pwErrMatch:'Wachtwoorden komen niet overeen.', pwErrToken:'De link is ongeldig of verlopen. Vraag een nieuwe aan.', pwErrGeneric:'Kon niet voltooien. Probeer opnieuw.' },
+        it: { pwForgot:'Password dimenticata?', pwResetTitle:'Reimposta password', pwResetBody:'Inserisci la tua email e ti invieremo un link per reimpostarla.', pwSend:'Invia link', pwCancel:'Annulla', pwSentTitle:'Controlla la tua email', pwSentBody:'Se esiste un account con quella email, riceverai un link per reimpostare la password.', pwNewTitle:'Nuova password', pwNewBody:'Inserisci la tua nuova password.', pwNewPh:'Nuova password', pwConfirmPh:'Conferma password', pwSave:'Cambia password', pwDoneTitle:'Password aggiornata', pwDoneBody:'Ora puoi accedere con la tua nuova password.', pwErrEmail:'Inserisci un\'email valida.', pwErrShort:'La password deve avere almeno 6 caratteri.', pwErrMatch:'Le password non coincidono.', pwErrToken:'Il link non è valido o è scaduto. Richiedine uno nuovo.', pwErrGeneric:'Impossibile completare. Riprova.' },
+        pt: { pwForgot:'Esqueceste a palavra-passe?', pwResetTitle:'Repor palavra-passe', pwResetBody:'Introduz o teu email e enviamos-te um link para a repor.', pwSend:'Enviar link', pwCancel:'Cancelar', pwSentTitle:'Verifica o teu email', pwSentBody:'Se existir uma conta com esse email, receberás um link para repor a palavra-passe.', pwNewTitle:'Nova palavra-passe', pwNewBody:'Introduz a tua nova palavra-passe.', pwNewPh:'Nova palavra-passe', pwConfirmPh:'Confirmar palavra-passe', pwSave:'Mudar palavra-passe', pwDoneTitle:'Palavra-passe atualizada', pwDoneBody:'Já podes iniciar sessão com a nova palavra-passe.', pwErrEmail:'Introduz um email válido.', pwErrShort:'A palavra-passe deve ter pelo menos 6 caracteres.', pwErrMatch:'As palavras-passe não coincidem.', pwErrToken:'O link é inválido ou expirou. Solicita um novo.', pwErrGeneric:'Não foi possível concluir. Tenta de novo.' },
+        hi: { pwForgot:'पासवर्ड भूल गए?', pwResetTitle:'पासवर्ड रीसेट करें', pwResetBody:'अपना ईमेल दर्ज करें और हम आपको रीसेट लिंक भेजेंगे।', pwSend:'लिंक भेजें', pwCancel:'रद्द करें', pwSentTitle:'अपना ईमेल देखें', pwSentBody:'यदि उस ईमेल से कोई खाता मौजूद है, तो आपको पासवर्ड रीसेट करने का लिंक मिलेगा।', pwNewTitle:'नया पासवर्ड', pwNewBody:'अपना नया पासवर्ड दर्ज करें।', pwNewPh:'नया पासवर्ड', pwConfirmPh:'पासवर्ड की पुष्टि करें', pwSave:'पासवर्ड बदलें', pwDoneTitle:'पासवर्ड अपडेट हुआ', pwDoneBody:'अब आप अपने नए पासवर्ड से लॉग इन कर सकते हैं।', pwErrEmail:'मान्य ईमेल दर्ज करें।', pwErrShort:'पासवर्ड कम से कम 6 अक्षर का होना चाहिए।', pwErrMatch:'पासवर्ड मेल नहीं खाते।', pwErrToken:'लिंक अमान्य है या समाप्त हो गया है। नया अनुरोध करें।', pwErrGeneric:'पूरा नहीं हो सका। फिर से प्रयास करें।' },
+    };
+    for (const _l in _PWRESET_I18N) { T[_l] = Object.assign(T[_l] || {}, _PWRESET_I18N[_l]); }
+
     function applyLang() {
         const lang = T[currentLang] || T.es;
         // Per-key fallback: chosen language → English → Spanish. This lets newly
@@ -5180,6 +5200,8 @@
                 '<div class="sk-modal-icon" aria-hidden="true"></div>' +
                 '<h2 class="sk-modal-title"></h2>' +
                 '<p class="sk-modal-body"></p>' +
+                '<div class="sk-modal-fields"></div>' +
+                '<div class="sk-modal-error" role="alert"></div>' +
                 '<div class="sk-modal-actions">' +
                   '<button type="button" class="sk-modal-btn sk-modal-ghost"></button>' +
                   '<button type="button" class="sk-modal-btn sk-modal-primary"></button>' +
@@ -5189,17 +5211,34 @@
             this._icon = card.querySelector('.sk-modal-icon');
             this._title = card.querySelector('.sk-modal-title');
             this._bodyEl = card.querySelector('.sk-modal-body');
+            this._fieldsEl = card.querySelector('.sk-modal-fields');
+            this._errEl = card.querySelector('.sk-modal-error');
             this._ghost = card.querySelector('.sk-modal-ghost');
             this._primary = card.querySelector('.sk-modal-primary');
             this._ghost.addEventListener('click', () => this._done(false));
-            this._primary.addEventListener('click', () => this._done(true));
+            this._primary.addEventListener('click', () => this._submit());
             ov.addEventListener('click', (e) => { if (e.target === ov) this._done(false); });
             this._el = ov;
             return ov;
         },
-        _done(val) {
+        // Validate (prompt mode) then resolve true; confirm/notice resolve true directly.
+        _submit() {
+            if (this._promptMode) {
+                const values = {};
+                this._fields.forEach(inp => { values[inp.dataset.name] = inp.value; });
+                if (this._validate) {
+                    const err = this._validate(values);
+                    if (err) { this._errEl.textContent = err; return; }
+                }
+                this._done(true, values);
+                return;
+            }
+            this._done(true);
+        },
+        _done(val, payload) {
             if (!this._resolver) return;
             const resolve = this._resolver; this._resolver = null;
+            const wasPrompt = this._promptMode;
             this._el.classList.remove('open');
             if (this._onKey) { document.removeEventListener('keydown', this._onKey, true); this._onKey = null; }
             const prev = this._prevFocus; this._prevFocus = null;
@@ -5207,7 +5246,9 @@
                 if (!this._resolver && this._el) this._el.setAttribute('hidden', '');
                 try { prev && prev.focus && prev.focus(); } catch (_) {}
             }, 200);
-            resolve(val);
+            // Prompt resolves with the field values (or null on cancel); confirm/
+            // notice resolve with the boolean as before.
+            resolve(wasPrompt ? (val ? (payload || {}) : null) : val);
         },
         open(opts) {
             opts = opts || {};
@@ -5217,8 +5258,32 @@
                 this._icon.textContent = opts.icon || '';
                 this._title.textContent = opts.title || '';
                 this._bodyEl.textContent = opts.body || '';
+                // Input fields (prompt mode). Rebuilt each open.
+                this._fieldsEl.innerHTML = '';
+                this._fields = [];
+                this._errEl.textContent = '';
+                this._validate = opts.validate || null;
+                this._promptMode = opts.mode === 'prompt';
+                if (Array.isArray(opts.fields)) {
+                    opts.fields.forEach(f => {
+                        const input = document.createElement('input');
+                        input.className = 'sk-modal-input';
+                        input.type = f.type || 'text';
+                        input.placeholder = f.placeholder || '';
+                        if (f.autocomplete) input.autocomplete = f.autocomplete;
+                        if (f.value) input.value = f.value;
+                        input.dataset.name = f.name;
+                        input.addEventListener('input', () => { this._errEl.textContent = ''; });
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter') { e.preventDefault(); this._submit(); }
+                        });
+                        this._fieldsEl.appendChild(input);
+                        this._fields.push(input);
+                    });
+                }
                 const isConfirm = opts.mode === 'confirm';
-                this._ghost.hidden = !isConfirm;
+                // Prompt and confirm both show the ghost (cancel) button.
+                this._ghost.hidden = !(isConfirm || this._promptMode);
                 this._ghost.textContent = opts.cancelText || '';
                 this._primary.textContent = opts.okText || 'OK';
                 this._primary.classList.toggle('is-danger', !!opts.danger);
@@ -5227,8 +5292,9 @@
                 this._el.removeAttribute('hidden');
                 void this._el.offsetWidth;                // reflow so .open transition plays
                 this._el.classList.add('open');
-                // Focus the SAFE button on a destructive confirm, else the primary.
-                const focusEl = (isConfirm && opts.danger) ? this._ghost : this._primary;
+                // Focus the first input (prompt), else the SAFE button on a
+                // destructive confirm, else the primary.
+                const focusEl = this._fields[0] || ((isConfirm && opts.danger) ? this._ghost : this._primary);
                 try { focusEl.focus(); } catch (_) {}
                 this._onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); this._done(false); } };
                 document.addEventListener('keydown', this._onKey, true);
@@ -5236,6 +5302,7 @@
         },
         confirm(o) { return this.open(Object.assign({ mode: 'confirm' }, o)); },
         notice(o) { return this.open(Object.assign({ mode: 'notice' }, o)); },
+        prompt(o) { return this.open(Object.assign({ mode: 'prompt' }, o)); },
     };
     window.skDialog = skDialog;
 
@@ -8450,6 +8517,17 @@ ${this.buildContext()}`;
             try { _processLandingLogo(); } catch (_) {}
             // Wire the showcase carousel (map screenshots slider).
             try { _wireLandingCarousels(); } catch (_) {}
+            // Arrived from a password-reset email (?reset=<token>)? Show the landing,
+            // then open the new-password form on top. Handled before session routing
+            // so it works whether or not the browser still has a stale session.
+            try {
+                const resetTok = new URL(window.location.href).searchParams.get('reset');
+                if (resetTok) {
+                    this._showLanding();
+                    setTimeout(() => { this._resetPasswordWithToken(resetTok); }, 300);
+                    return;
+                }
+            } catch (_) {}
             const tok = this.token();
             if (tok) {
                 // Validate the saved session against the server before letting them in.
@@ -8861,6 +8939,8 @@ ${this.buildContext()}`;
             this._wirePricing();
             const form = document.getElementById('auth-form');
             if (form) form.addEventListener('submit', (e) => { e.preventDefault(); this._submit(); });
+            const forgot = document.getElementById('auth-forgot');
+            if (forgot) forgot.addEventListener('click', () => this._forgotPassword());
             // Top-bar auth buttons → dedicated auth view; back → home.
             // Entering auth from the top bar is a plain login/register with NO
             // plan attached, so clear any stale checkout intent first.
@@ -9123,6 +9203,88 @@ ${this.buildContext()}`;
                 this._error('No se pudo contactar con el servidor. Inicia start_server.py.');
             } finally {
                 if (submit) { submit.disabled = false; submit.textContent = (this.mode === 'register') ? 'Crear cuenta' : 'Entrar'; }
+            }
+        },
+        // T-table string helper for the password-reset flow.
+        _pwtk(k) {
+            const L = T[currentLang] || {};
+            return L[k] || (T.en && T.en[k]) || (T.es && T.es[k]) || '';
+        },
+        // "Forgot password?" → ask for the email, POST the reset request. We ALWAYS
+        // show the same neutral "check your email" notice (never reveal whether the
+        // email is registered).
+        async _forgotPassword() {
+            const tk = (k) => this._pwtk(k);
+            const typed = (document.getElementById('auth-email') || {}).value || '';
+            const vals = await skDialog.prompt({
+                icon: '🔑',
+                title: tk('pwResetTitle'),
+                body: tk('pwResetBody'),
+                fields: [{ name: 'email', type: 'email', placeholder: landingI18n.get(currentLang, 'lpEmailPh'), autocomplete: 'email', value: typed.trim() }],
+                okText: tk('pwSend'),
+                cancelText: tk('pwCancel'),
+                validate: (v) => {
+                    const e = (v.email || '').trim();
+                    if (!e || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return tk('pwErrEmail');
+                    return null;
+                },
+            });
+            if (!vals) return;   // cancelled
+            try {
+                await fetch('/api/auth/request-password-reset', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: (vals.email || '').trim() }),
+                });
+            } catch (_) { /* still show the neutral notice below */ }
+            await skDialog.notice({ icon: '📩', title: tk('pwSentTitle'), body: tk('pwSentBody'), okText: tk('mdGotIt') });
+        },
+        // Arrived via the email link (?token=...): ask for a new password twice,
+        // POST it, confirm, then strip the token from the URL.
+        async _resetPasswordWithToken(token) {
+            const tk = (k) => this._pwtk(k);
+            const clearUrl = () => {
+                try {
+                    const u = new URL(window.location.href);
+                    u.searchParams.delete('token');
+                    window.history.replaceState({}, '', '/' + u.search);
+                } catch (_) {}
+            };
+            const vals = await skDialog.prompt({
+                icon: '🔒',
+                title: tk('pwNewTitle'),
+                body: tk('pwNewBody'),
+                fields: [
+                    { name: 'p1', type: 'password', placeholder: tk('pwNewPh'), autocomplete: 'new-password' },
+                    { name: 'p2', type: 'password', placeholder: tk('pwConfirmPh'), autocomplete: 'new-password' },
+                ],
+                okText: tk('pwSave'),
+                cancelText: tk('pwCancel'),
+                validate: (v) => {
+                    if ((v.p1 || '').length < 6) return tk('pwErrShort');
+                    if (v.p1 !== v.p2) return tk('pwErrMatch');
+                    return null;
+                },
+            });
+            if (!vals) { clearUrl(); return; }   // cancelled
+            try {
+                const r = await fetch('/api/auth/reset-password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, password: vals.p1 }),
+                });
+                const data = await r.json().catch(() => ({}));
+                clearUrl();
+                if (r.ok && data.ok) {
+                    await skDialog.notice({ icon: '✓', title: tk('pwDoneTitle'), body: tk('pwDoneBody'), okText: tk('mdGotIt') });
+                    this.showAuth('login');
+                    return;
+                }
+                const msg = data.error === 'token_invalid_or_expired' ? tk('pwErrToken')
+                          : data.error === 'password_too_short' ? tk('pwErrShort')
+                          : tk('pwErrGeneric');
+                await skDialog.notice({ icon: '⚠️', title: tk('pwResetTitle'), body: msg, okText: tk('mdGotIt') });
+            } catch (_) {
+                clearUrl();
+                await skDialog.notice({ icon: '⚠️', title: tk('pwResetTitle'), body: tk('pwErrGeneric'), okText: tk('mdGotIt') });
             }
         },
         async logout() {

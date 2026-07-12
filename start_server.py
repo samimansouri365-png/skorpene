@@ -224,7 +224,7 @@ def _send_password_reset_email(email, reset_token, brevo_api_key):
     if not brevo_api_key or not reset_token:
         return False
     try:
-        reset_url = f"https://www.skorpene.com/reset-password?token={reset_token}"
+        reset_url = f"https://www.skorpene.com/?reset={reset_token}"
         sender = {"name": "Skorpene", "email": "noreply@skorpene.com"}
         to = [{"email": email}]
         subject = "Restablecer tu contraseña en Skorpene"
