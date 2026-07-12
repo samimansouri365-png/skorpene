@@ -6786,8 +6786,14 @@ body.onb-active { overflow: hidden; }
 .lpm-item:hover { background: rgba(139,92,246,0.14); }
 .lpm-enter { font-weight: 600; }
 .lpm-logout { color: #ff8da3; }
+/* Cancel = destructive-ish pink; while a cancellation is pending the same
+   button flips to "Resume subscription" in green. */
+.lpm-cancelsub { color: #ff8da3; }
+.lpm-resumesub { color: #7fd8a4; }
 .lpm-reset { color: #f0b070; font-size: 12px; }
 [data-theme="light"] #profile-chip .lpm-reset { color: #b4630e; }
+[data-theme="light"] #profile-chip .lpm-cancelsub { color: #d6336c; }
+[data-theme="light"] #profile-chip .lpm-resumesub { color: #1f9d5b; }
 /* CRITICAL: .lpm-item sets display:block, which beats the UA [hidden]{display:none}
    rule — so a menu item with the `hidden` attribute (the dev Reset) would render
    anyway. This makes `hidden` actually hide it. */

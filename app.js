@@ -1084,8 +1084,8 @@
     Object.keys(SIM_I18N_CARD).forEach(lng => { if (T[lng]) Object.assign(T[lng], SIM_I18N_CARD[lng]); });
     // AI assistant strings — all 9 languages.
     const AI_I18N = {
-        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app',backHome:'Volver a inicio',welcomeTitle:'Bienvenido a Skorpene',welcomeSub:'Preparando tu mundo…',proLockedHint:'🔒 Disponible en Pro (mapa en vivo)' },
-        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',logoutLabel:'Log out',enterApp:'Enter app',backHome:'Back to home',welcomeTitle:'Welcome to Skorpene',welcomeSub:'Preparing your world…',proLockedHint:'🔒 Available on Pro (live map)' },
+        es:{ aiTitle:'Asistente IA',aiWelcome:'Hola 👋 Pregúntame lo que quieras sobre los eventos del mapa.',aiPlaceholder:'Pregunta sobre el mapa…',aiAskPh:'Pregunta a la IA…',aiThinking:'Pensando…',aiError:'No se pudo contactar con la IA. Revisa que el servidor (start_server.py) esté en marcha y que ANTHROPIC_API_KEY esté configurada.',srcTelegram:'Telegram',srcOutlets:'Noticieros',outletsLoading:'Cargando noticieros…',outletsError:'No se pudieron cargar los noticieros (¿servidor en marcha?).',outletsEmpty:'Sin artículos disponibles.',newsTitle:'NOTICIAS EN VIVO',translatingNews:'Traduciendo noticias…',translateDone:'Noticias traducidas',showMore:'Mostrar más',showLess:'Mostrar menos',mapLockTitle:'El mapa en vivo es Pro',mapLockBody:'Desbloquea el mapa en vivo para ver cada noticia geolocalizada en tiempo real. En el plan Free puedes añadir hasta 5 fuentes y leerlas en el Feed.',mapLockCta:'Obtener Pro',srcLimitTitle:'Has alcanzado el límite Free',srcLimitBody:'El plan Free permite hasta 5 fuentes. Mejora a Pro para fuentes ilimitadas y el mapa en vivo.',planChoose:'Elegir plan',planLabel:'Plan',subCancel:'Cancelar suscripción',subResume:'Reanudar suscripción',subCancelConfirm:'¿Seguro que quieres cancelar tu suscripción? Mantendrás tu plan hasta el final del periodo ya pagado.',subCancelDone:'Suscripción cancelada. Tu plan sigue activo hasta el {date}.',subCancelNow:'Suscripción cancelada. Tu cuenta ahora es Free.',subResumeDone:'Suscripción reanudada ✓',subErr:'No se pudo completar la operación. Inténtalo de nuevo.',logoutLabel:'Cerrar sesión',enterApp:'Entrar a la app',backHome:'Volver a inicio',welcomeTitle:'Bienvenido a Skorpene',welcomeSub:'Preparando tu mundo…',proLockedHint:'🔒 Disponible en Pro (mapa en vivo)' },
+        en:{ aiTitle:'AI Assistant',aiWelcome:'Hi 👋 Ask me anything about the events on the map.',aiPlaceholder:'Ask about the map…',aiAskPh:'Ask the AI…',aiThinking:'Thinking…',aiError:'Could not reach the AI. Make sure the server (start_server.py) is running and ANTHROPIC_API_KEY is set.',srcTelegram:'Telegram',srcOutlets:'News outlets',outletsLoading:'Loading news outlets…',outletsError:'Could not load news outlets (is the server running?).',outletsEmpty:'No articles available.',newsTitle:'LIVE NEWS',translatingNews:'Translating news…',translateDone:'News translated',showMore:'Show more',showLess:'Show less',mapLockTitle:'The live map is Pro',mapLockBody:'Unlock the live map to see every story geolocated in real time. On the Free plan you can add up to 5 sources and read them in the Feed.',mapLockCta:'Get Pro',srcLimitTitle:'You\'ve hit the Free limit',srcLimitBody:'The Free plan allows up to 5 sources. Upgrade to Pro for unlimited sources and the live map.',planChoose:'Choose plan',planLabel:'Plan',subCancel:'Cancel subscription',subResume:'Resume subscription',subCancelConfirm:'Cancel your subscription? You keep your plan until the end of the period you already paid for.',subCancelDone:'Subscription canceled. Your plan stays active until {date}.',subCancelNow:'Subscription canceled. Your account is now Free.',subResumeDone:'Subscription resumed ✓',subErr:'Something went wrong. Please try again.',logoutLabel:'Log out',enterApp:'Enter app',backHome:'Back to home',welcomeTitle:'Welcome to Skorpene',welcomeSub:'Preparing your world…',proLockedHint:'🔒 Available on Pro (live map)' },
         fr:{ aiTitle:'Assistant IA',aiWelcome:'Bonjour 👋 Posez-moi des questions sur les événements de la carte.',aiPlaceholder:'Question sur la carte…',aiAskPh:'Demandez à l\'IA…',aiThinking:'Réflexion…',aiError:'Impossible de contacter l\'IA. Vérifiez que le serveur (start_server.py) est en marche.',srcTelegram:'Telegram',srcOutlets:'Médias',outletsLoading:'Chargement…',outletsError:'Impossible de charger les médias.',outletsEmpty:'Aucun article disponible.',newsTitle:'ACTUALITÉS EN DIRECT',translatingNews:'Traduction…',translateDone:'Actualités traduites',showMore:'Afficher plus',showLess:'Afficher moins' },
         ru:{ aiTitle:'ИИ Ассистент',aiWelcome:'Привет 👋 Задайте мне вопросы о событиях на карте.',aiPlaceholder:'Вопрос о карте…',aiAskPh:'Спросите ИИ…',aiThinking:'Думаю…',aiError:'Не удалось связаться с ИИ. Проверьте, что сервер (start_server.py) запущен.',srcTelegram:'Телеграм',srcOutlets:'СМИ',outletsLoading:'Загрузка…',outletsError:'Не удалось загрузить СМИ.',outletsEmpty:'Нет доступных статей.',newsTitle:'НОВОСТИ В ПРЯМОМ ЭФИРЕ',translatingNews:'Перевод…',translateDone:'Новости переведены',showMore:'Показать больше',showLess:'Показать меньше' },
         zh:{ aiTitle:'AI 助手',aiWelcome:'你好 👋 随时可以问我地图上的事件。',aiPlaceholder:'询问地图…',aiAskPh:'询问 AI…',aiThinking:'思考中…',aiError:'无法联系 AI。请确认服务器 (start_server.py) 正在运行。',srcTelegram:'Telegram',srcOutlets:'新闻媒体',outletsLoading:'加载中…',outletsError:'无法加载新闻媒体。',outletsEmpty:'暂无文章。',newsTitle:'实时新闻',translatingNews:'翻译中…',translateDone:'新闻已翻译',showMore:'显示更多',showLess:'显示更少' },
@@ -4867,17 +4867,17 @@
     // didn't have them, so the chrome never falls back to English. (es/en already
     // carry these keys inline in T above.) Merged into T so applyLang/tk see them.
     const _UI_EXTRA = {
-        fr: { planChoose:'Choisir un plan', logoutLabel:'Se déconnecter', enterApp:"Ouvrir l'app", backHome:"Retour à l'accueil", welcomeTitle:'Bienvenue sur Skorpene', welcomeSub:'Préparation de ton monde…', proLockedHint:'🔒 Disponible avec Pro (carte en direct)' },
-        ru: { planChoose:'Выбрать план', logoutLabel:'Выйти', enterApp:'Войти в приложение', backHome:'На главную', welcomeTitle:'Добро пожаловать в Skorpene', welcomeSub:'Готовим твой мир…', proLockedHint:'🔒 Доступно в Pro (живая карта)' },
-        zh: { planChoose:'选择方案', logoutLabel:'退出登录', enterApp:'进入应用', backHome:'返回首页', welcomeTitle:'欢迎使用 Skorpene', welcomeSub:'正在准备你的世界…', proLockedHint:'🔒 Pro 专享（实时地图）' },
-        tr: { planChoose:'Plan seç', logoutLabel:'Çıkış yap', enterApp:'Uygulamaya gir', backHome:'Ana sayfaya dön', welcomeTitle:"Skorpene'ye hoş geldin", welcomeSub:'Dünyan hazırlanıyor…', proLockedHint:"🔒 Pro'da mevcut (canlı harita)" },
-        ar: { planChoose:'اختر خطة', logoutLabel:'تسجيل الخروج', enterApp:'ادخل التطبيق', backHome:'العودة للرئيسية', welcomeTitle:'مرحبًا بك في Skorpene', welcomeSub:'نُجهّز عالمك…', proLockedHint:'🔒 متاح في Pro (خريطة حية)' },
-        fa: { planChoose:'انتخاب پلن', logoutLabel:'خروج', enterApp:'ورود به برنامه', backHome:'بازگشت به خانه', welcomeTitle:'به Skorpene خوش آمدید', welcomeSub:'در حال آماده‌سازی دنیای تو…', proLockedHint:'🔒 در Pro موجود است (نقشه زنده)' },
-        he: { planChoose:'בחר תוכנית', logoutLabel:'התנתק', enterApp:'כניסה לאפליקציה', backHome:'חזרה לדף הבית', welcomeTitle:'ברוכים הבאים ל-Skorpene', welcomeSub:'מכינים את העולם שלך…', proLockedHint:'🔒 זמין ב-Pro (מפה חיה)' },
-        nl: { planChoose:'Plan kiezen', logoutLabel:'Uitloggen', enterApp:'App openen', backHome:'Terug naar start', welcomeTitle:'Welkom bij Skorpene', welcomeSub:'Je wereld wordt voorbereid…', proLockedHint:'🔒 Beschikbaar in Pro (live kaart)' },
-        it: { planChoose:'Scegli piano', logoutLabel:'Esci', enterApp:"Apri l'app", backHome:'Torna alla home', welcomeTitle:'Benvenuto su Skorpene', welcomeSub:'Stiamo preparando il tuo mondo…', proLockedHint:'🔒 Disponibile in Pro (mappa live)' },
-        pt: { planChoose:'Escolher plano', logoutLabel:'Terminar sessão', enterApp:'Entrar na app', backHome:'Voltar ao início', welcomeTitle:'Bem-vindo ao Skorpene', welcomeSub:'A preparar o teu mundo…', proLockedHint:'🔒 Disponível no Pro (mapa em direto)' },
-        hi: { planChoose:'प्लान चुनें', logoutLabel:'लॉग आउट', enterApp:'ऐप खोलें', backHome:'होम पर वापस', welcomeTitle:'Skorpene में आपका स्वागत है', welcomeSub:'आपकी दुनिया तैयार हो रही है…', proLockedHint:'🔒 Pro में उपलब्ध (लाइव मानचित्र)' },
+        fr: { planChoose:'Choisir un plan', logoutLabel:'Se déconnecter', enterApp:"Ouvrir l'app", backHome:"Retour à l'accueil", welcomeTitle:'Bienvenue sur Skorpene', welcomeSub:'Préparation de ton monde…', proLockedHint:'🔒 Disponible avec Pro (carte en direct)', subCancel:"Annuler l'abonnement", subResume:"Reprendre l'abonnement", subCancelConfirm:"Annuler ton abonnement ? Tu gardes ton plan jusqu'à la fin de la période déjà payée.", subCancelDone:"Abonnement annulé. Ton plan reste actif jusqu'au {date}.", subCancelNow:'Abonnement annulé. Ton compte est maintenant Free.', subResumeDone:'Abonnement repris ✓', subErr:"L'opération a échoué. Réessaie." },
+        ru: { planChoose:'Выбрать план', logoutLabel:'Выйти', enterApp:'Войти в приложение', backHome:'На главную', welcomeTitle:'Добро пожаловать в Skorpene', welcomeSub:'Готовим твой мир…', proLockedHint:'🔒 Доступно в Pro (живая карта)', subCancel:'Отменить подписку', subResume:'Возобновить подписку', subCancelConfirm:'Отменить подписку? Твой план останется активным до конца уже оплаченного периода.', subCancelDone:'Подписка отменена. План активен до {date}.', subCancelNow:'Подписка отменена. Теперь у тебя план Free.', subResumeDone:'Подписка возобновлена ✓', subErr:'Не удалось выполнить операцию. Попробуй ещё раз.' },
+        zh: { planChoose:'选择方案', logoutLabel:'退出登录', enterApp:'进入应用', backHome:'返回首页', welcomeTitle:'欢迎使用 Skorpene', welcomeSub:'正在准备你的世界…', proLockedHint:'🔒 Pro 专享（实时地图）', subCancel:'取消订阅', subResume:'恢复订阅', subCancelConfirm:'确定要取消订阅吗？已付费期间内你仍可继续使用当前方案。', subCancelDone:'订阅已取消。你的方案将保留至 {date}。', subCancelNow:'订阅已取消。你的账户现在是 Free。', subResumeDone:'订阅已恢复 ✓', subErr:'操作失败，请重试。' },
+        tr: { planChoose:'Plan seç', logoutLabel:'Çıkış yap', enterApp:'Uygulamaya gir', backHome:'Ana sayfaya dön', welcomeTitle:"Skorpene'ye hoş geldin", welcomeSub:'Dünyan hazırlanıyor…', proLockedHint:"🔒 Pro'da mevcut (canlı harita)", subCancel:'Aboneliği iptal et', subResume:'Aboneliği sürdür', subCancelConfirm:'Aboneliğini iptal etmek istiyor musun? Ödediğin dönemin sonuna kadar planın aktif kalır.', subCancelDone:'Abonelik iptal edildi. Planın {date} tarihine kadar aktif.', subCancelNow:'Abonelik iptal edildi. Hesabın artık Free.', subResumeDone:'Abonelik sürdürüldü ✓', subErr:'İşlem tamamlanamadı. Tekrar dene.' },
+        ar: { planChoose:'اختر خطة', logoutLabel:'تسجيل الخروج', enterApp:'ادخل التطبيق', backHome:'العودة للرئيسية', welcomeTitle:'مرحبًا بك في Skorpene', welcomeSub:'نُجهّز عالمك…', proLockedHint:'🔒 متاح في Pro (خريطة حية)', subCancel:'إلغاء الاشتراك', subResume:'استئناف الاشتراك', subCancelConfirm:'هل تريد إلغاء اشتراكك؟ ستحتفظ بخطتك حتى نهاية الفترة المدفوعة.', subCancelDone:'تم إلغاء الاشتراك. تبقى خطتك فعّالة حتى {date}.', subCancelNow:'تم إلغاء الاشتراك. حسابك الآن Free.', subResumeDone:'تم استئناف الاشتراك ✓', subErr:'تعذّر إتمام العملية. حاول مجددًا.' },
+        fa: { planChoose:'انتخاب پلن', logoutLabel:'خروج', enterApp:'ورود به برنامه', backHome:'بازگشت به خانه', welcomeTitle:'به Skorpene خوش آمدید', welcomeSub:'در حال آماده‌سازی دنیای تو…', proLockedHint:'🔒 در Pro موجود است (نقشه زنده)', subCancel:'لغو اشتراک', subResume:'ازسرگیری اشتراک', subCancelConfirm:'اشتراکت لغو شود؟ تا پایان دورهٔ پرداخت‌شده پلنت فعال می‌ماند.', subCancelDone:'اشتراک لغو شد. پلنت تا {date} فعال می‌ماند.', subCancelNow:'اشتراک لغو شد. حسابت اکنون Free است.', subResumeDone:'اشتراک از سر گرفته شد ✓', subErr:'عملیات انجام نشد. دوباره تلاش کن.' },
+        he: { planChoose:'בחר תוכנית', logoutLabel:'התנתק', enterApp:'כניסה לאפליקציה', backHome:'חזרה לדף הבית', welcomeTitle:'ברוכים הבאים ל-Skorpene', welcomeSub:'מכינים את העולם שלך…', proLockedHint:'🔒 זמין ב-Pro (מפה חיה)', subCancel:'ביטול המנוי', subResume:'חידוש המנוי', subCancelConfirm:'לבטל את המנוי? התוכנית תישאר פעילה עד סוף התקופה ששולמה.', subCancelDone:'המנוי בוטל. התוכנית פעילה עד {date}.', subCancelNow:'המנוי בוטל. החשבון שלך עכשיו Free.', subResumeDone:'המנוי חודש ✓', subErr:'הפעולה נכשלה. נסה שוב.' },
+        nl: { planChoose:'Plan kiezen', logoutLabel:'Uitloggen', enterApp:'App openen', backHome:'Terug naar start', welcomeTitle:'Welkom bij Skorpene', welcomeSub:'Je wereld wordt voorbereid…', proLockedHint:'🔒 Beschikbaar in Pro (live kaart)', subCancel:'Abonnement opzeggen', subResume:'Abonnement hervatten', subCancelConfirm:'Abonnement opzeggen? Je houdt je plan tot het einde van de al betaalde periode.', subCancelDone:'Abonnement opgezegd. Je plan blijft actief tot {date}.', subCancelNow:'Abonnement opgezegd. Je account is nu Free.', subResumeDone:'Abonnement hervat ✓', subErr:'Bewerking mislukt. Probeer opnieuw.' },
+        it: { planChoose:'Scegli piano', logoutLabel:'Esci', enterApp:"Apri l'app", backHome:'Torna alla home', welcomeTitle:'Benvenuto su Skorpene', welcomeSub:'Stiamo preparando il tuo mondo…', proLockedHint:'🔒 Disponibile in Pro (mappa live)', subCancel:'Annulla abbonamento', subResume:'Riattiva abbonamento', subCancelConfirm:"Vuoi annullare l'abbonamento? Manterrai il tuo piano fino alla fine del periodo già pagato.", subCancelDone:'Abbonamento annullato. Il piano resta attivo fino al {date}.', subCancelNow:'Abbonamento annullato. Il tuo account ora è Free.', subResumeDone:'Abbonamento riattivato ✓', subErr:'Operazione non riuscita. Riprova.' },
+        pt: { planChoose:'Escolher plano', logoutLabel:'Terminar sessão', enterApp:'Entrar na app', backHome:'Voltar ao início', welcomeTitle:'Bem-vindo ao Skorpene', welcomeSub:'A preparar o teu mundo…', proLockedHint:'🔒 Disponível no Pro (mapa em direto)', subCancel:'Cancelar subscrição', subResume:'Retomar subscrição', subCancelConfirm:'Cancelar a tua subscrição? Manténs o teu plano até ao fim do período já pago.', subCancelDone:'Subscrição cancelada. O teu plano fica ativo até {date}.', subCancelNow:'Subscrição cancelada. A tua conta agora é Free.', subResumeDone:'Subscrição retomada ✓', subErr:'Não foi possível concluir. Tenta novamente.' },
+        hi: { planChoose:'प्लान चुनें', logoutLabel:'लॉग आउट', enterApp:'ऐप खोलें', backHome:'होम पर वापस', welcomeTitle:'Skorpene में आपका स्वागत है', welcomeSub:'आपकी दुनिया तैयार हो रही है…', proLockedHint:'🔒 Pro में उपलब्ध (लाइव मानचित्र)', subCancel:'सदस्यता रद्द करें', subResume:'सदस्यता फिर शुरू करें', subCancelConfirm:'क्या सदस्यता रद्द करनी है? भुगतान की गई अवधि के अंत तक आपका प्लान सक्रिय रहेगा।', subCancelDone:'सदस्यता रद्द हो गई। आपका प्लान {date} तक सक्रिय रहेगा।', subCancelNow:'सदस्यता रद्द हो गई। आपका खाता अब Free है।', subResumeDone:'सदस्यता फिर शुरू हो गई ✓', subErr:'कार्रवाई पूरी नहीं हो सकी। फिर से आज़माएँ।' },
     };
     for (const _l in _UI_EXTRA) { T[_l] = Object.assign(T[_l] || {}, _UI_EXTRA[_l]); }
 
@@ -5139,6 +5139,104 @@
     }
     window.applyPlanGating = applyPlanGating;
 
+    // ── Subscription self-service ──
+    // Cancel (and un-cancel) the paid plan WITHOUT leaving Skorpene: one button
+    // in both profile menus talks to /api/subscription/*. Cancelling keeps the
+    // plan until the end of the already-paid period (planUntil); while that is
+    // pending the same button flips to "Resume subscription".
+    const subCtl = {
+        _busy: false,
+        _tk(k) {
+            const L = T[currentLang] || {};
+            return L[k] || (T.en && T.en[k]) || (T.es && T.es[k]) || '';
+        },
+        _fmtDate(ts) {
+            try { return new Date(ts * 1000).toLocaleDateString(currentLang, { year: 'numeric', month: 'short', day: 'numeric' }); }
+            catch (_) { return new Date(ts * 1000).toLocaleDateString(); }
+        },
+        _user() { try { return JSON.parse(localStorage.getItem('geoscope_auth_user') || '{}') || {}; } catch (_) { return {}; } },
+        _saveUser(u) { try { localStorage.setItem('geoscope_auth_user', JSON.stringify(u)); } catch (_) {} },
+        _closeMenus() {
+            ['profile-menu', 'landing-profile-menu'].forEach(id => {
+                const m = document.getElementById(id);
+                if (m) m.setAttribute('hidden', '');
+            });
+        },
+        // Paint the cancel/resume item of ONE profile menu. Hidden on free.
+        renderInto(btnId) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            const u = this._user();
+            const plan = (u.plan || 'free').toLowerCase();
+            const paid = plan === 'pro' || plan === 'team';
+            btn.hidden = !paid;
+            if (!paid) return;
+            const pending = !!u.planUntil;
+            btn.textContent = pending ? this._tk('subResume') : this._tk('subCancel');
+            btn.classList.toggle('lpm-cancelsub', !pending);
+            btn.classList.toggle('lpm-resumesub', pending);
+            if (pending) btn.title = this._fmtDate(u.planUntil); else btn.removeAttribute('title');
+            if (btn.dataset.wired !== '1') {
+                btn.dataset.wired = '1';
+                btn.addEventListener('click', () => {
+                    if (this._user().planUntil) this.resume(); else this.cancel();
+                });
+            }
+        },
+        renderAll() { this.renderInto('profile-cancelsub-btn'); this.renderInto('landing-cancelsub-btn'); },
+        async _post(path) {
+            let tok = '';
+            try { tok = localStorage.getItem('geoscope_auth_token') || ''; } catch (_) {}
+            if (!tok) return null;
+            try {
+                const r = await fetch(path, { method: 'POST', headers: { Authorization: 'Bearer ' + tok } });
+                const d = await r.json().catch(() => ({}));
+                return r.ok ? d : null;
+            } catch (_) { return null; }
+        },
+        async cancel() {
+            if (this._busy) return;
+            this._closeMenus();
+            try { if (!confirm(this._tk('subCancelConfirm'))) return; } catch (_) {}
+            this._busy = true;
+            try {
+                const d = await this._post('/api/subscription/cancel');
+                if (!d || !d.ok) { alert(this._tk('subErr')); return; }
+                const u = this._user();
+                u.plan = d.plan || u.plan;
+                u.planUntil = d.until || null;
+                this._saveUser(u);
+                this._refreshUi();
+                alert(d.until
+                    ? this._tk('subCancelDone').replace('{date}', this._fmtDate(d.until))
+                    : this._tk('subCancelNow'));
+            } finally { this._busy = false; }
+        },
+        async resume() {
+            if (this._busy) return;
+            this._closeMenus();
+            this._busy = true;
+            try {
+                const d = await this._post('/api/subscription/resume');
+                if (!d || !d.ok) { alert(this._tk('subErr')); return; }
+                const u = this._user();
+                u.planUntil = null;
+                this._saveUser(u);
+                this._refreshUi();
+                alert(this._tk('subResumeDone'));
+            } finally { this._busy = false; }
+        },
+        _refreshUi() {
+            // Re-locks the map + re-renders the app chip if the plan dropped to
+            // free, and refreshes the landing chip/pricing CTAs.
+            try { applyPlanGating(); } catch (_) {}
+            try { auth && auth._fillLandingProfile && auth._fillLandingProfile(); } catch (_) {}
+            try { auth && auth._refreshPricingCtas && auth._refreshPricingCtas(); } catch (_) {}
+            this.renderAll();
+        },
+    };
+    window.subCtl = subCtl;
+
     // ── Profile chip (top-right) ──
     // Shows the signed-in user + their current plan. Free users get a "Choose
     // plan" pill that opens the plans view. Idempotent.
@@ -5179,6 +5277,7 @@
             resetBtn.hidden = !isDev;
             resetBtn.textContent = tr.devReset || 'Reset everything (dev)';
         }
+        try { subCtl.renderInto('profile-cancelsub-btn'); } catch (_) {}
         if (!_profileWired) {
             _profileWired = true;
             const btn = document.getElementById('profile-chip-btn');
@@ -8496,6 +8595,7 @@ ${this.buildContext()}`;
                 resetBtn.hidden = !this._isDevUser();
                 resetBtn.textContent = tr.devReset || 'Reset everything (dev)';
             }
+            try { window.subCtl && window.subCtl.renderInto('landing-cancelsub-btn'); } catch (_) {}
         },
         _enterApp() { this._revealApp(true); },
         // Reveal the product (map) by hiding the landing overlay. `withWelcome`

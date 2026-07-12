@@ -165,6 +165,9 @@ def _auth_init():
             "ALTER TABLE users ADD COLUMN plan TEXT DEFAULT 'free'",
             "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
             "ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT",
+            # Paid-through timestamp set when the user cancels: the plan stays
+            # active until this moment, then drops to free (checked at auth).
+            "ALTER TABLE users ADD COLUMN plan_until REAL",
             # Onboarding profile (JSON). Bound to the account so the wizard runs
             # once and is never asked again, on any device.
             "ALTER TABLE users ADD COLUMN profile TEXT",
@@ -209,6 +212,32 @@ def _stripe_request(method, path, form=None):
         })
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.load(resp)
+
+
+def _sub_period_end(sub):
+    """Paid-through timestamp of a Stripe subscription. Newer API versions set
+    cancel_at once cancel_at_period_end is on (and keep current_period_end on
+    the items); older ones expose current_period_end on the root object."""
+    for v in (sub.get('cancel_at'), sub.get('current_period_end')):
+        if v:
+            return float(v)
+    try:
+        items = ((sub.get('items') or {}).get('data')) or []
+        v = items[0].get('current_period_end') if items else None
+        if v:
+            return float(v)
+    except Exception:
+        pass
+    print('[Stripe] subscription has no period end; defaulting to +30d', file=sys.stderr)
+    return time.time() + 30 * 86400
+
+
+def _row_value(row, key):
+    """sqlite3.Row lookup that tolerates a column missing (pre-migration DB)."""
+    try:
+        return row[key]
+    except Exception:
+        return None
 
 
 def _hash_pw(password, salt):
@@ -591,6 +620,10 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_billing_create_session()
         elif self.path == '/api/billing/dev-upgrade':
             self.handle_billing_dev_upgrade()
+        elif self.path == '/api/subscription/cancel':
+            self.handle_subscription_cancel()
+        elif self.path == '/api/subscription/resume':
+            self.handle_subscription_resume()
         else:
             self.send_error(404)
 
@@ -662,25 +695,12 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             if not row or not hmac.compare_digest(_hash_pw(password, row['pw_salt']), row['pw_hash']):
                 self._json_response(401, {'error': 'bad_credentials'}); return
             token = _new_session(conn, row['id'])
-        profile = _safe_json(row['profile'])
-        sources = _safe_json(row['sources'])
-        self._json_response(200, {'token': token, 'user': {
-            'email': row['email'], 'name': row['name'], 'plan': row['plan'] or 'free',
-            'profile': profile, 'sources': sources, 'is_dev': _is_dev_email(row['email'])}})
+        self._json_response(200, {'token': token, 'user': self._user_payload(row)})
 
-    def handle_auth_me(self):
-        token = self._bearer_token()
-        if not token:
-            self._json_response(401, {'error': 'no_token'}); return
-        min_created = time.time() - _SESSION_TTL
-        with _auth_db() as conn:
-            row = conn.execute(
-                'SELECT u.email, u.name, u.plan, u.profile, u.sources FROM sessions s JOIN users u ON u.id=s.user_id '
-                'WHERE s.token=? AND s.created > ?',
-                (token, min_created)).fetchone()
-        if not row:
-            self._json_response(401, {'error': 'invalid_token'}); return
-        self._json_response(200, {'user': {
+    def _user_payload(self, row):
+        """The public user object sent to the client (login + /me)."""
+        until = _row_value(row, 'plan_until')
+        return {
             'email': row['email'], 'name': row['name'],
             'plan': row['plan'] or 'free',
             # Account-bound onboarding profile (null until the wizard is done).
@@ -688,7 +708,20 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             # Account-bound news sources (null until the user has any saved).
             'sources': _safe_json(row['sources']),
             'is_dev': _is_dev_email(row['email']),
-        }})
+            # Set only while a cancellation is pending: epoch seconds the paid
+            # plan stays active until. The client shows "Resume subscription".
+            'planUntil': float(until) if until else None,
+        }
+
+    def handle_auth_me(self):
+        if not self._bearer_token():
+            self._json_response(401, {'error': 'no_token'}); return
+        # _user_from_token also applies the plan_until expiry, so a lapsed
+        # cancellation is already reflected in the payload we return here.
+        row = self._user_from_token()
+        if not row:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        self._json_response(200, {'user': self._user_payload(row)})
 
     def handle_auth_profile(self):
         """Persist the onboarding profile JSON onto the user's account so the
@@ -737,22 +770,34 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self._json_response(403, {'error': 'not_dev'}); return
         with _AUTH_LOCK, _auth_db() as conn:
             conn.execute("UPDATE users SET profile=NULL, sources=NULL, plan='free', "
-                         "stripe_customer_id=NULL, stripe_subscription_id=NULL WHERE id=?",
+                         "stripe_customer_id=NULL, stripe_subscription_id=NULL, plan_until=NULL WHERE id=?",
                          (user['id'],))
             conn.commit()
         self._json_response(200, {'ok': True, 'plan': 'free'})
 
     def _user_from_token(self):
-        """Resolve the bearer token to a users row, or None."""
+        """Resolve the bearer token to a users row, or None. Also the single
+        place where a canceled subscription that reached its paid-through date
+        (plan_until) drops to free — every gated endpoint and /me authenticate
+        through here, so no Stripe webhook is needed for the downgrade."""
         token = self._bearer_token()
         if not token:
             return None
         min_created = time.time() - _SESSION_TTL
+        q = ('SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id '
+             'WHERE s.token=? AND s.created > ?')
         with _auth_db() as conn:
-            return conn.execute(
-                'SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id '
-                'WHERE s.token=? AND s.created > ?',
-                (token, min_created)).fetchone()
+            row = conn.execute(q, (token, min_created)).fetchone()
+        if row is None:
+            return None
+        until = _row_value(row, 'plan_until')
+        if until and (row['plan'] or 'free') in ('pro', 'team') and time.time() > float(until):
+            with _AUTH_LOCK, _auth_db() as conn:
+                conn.execute("UPDATE users SET plan='free', plan_until=NULL, "
+                             'stripe_subscription_id=NULL WHERE id=?', (row['id'],))
+                conn.commit()
+                row = conn.execute(q, (token, min_created)).fetchone()
+        return row
 
     def handle_billing_dev_upgrade(self):
         """Switch a DEVELOPER account's plan without paying, so the owner can test
@@ -769,7 +814,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         if plan not in ('free', 'pro', 'team'):
             self._json_response(400, {'error': 'bad_plan'}); return
         with _AUTH_LOCK, _auth_db() as conn:
-            conn.execute('UPDATE users SET plan=? WHERE id=?', (plan, user['id']))
+            conn.execute('UPDATE users SET plan=?, plan_until=NULL WHERE id=?', (plan, user['id']))
             conn.commit()
         self._json_response(200, {'plan': plan, 'dev': True})
 
@@ -847,11 +892,125 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             new_plan = 'team' if price_id == STRIPE_PRICE_TEAM else 'pro'
             with _AUTH_LOCK, _auth_db() as conn:
                 conn.execute(
-                    'UPDATE users SET plan=?, stripe_subscription_id=?, stripe_customer_id=? WHERE id=?',
+                    'UPDATE users SET plan=?, stripe_subscription_id=?, stripe_customer_id=?, plan_until=NULL WHERE id=?',
                     (new_plan, sub_id, cust_id, user['id']))
                 conn.commit()
             self._json_response(200, {'plan': new_plan}); return
         self._json_response(200, {'plan': user['plan'] or 'free', 'paid': False})
+
+    # ── Subscription self-service (cancel / resume, no Stripe portal) ──
+    def _find_stripe_subscription_id(self, user):
+        """Best-effort lookup of the user's live Stripe subscription id.
+        Prefers the id stored at purchase time; falls back to the stored
+        customer id, then to a customer-by-email search (accounts that paid
+        before the ids were persisted). Returns the id, '' when the account
+        definitively has no subscription, or None when Stripe couldn't be
+        reached (the caller must NOT downgrade blindly in that case)."""
+        from urllib.parse import urlencode
+        sub_id = (user['stripe_subscription_id'] or '').strip()
+        if sub_id:
+            return sub_id
+        cust_id = (user['stripe_customer_id'] or '').strip()
+        try:
+            if not cust_id:
+                found = _stripe_request('GET', '/v1/customers?' + urlencode(
+                    {'email': user['email'], 'limit': 3}))
+                data = found.get('data') or []
+                cust_id = (data[0].get('id') or '') if data else ''
+                if not cust_id:
+                    return ''
+            # No status filter: Stripe then returns every non-canceled
+            # subscription (active, trialing, past_due…) — all cancelable.
+            subs = _stripe_request('GET', '/v1/subscriptions?' + urlencode(
+                {'customer': cust_id, 'limit': 3}))
+            data = subs.get('data') or []
+            return (data[0].get('id') or '') if data else ''
+        except RuntimeError:
+            return ''   # no Stripe key configured (dev box) → nothing billed
+        except Exception as e:
+            print('[Stripe] subscription lookup failed: {0}'.format(e), file=sys.stderr)
+            return None
+
+    def _drop_to_free(self, user_id):
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute("UPDATE users SET plan='free', plan_until=NULL, "
+                         'stripe_subscription_id=NULL WHERE id=?', (user_id,))
+            conn.commit()
+
+    def handle_subscription_cancel(self):
+        """Cancel the signed-in user's paid plan from inside Skorpene. Sets
+        cancel_at_period_end in Stripe so they keep what they already paid for;
+        the plan drops to free automatically (enforced in _user_from_token)
+        once the paid-through date passes. Accounts with no real Stripe
+        subscription (dev upgrades, stale links) drop to free immediately."""
+        user = self._user_from_token()
+        if not user:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        plan = (user['plan'] or 'free').lower()
+        if plan not in ('pro', 'team'):
+            self._json_response(400, {'error': 'not_paid'}); return
+        sub_id = self._find_stripe_subscription_id(user)
+        if sub_id is None:
+            self._json_response(502, {'error': 'stripe_unreachable'}); return
+        if not sub_id:
+            self._drop_to_free(user['id'])
+            self._json_response(200, {'ok': True, 'plan': 'free', 'until': None}); return
+        try:
+            sub = _stripe_request('POST', '/v1/subscriptions/' + sub_id,
+                                  [('cancel_at_period_end', 'true')])
+        except urllib.error.HTTPError as e:
+            body = e.read().decode('utf-8', 'replace') if hasattr(e, 'read') else str(e)
+            if e.code == 404:
+                # The subscription no longer exists in Stripe → nothing billed.
+                self._drop_to_free(user['id'])
+                self._json_response(200, {'ok': True, 'plan': 'free', 'until': None}); return
+            if e.code == 400:
+                # A fully-canceled subscription rejects updates with 400 —
+                # confirm, then treat it like "already gone".
+                try:
+                    cur = _stripe_request('GET', '/v1/subscriptions/' + sub_id)
+                    if cur.get('status') == 'canceled':
+                        self._drop_to_free(user['id'])
+                        self._json_response(200, {'ok': True, 'plan': 'free', 'until': None}); return
+                except Exception:
+                    pass
+            print('[Stripe] cancel HTTP {0}: {1}'.format(e.code, body[:300]), file=sys.stderr)
+            self._json_response(502, {'error': 'stripe_http'}); return
+        except Exception as e:
+            print('[Stripe] cancel error: {0}'.format(e), file=sys.stderr)
+            self._json_response(502, {'error': 'stripe_unreachable'}); return
+        until = _sub_period_end(sub)
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute('UPDATE users SET plan_until=?, stripe_subscription_id=? WHERE id=?',
+                         (until, sub_id, user['id']))
+            conn.commit()
+        self._json_response(200, {'ok': True, 'plan': plan, 'until': until})
+
+    def handle_subscription_resume(self):
+        """Undo a pending cancellation before the paid period ends: clears
+        cancel_at_period_end in Stripe and the local paid-through marker, so
+        billing and the plan continue as if the user never canceled."""
+        user = self._user_from_token()
+        if not user:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        plan = (user['plan'] or 'free').lower()
+        sub_id = (user['stripe_subscription_id'] or '').strip()
+        if plan not in ('pro', 'team') or not _row_value(user, 'plan_until') or not sub_id:
+            self._json_response(400, {'error': 'nothing_to_resume'}); return
+        try:
+            _stripe_request('POST', '/v1/subscriptions/' + sub_id,
+                            [('cancel_at_period_end', 'false')])
+        except urllib.error.HTTPError as e:
+            body = e.read().decode('utf-8', 'replace') if hasattr(e, 'read') else str(e)
+            print('[Stripe] resume HTTP {0}: {1}'.format(e.code, body[:300]), file=sys.stderr)
+            self._json_response(502, {'error': 'stripe_http'}); return
+        except Exception as e:
+            print('[Stripe] resume error: {0}'.format(e), file=sys.stderr)
+            self._json_response(502, {'error': 'stripe_unreachable'}); return
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute('UPDATE users SET plan_until=NULL WHERE id=?', (user['id'],))
+            conn.commit()
+        self._json_response(200, {'ok': True, 'plan': plan, 'until': None})
 
     def handle_auth_logout(self):
         token = self._bearer_token()
