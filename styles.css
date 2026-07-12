@@ -478,6 +478,41 @@ body.plan-locked .map-lock { display: flex; }
     min-height: 0;
 }
 .sk-modal-error:empty { display: none; }
+/* Optional inline link inside a dialog (e.g. "I forgot my password"). */
+.sk-modal-link {
+    display: block; margin: 0 auto 14px; padding: 2px 4px;
+    background: none; border: 0; cursor: pointer;
+    font-family: var(--font); font-size: 12.5px; font-weight: 600;
+    color: #b79bff; text-decoration: underline; text-underline-offset: 2px;
+}
+.sk-modal-link:hover { color: #d3c4ff; }
+.sk-modal-link[hidden] { display: none; }
+[data-theme="light"] .sk-modal-link { color: #6d28d9; }
+[data-theme="light"] .sk-modal-link:hover { color: #5b21b6; }
+
+/* ── Profile-photo framing editor ── square stage, circular window, drag+zoom */
+.avatar-editor-card { max-width: 340px; }
+.avatar-editor-stage {
+    position: relative; margin: 4px auto 16px; overflow: hidden;
+    border-radius: 14px; background: #0d0a16; touch-action: none; cursor: grab;
+    user-select: none;
+}
+.avatar-editor-stage:active { cursor: grabbing; }
+.avatar-editor-stage #ae-img {
+    position: absolute; top: 0; left: 0; max-width: none; pointer-events: none;
+    user-select: none; -webkit-user-drag: none;
+}
+.avatar-editor-mask {
+    position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+    box-shadow: 0 0 0 9999px rgba(10, 6, 20, 0.62);
+    border: 2px solid rgba(255, 255, 255, 0.85);
+}
+.avatar-editor-zoom {
+    display: block; width: 78%; margin: 0 auto 18px; accent-color: #8b5cf6; cursor: pointer;
+}
+[data-theme="light"] .avatar-editor-stage { background: #ece9f6; }
+[data-theme="light"] .avatar-editor-mask { box-shadow: 0 0 0 9999px rgba(255,255,255,0.66); border-color: rgba(94,106,210,0.9); }
+
 [data-theme="light"] .sk-modal-input {
     color: #201c2e; background: rgba(94,106,210,0.05); border-color: rgba(94,106,210,0.30);
 }

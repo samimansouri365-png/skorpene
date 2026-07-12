@@ -4941,6 +4941,24 @@
     };
     for (const _l in _ACCOUNT_I18N) { T[_l] = Object.assign(T[_l] || {}, _ACCOUNT_I18N[_l]); }
 
+    // Photo framing editor + "I forgot my current password" link (13 langs).
+    const _ACCOUNT_I18N2 = {
+        es: { acAdjust:'Ajusta tu foto', acDragHint:'Arrastra para mover y usa el control para acercar.', acSaveBtn:'Guardar', acForgotInline:'No recuerdo mi contraseña actual' },
+        en: { acAdjust:'Adjust your photo', acDragHint:'Drag to move, use the slider to zoom.', acSaveBtn:'Save', acForgotInline:"I don't remember my current password" },
+        fr: { acAdjust:'Ajuste ta photo', acDragHint:'Fais glisser pour déplacer, utilise le curseur pour zoomer.', acSaveBtn:'Enregistrer', acForgotInline:'Je ne me souviens pas de mon mot de passe actuel' },
+        ru: { acAdjust:'Настройте фото', acDragHint:'Перетаскивайте, чтобы двигать, ползунок — для масштаба.', acSaveBtn:'Сохранить', acForgotInline:'Я не помню текущий пароль' },
+        zh: { acAdjust:'调整你的照片', acDragHint:'拖动以移动，用滑块缩放。', acSaveBtn:'保存', acForgotInline:'我不记得当前密码' },
+        tr: { acAdjust:'Fotoğrafını ayarla', acDragHint:'Taşımak için sürükle, yakınlaştırmak için kaydırıcıyı kullan.', acSaveBtn:'Kaydet', acForgotInline:'Mevcut şifremi hatırlamıyorum' },
+        ar: { acAdjust:'اضبط صورتك', acDragHint:'اسحب للتحريك، واستخدم شريط التمرير للتكبير.', acSaveBtn:'حفظ', acForgotInline:'لا أتذكر كلمة المرور الحالية' },
+        fa: { acAdjust:'عکست را تنظیم کن', acDragHint:'برای جابه‌جایی بکش و برای بزرگ‌نمایی از نوار لغزنده استفاده کن.', acSaveBtn:'ذخیره', acForgotInline:'رمز عبور فعلی‌ام را به یاد نمی‌آورم' },
+        he: { acAdjust:'התאם את התמונה', acDragHint:'גרור כדי להזיז, השתמש במחוון כדי לשנות זום.', acSaveBtn:'שמור', acForgotInline:'אני לא זוכר את הסיסמה הנוכחית' },
+        nl: { acAdjust:'Pas je foto aan', acDragHint:'Sleep om te verplaatsen, gebruik de schuif om te zoomen.', acSaveBtn:'Opslaan', acForgotInline:'Ik weet mijn huidige wachtwoord niet meer' },
+        it: { acAdjust:'Regola la tua foto', acDragHint:'Trascina per spostare, usa il cursore per lo zoom.', acSaveBtn:'Salva', acForgotInline:'Non ricordo la mia password attuale' },
+        pt: { acAdjust:'Ajusta a tua foto', acDragHint:'Arrasta para mover, usa o cursor para aproximar.', acSaveBtn:'Guardar', acForgotInline:'Não me lembro da minha palavra-passe atual' },
+        hi: { acAdjust:'अपनी फ़ोटो समायोजित करें', acDragHint:'हिलाने के लिए खींचें, ज़ूम के लिए स्लाइडर का उपयोग करें।', acSaveBtn:'सहेजें', acForgotInline:'मुझे अपना वर्तमान पासवर्ड याद नहीं है' },
+    };
+    for (const _l in _ACCOUNT_I18N2) { T[_l] = Object.assign(T[_l] || {}, _ACCOUNT_I18N2[_l]); }
+
     function applyLang() {
         const lang = T[currentLang] || T.es;
         // Per-key fallback: chosen language → English → Spanish. This lets newly
@@ -5222,6 +5240,7 @@
                 '<p class="sk-modal-body"></p>' +
                 '<div class="sk-modal-fields"></div>' +
                 '<div class="sk-modal-error" role="alert"></div>' +
+                '<button type="button" class="sk-modal-link" hidden></button>' +
                 '<div class="sk-modal-actions">' +
                   '<button type="button" class="sk-modal-btn sk-modal-ghost"></button>' +
                   '<button type="button" class="sk-modal-btn sk-modal-primary"></button>' +
@@ -5233,10 +5252,18 @@
             this._bodyEl = card.querySelector('.sk-modal-body');
             this._fieldsEl = card.querySelector('.sk-modal-fields');
             this._errEl = card.querySelector('.sk-modal-error');
+            this._linkEl = card.querySelector('.sk-modal-link');
             this._ghost = card.querySelector('.sk-modal-ghost');
             this._primary = card.querySelector('.sk-modal-primary');
             this._ghost.addEventListener('click', () => this._done(false));
             this._primary.addEventListener('click', () => this._submit());
+            // Optional inline link (e.g. "I don't remember my password"): closes
+            // the dialog as cancel, then runs the supplied action.
+            this._linkEl.addEventListener('click', () => {
+                const action = this._linkAction;
+                this._done(false);
+                if (action) setTimeout(action, 60);
+            });
             ov.addEventListener('click', (e) => { if (e.target === ov) this._done(false); });
             this._el = ov;
             return ov;
@@ -5300,6 +5327,15 @@
                         this._fieldsEl.appendChild(input);
                         this._fields.push(input);
                     });
+                }
+                // Optional inline link under the fields (opts.link = {text, action}).
+                if (opts.link && opts.link.text) {
+                    this._linkEl.textContent = opts.link.text;
+                    this._linkEl.hidden = false;
+                    this._linkAction = opts.link.action || null;
+                } else {
+                    this._linkEl.hidden = true;
+                    this._linkAction = null;
                 }
                 const isConfirm = opts.mode === 'confirm';
                 // Prompt and confirm both show the ghost (cancel) button.
@@ -9290,6 +9326,9 @@ ${this.buildContext()}`;
                 ],
                 okText: tk('pwSave'),
                 cancelText: tk('pwCancel'),
+                // Escape hatch: if they don't remember the current password, fall
+                // back to the emailed reset flow (prefilled with their address).
+                link: { text: tk('acForgotInline'), action: () => this._forgotPassword() },
                 validate: (v) => {
                     if (!(v.cur || '').length) return tk('acErrCurrent');
                     if ((v.p1 || '').length < 6) return tk('pwErrShort');
@@ -9317,9 +9356,9 @@ ${this.buildContext()}`;
                 await skDialog.notice({ icon: '⚠️', title: tk('acPhotoErrTitle'), body: tk('pwErrGeneric'), okText: tk('mdGotIt') });
             }
         },
-        // Change profile picture: opens the file picker, resizes the chosen image
-        // client-side to a small square JPEG (keeps the payload tiny), then POSTs
-        // it to /api/auth/avatar. The resized data: URL is stored on the account.
+        // Change profile picture: opens the file picker, then an editor where the
+        // user drags + zooms to frame the photo inside the circle. On save, the
+        // framed square is exported as a small JPEG and POSTed to /api/auth/avatar.
         _changeAvatar() {
             const tk = (k) => this._pwtk(k);
             const input = document.getElementById('avatar-file-input');
@@ -9331,11 +9370,12 @@ ${this.buildContext()}`;
                 if (!file) return;
                 let dataUrl;
                 try {
-                    dataUrl = await this._resizeImage(file, 256);
+                    dataUrl = await this._openAvatarEditor(file);
                 } catch (_) {
                     await skDialog.notice({ icon: '⚠️', title: tk('acPhotoErrTitle'), body: tk('acPhotoErrBody'), okText: tk('mdGotIt') });
                     return;
                 }
+                if (!dataUrl) return;        // cancelled in the editor
                 const tok = (() => { try { return localStorage.getItem(LS_TOKEN) || ''; } catch (_) { return ''; } })();
                 if (!tok) return;
                 let resp;
@@ -9360,38 +9400,132 @@ ${this.buildContext()}`;
             };
             input.click();
         },
-        // Load an image File, center-crop to a square and scale to `size`px, then
-        // return a compressed JPEG data: URL. Runs entirely in the browser.
-        _resizeImage(file, size) {
-            return new Promise((resolve, reject) => {
+        // Read an image File, then open the framing editor. Resolves with a
+        // cropped JPEG data: URL, or null if the user cancels / it fails to load.
+        _openAvatarEditor(file) {
+            return new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.onerror = () => reject(new Error('read'));
+                reader.onerror = () => resolve(null);
                 reader.onload = () => {
                     const img = new Image();
-                    img.onerror = () => reject(new Error('decode'));
-                    img.onload = () => {
-                        try {
-                            const side = Math.min(img.width, img.height);
-                            const sx = (img.width - side) / 2;
-                            const sy = (img.height - side) / 2;
-                            const canvas = document.createElement('canvas');
-                            canvas.width = size; canvas.height = size;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
-                            resolve(canvas.toDataURL('image/jpeg', 0.85));
-                        } catch (e) { reject(e); }
-                    };
+                    img.onerror = () => resolve(null);
+                    img.onload = () => this._runAvatarEditor(img, resolve);
                     img.src = reader.result;
                 };
                 reader.readAsDataURL(file);
             });
+        },
+        // The framing editor itself: a square stage with a circular mask, drag to
+        // pan, a slider to zoom. "Save" renders the visible square to a 256px
+        // canvas → JPEG. Built once, reused. Resolves url|null.
+        _runAvatarEditor(img, resolve) {
+            const tk = (k) => this._pwtk(k);
+            const V = 260;    // on-screen stage size (px)
+            const OUT = 256;  // exported square (px)
+            let ov = document.getElementById('avatar-editor');
+            if (!ov) {
+                ov = document.createElement('div');
+                ov.id = 'avatar-editor';
+                ov.className = 'sk-modal';
+                ov.innerHTML =
+                    '<div class="sk-modal-card avatar-editor-card" role="dialog" aria-modal="true">' +
+                        '<h2 class="sk-modal-title" id="ae-title"></h2>' +
+                        '<p class="sk-modal-body" id="ae-hint"></p>' +
+                        '<div class="avatar-editor-stage" id="ae-stage">' +
+                            '<img id="ae-img" alt="" draggable="false">' +
+                            '<div class="avatar-editor-mask"></div>' +
+                        '</div>' +
+                        '<input type="range" id="ae-zoom" class="avatar-editor-zoom" min="1" max="3" step="0.01" value="1">' +
+                        '<div class="sk-modal-actions">' +
+                            '<button type="button" class="sk-modal-btn sk-modal-ghost" id="ae-cancel"></button>' +
+                            '<button type="button" class="sk-modal-btn sk-modal-primary" id="ae-save"></button>' +
+                        '</div>' +
+                    '</div>';
+                document.body.appendChild(ov);
+            }
+            const stage = ov.querySelector('#ae-stage');
+            const imgEl = ov.querySelector('#ae-img');
+            const zoom = ov.querySelector('#ae-zoom');
+            ov.querySelector('#ae-title').textContent = tk('acAdjust');
+            ov.querySelector('#ae-hint').textContent = tk('acDragHint');
+            ov.querySelector('#ae-cancel').textContent = tk('pwCancel');
+            ov.querySelector('#ae-save').textContent = tk('acSaveBtn');
+            stage.style.width = V + 'px'; stage.style.height = V + 'px';
+
+            const iw = img.naturalWidth, ih = img.naturalHeight;
+            const baseScale = Math.max(V / iw, V / ih);
+            let scale = baseScale;
+            let ox = (V - iw * scale) / 2, oy = (V - ih * scale) / 2;
+            const clamp = () => {
+                ox = Math.min(0, Math.max(V - iw * scale, ox));
+                oy = Math.min(0, Math.max(V - ih * scale, oy));
+            };
+            const apply = () => {
+                imgEl.style.width = (iw * scale) + 'px';
+                imgEl.style.height = (ih * scale) + 'px';
+                imgEl.style.left = ox + 'px';
+                imgEl.style.top = oy + 'px';
+            };
+            imgEl.src = img.src;
+            clamp(); apply();
+
+            zoom.value = '1';
+            zoom.oninput = () => {
+                const newScale = baseScale * (parseFloat(zoom.value) || 1);
+                // Keep the viewport centre fixed while zooming.
+                const cx = (V / 2 - ox) / scale, cy = (V / 2 - oy) / scale;
+                scale = newScale;
+                ox = V / 2 - cx * scale; oy = V / 2 - cy * scale;
+                clamp(); apply();
+            };
+
+            // Drag to pan (pointer events cover mouse + touch).
+            let dragging = false, px = 0, py = 0;
+            const onDown = (e) => { dragging = true; px = e.clientX; py = e.clientY; try { stage.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); };
+            const onMove = (e) => {
+                if (!dragging) return;
+                ox += e.clientX - px; oy += e.clientY - py; px = e.clientX; py = e.clientY;
+                clamp(); apply();
+            };
+            const onUp = () => { dragging = false; };
+            stage.onpointerdown = onDown;
+            stage.onpointermove = onMove;
+            stage.onpointerup = onUp;
+            stage.onpointercancel = onUp;
+
+            const close = (val) => {
+                ov.classList.remove('open');
+                setTimeout(() => ov.setAttribute('hidden', ''), 200);
+                resolve(val);
+            };
+            ov.querySelector('#ae-cancel').onclick = () => close(null);
+            ov.querySelector('#ae-save').onclick = () => {
+                try {
+                    const c = document.createElement('canvas');
+                    c.width = OUT; c.height = OUT;
+                    const ctx = c.getContext('2d');
+                    const sSize = V / scale;
+                    ctx.drawImage(img, -ox / scale, -oy / scale, sSize, sSize, 0, 0, OUT, OUT);
+                    close(c.toDataURL('image/jpeg', 0.85));
+                } catch (_) { close(null); }
+            };
+            ov.onclick = (e) => { if (e.target === ov) close(null); };
+
+            ov.removeAttribute('hidden');
+            void ov.offsetWidth;              // reflow so the .open transition plays
+            ov.classList.add('open');
         },
         // "Forgot password?" → ask for the email, POST the reset request. We ALWAYS
         // show the same neutral "check your email" notice (never reveal whether the
         // email is registered).
         async _forgotPassword() {
             const tk = (k) => this._pwtk(k);
-            const typed = (document.getElementById('auth-email') || {}).value || '';
+            // Prefill: the login form's email field if present, else the
+            // logged-in account's email (when opened from "change password").
+            let typed = (document.getElementById('auth-email') || {}).value || '';
+            if (!typed) {
+                try { typed = (JSON.parse(localStorage.getItem(LS_USER) || '{}') || {}).email || ''; } catch (_) {}
+            }
             const vals = await skDialog.prompt({
                 icon: '🔑',
                 title: tk('pwResetTitle'),
