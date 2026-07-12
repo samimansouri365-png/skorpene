@@ -497,6 +497,19 @@ body.plan-locked .map-lock { display: flex; }
 [data-theme="light"] .sk-modal-body { color: #4a4560; }
 [data-theme="light"] .sk-modal-ghost { color: #4a4560; border-color: rgba(0,0,0,0.14); }
 [data-theme="light"] .sk-modal-ghost:hover { background: rgba(0,0,0,0.04); color: #201c2e; }
+/* Light theme: map-lock blur overlay and card. */
+[data-theme="light"] .map-lock { background: rgba(20, 18, 30, 0.32); }
+[data-theme="light"] .map-lock-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(94, 106, 210, 0.28);
+    box-shadow: 0 18px 60px rgba(30, 20, 60, 0.22);
+}
+[data-theme="light"] .map-lock-title { color: #201c2e; }
+[data-theme="light"] .map-lock-body { color: #4a4560; }
+[data-theme="light"] .map-lock-cta {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    color: #fff;
+}
 @media (prefers-reduced-motion: reduce) {
     .sk-modal, .sk-modal-card { transition: none; }
 }
