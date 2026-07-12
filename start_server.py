@@ -228,11 +228,28 @@ def _send_password_reset_email(email, reset_token, brevo_api_key):
         sender = {"name": "Skorpene", "email": "noreply@skorpene.com"}
         to = [{"email": email}]
         subject = "Restablecer tu contraseña en Skorpene"
+
+        # Load and encode logo as base64 for embedding in email
+        logo_b64 = ""
+        try:
+            import base64
+            logo_path = os.path.join(os.path.dirname(__file__), 'logo.png')
+            if os.path.exists(logo_path):
+                with open(logo_path, 'rb') as f:
+                    logo_b64 = base64.b64encode(f.read()).decode('utf-8')
+        except Exception:
+            pass
+
+        logo_html = f'<img src="data:image/png;base64,{logo_b64}" alt="Skorpene" style="max-width:150px;margin-bottom:20px;">' if logo_b64 else ""
+
         html_content = f"""
-        <h2>Restablecer contraseña</h2>
-        <p>Haz clic en el enlace para cambiar tu contraseña:</p>
-        <p><a href="{reset_url}">Restablecer contraseña</a></p>
-        <p>Este enlace expira en 1 hora.</p>
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+            {logo_html}
+            <h2 style="color:#333;">Restablecer contraseña</h2>
+            <p style="color:#666;line-height:1.6;">Haz clic en el enlace para cambiar tu contraseña:</p>
+            <p><a href="{reset_url}" style="background:#8b5cf6;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;display:inline-block;">Restablecer contraseña</a></p>
+            <p style="color:#999;font-size:12px;">Este enlace expira en 1 hora.</p>
+        </div>
         """
         payload = {
             "sender": sender,
