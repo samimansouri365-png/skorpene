@@ -229,9 +229,6 @@ def _send_password_reset_email(email, reset_token, brevo_api_key):
         to = [{"email": email}]
         subject = "Restablecer tu contraseña en Skorpene"
 
-        # Logo served as static file URL (Gmail blocks base64 for security)
-        logo_url = "https://www.skorpene.com/logo.png"
-
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -240,8 +237,6 @@ def _send_password_reset_email(email, reset_token, brevo_api_key):
             <style>
                 body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }}
                 .container {{ max-width: 600px; margin: 0 auto; padding: 40px 20px; }}
-                .logo {{ text-align: center; margin-bottom: 30px; }}
-                .logo img {{ max-width: 120px; height: auto; }}
                 .content {{ background: #f9f9f9; padding: 30px; border-radius: 8px; }}
                 h2 {{ color: #333; margin-top: 0; }}
                 p {{ color: #666; line-height: 1.6; margin: 15px 0; }}
@@ -253,9 +248,6 @@ def _send_password_reset_email(email, reset_token, brevo_api_key):
         </head>
         <body>
             <div class="container">
-                <div class="logo">
-                    <img src="{logo_url}" alt="Skorpene" width="120">
-                </div>
                 <div class="content">
                     <h2>Restablecer tu contraseña</h2>
                     <p>Haz clic en el botón para cambiar tu contraseña:</p>
