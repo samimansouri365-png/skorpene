@@ -9781,10 +9781,14 @@ ${this.buildContext()}`;
             // Update submit button label too (mode-dependent).
             try { auth._setMode(auth.mode); } catch (_) {}
         },
-        // Resolve the initial language: saved profile > a previously-picked
-        // landing lang > English (the default). We intentionally do NOT use the
-        // browser language so the default is always English; the user can pick
-        // any of the 13 languages from the picker and their choice is saved.
+        // Resolve the initial language, in priority order:
+        //   1. saved onboarding profile lang   (explicit choice)
+        //   2. a previously-picked landing lang (explicit choice)
+        //   3. the browser's language          (navigator.languages)
+        //   4. English                         (final fallback)
+        // Explicit picks always win so switching languages sticks; otherwise we
+        // follow the browser so e.g. a reset link opened in a fresh context (the
+        // phone mail app's in-app browser) shows the user's own language, not en.
         resolve() {
             try {
                 const p = JSON.parse(localStorage.getItem('geoscope_profile') || 'null');
@@ -9794,7 +9798,23 @@ ${this.buildContext()}`;
                 const saved = localStorage.getItem('geoscope_landing_lang');
                 if (saved && LANDING_I18N[saved]) return saved;
             } catch (_) {}
+            const bl = this.browserLang();
+            if (bl) return bl;
             return 'en';
+        },
+        // First of the browser's preferred languages that we actually support,
+        // matched by base code (so zh-CN/zh-TW → zh, pt-BR → pt), or '' if none.
+        browserLang() {
+            try {
+                const list = (navigator.languages && navigator.languages.length)
+                    ? navigator.languages
+                    : [navigator.language || navigator.userLanguage || ''];
+                for (const raw of list) {
+                    const base = String(raw || '').toLowerCase().split('-')[0];
+                    if (base && LANDING_I18N[base]) return base;
+                }
+            } catch (_) {}
+            return '';
         },
         save(lng) {
             try { localStorage.setItem('geoscope_landing_lang', lng); } catch (_) {}
