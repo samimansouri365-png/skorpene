@@ -4921,6 +4921,26 @@
     };
     for (const _l in _PWRESET_I18N) { T[_l] = Object.assign(T[_l] || {}, _PWRESET_I18N[_l]); }
 
+    // Account self-service strings (change password / photo while logged in).
+    // Reuses pw* keys where possible (pwNewPh, pwConfirmPh, pwSave, pwCancel,
+    // pwErrShort, pwErrMatch, mdGotIt). Merged into T for all 13 languages.
+    const _ACCOUNT_I18N = {
+        es: { acPhoto:'Cambiar foto', acRemovePhoto:'Quitar foto', acPassword:'Cambiar contraseña', acPwTitle:'Cambiar contraseña', acPwBody:'Introduce tu contraseña actual y elige una nueva.', acCurrentPh:'Contraseña actual', acPwDoneTitle:'Contraseña cambiada', acPwDoneBody:'Tu contraseña se ha actualizado.', acErrCurrent:'La contraseña actual no es correcta.', acPhotoDoneTitle:'Foto actualizada', acPhotoDoneBody:'Tu foto de perfil se ha actualizado.', acPhotoErrTitle:'No se pudo actualizar', acPhotoErrBody:'No se pudo actualizar la foto. Inténtalo de nuevo.', acPhotoTooBig:'La imagen es demasiado grande.' },
+        en: { acPhoto:'Change photo', acRemovePhoto:'Remove photo', acPassword:'Change password', acPwTitle:'Change password', acPwBody:'Enter your current password and choose a new one.', acCurrentPh:'Current password', acPwDoneTitle:'Password changed', acPwDoneBody:'Your password has been updated.', acErrCurrent:'Your current password is incorrect.', acPhotoDoneTitle:'Photo updated', acPhotoDoneBody:'Your profile picture has been updated.', acPhotoErrTitle:'Could not update', acPhotoErrBody:'Could not update the photo. Please try again.', acPhotoTooBig:'The image is too large.' },
+        fr: { acPhoto:'Changer la photo', acRemovePhoto:'Retirer la photo', acPassword:'Changer le mot de passe', acPwTitle:'Changer le mot de passe', acPwBody:'Saisis ton mot de passe actuel et choisis-en un nouveau.', acCurrentPh:'Mot de passe actuel', acPwDoneTitle:'Mot de passe changé', acPwDoneBody:'Ton mot de passe a été mis à jour.', acErrCurrent:'Ton mot de passe actuel est incorrect.', acPhotoDoneTitle:'Photo mise à jour', acPhotoDoneBody:'Ta photo de profil a été mise à jour.', acPhotoErrTitle:'Échec de la mise à jour', acPhotoErrBody:'Impossible de mettre à jour la photo. Réessaie.', acPhotoTooBig:"L'image est trop volumineuse." },
+        ru: { acPhoto:'Изменить фото', acRemovePhoto:'Удалить фото', acPassword:'Сменить пароль', acPwTitle:'Смена пароля', acPwBody:'Введите текущий пароль и выберите новый.', acCurrentPh:'Текущий пароль', acPwDoneTitle:'Пароль изменён', acPwDoneBody:'Ваш пароль обновлён.', acErrCurrent:'Текущий пароль неверен.', acPhotoDoneTitle:'Фото обновлено', acPhotoDoneBody:'Ваше фото профиля обновлено.', acPhotoErrTitle:'Не удалось обновить', acPhotoErrBody:'Не удалось обновить фото. Попробуйте снова.', acPhotoTooBig:'Изображение слишком большое.' },
+        zh: { acPhoto:'更换照片', acRemovePhoto:'移除照片', acPassword:'更改密码', acPwTitle:'更改密码', acPwBody:'输入你的当前密码并选择一个新密码。', acCurrentPh:'当前密码', acPwDoneTitle:'密码已更改', acPwDoneBody:'你的密码已更新。', acErrCurrent:'当前密码不正确。', acPhotoDoneTitle:'照片已更新', acPhotoDoneBody:'你的头像已更新。', acPhotoErrTitle:'无法更新', acPhotoErrBody:'无法更新照片，请重试。', acPhotoTooBig:'图片太大。' },
+        tr: { acPhoto:'Fotoğrafı değiştir', acRemovePhoto:'Fotoğrafı kaldır', acPassword:'Şifreyi değiştir', acPwTitle:'Şifreyi değiştir', acPwBody:'Mevcut şifreni gir ve yeni bir tane seç.', acCurrentPh:'Mevcut şifre', acPwDoneTitle:'Şifre değiştirildi', acPwDoneBody:'Şifren güncellendi.', acErrCurrent:'Mevcut şifren yanlış.', acPhotoDoneTitle:'Fotoğraf güncellendi', acPhotoDoneBody:'Profil fotoğrafın güncellendi.', acPhotoErrTitle:'Güncellenemedi', acPhotoErrBody:'Fotoğraf güncellenemedi. Tekrar dene.', acPhotoTooBig:'Görüntü çok büyük.' },
+        ar: { acPhoto:'تغيير الصورة', acRemovePhoto:'إزالة الصورة', acPassword:'تغيير كلمة المرور', acPwTitle:'تغيير كلمة المرور', acPwBody:'أدخل كلمة المرور الحالية واختر واحدة جديدة.', acCurrentPh:'كلمة المرور الحالية', acPwDoneTitle:'تم تغيير كلمة المرور', acPwDoneBody:'تم تحديث كلمة المرور الخاصة بك.', acErrCurrent:'كلمة المرور الحالية غير صحيحة.', acPhotoDoneTitle:'تم تحديث الصورة', acPhotoDoneBody:'تم تحديث صورة ملفك الشخصي.', acPhotoErrTitle:'تعذّر التحديث', acPhotoErrBody:'تعذّر تحديث الصورة. حاول مرة أخرى.', acPhotoTooBig:'الصورة كبيرة جدًا.' },
+        fa: { acPhoto:'تغییر عکس', acRemovePhoto:'حذف عکس', acPassword:'تغییر رمز عبور', acPwTitle:'تغییر رمز عبور', acPwBody:'رمز عبور فعلی‌ات را وارد کن و یکی جدید انتخاب کن.', acCurrentPh:'رمز عبور فعلی', acPwDoneTitle:'رمز عبور تغییر کرد', acPwDoneBody:'رمز عبورت به‌روزرسانی شد.', acErrCurrent:'رمز عبور فعلی نادرست است.', acPhotoDoneTitle:'عکس به‌روزرسانی شد', acPhotoDoneBody:'عکس پروفایلت به‌روزرسانی شد.', acPhotoErrTitle:'به‌روزرسانی ناموفق بود', acPhotoErrBody:'عکس به‌روزرسانی نشد. دوباره تلاش کن.', acPhotoTooBig:'تصویر خیلی بزرگ است.' },
+        he: { acPhoto:'שנה תמונה', acRemovePhoto:'הסר תמונה', acPassword:'שנה סיסמה', acPwTitle:'שינוי סיסמה', acPwBody:'הזן את הסיסמה הנוכחית ובחר סיסמה חדשה.', acCurrentPh:'סיסמה נוכחית', acPwDoneTitle:'הסיסמה שונתה', acPwDoneBody:'הסיסמה שלך עודכנה.', acErrCurrent:'הסיסמה הנוכחית שגויה.', acPhotoDoneTitle:'התמונה עודכנה', acPhotoDoneBody:'תמונת הפרופיל שלך עודכנה.', acPhotoErrTitle:'העדכון נכשל', acPhotoErrBody:'לא ניתן היה לעדכן את התמונה. נסה שוב.', acPhotoTooBig:'התמונה גדולה מדי.' },
+        nl: { acPhoto:'Foto wijzigen', acRemovePhoto:'Foto verwijderen', acPassword:'Wachtwoord wijzigen', acPwTitle:'Wachtwoord wijzigen', acPwBody:'Voer je huidige wachtwoord in en kies een nieuw.', acCurrentPh:'Huidig wachtwoord', acPwDoneTitle:'Wachtwoord gewijzigd', acPwDoneBody:'Je wachtwoord is bijgewerkt.', acErrCurrent:'Je huidige wachtwoord is onjuist.', acPhotoDoneTitle:'Foto bijgewerkt', acPhotoDoneBody:'Je profielfoto is bijgewerkt.', acPhotoErrTitle:'Kon niet bijwerken', acPhotoErrBody:'Kon de foto niet bijwerken. Probeer opnieuw.', acPhotoTooBig:'De afbeelding is te groot.' },
+        it: { acPhoto:'Cambia foto', acRemovePhoto:'Rimuovi foto', acPassword:'Cambia password', acPwTitle:'Cambia password', acPwBody:'Inserisci la password attuale e scegline una nuova.', acCurrentPh:'Password attuale', acPwDoneTitle:'Password cambiata', acPwDoneBody:'La tua password è stata aggiornata.', acErrCurrent:'La password attuale non è corretta.', acPhotoDoneTitle:'Foto aggiornata', acPhotoDoneBody:'La tua foto profilo è stata aggiornata.', acPhotoErrTitle:'Impossibile aggiornare', acPhotoErrBody:'Impossibile aggiornare la foto. Riprova.', acPhotoTooBig:"L'immagine è troppo grande." },
+        pt: { acPhoto:'Mudar foto', acRemovePhoto:'Remover foto', acPassword:'Mudar palavra-passe', acPwTitle:'Mudar palavra-passe', acPwBody:'Introduz a tua palavra-passe atual e escolhe uma nova.', acCurrentPh:'Palavra-passe atual', acPwDoneTitle:'Palavra-passe alterada', acPwDoneBody:'A tua palavra-passe foi atualizada.', acErrCurrent:'A palavra-passe atual está incorreta.', acPhotoDoneTitle:'Foto atualizada', acPhotoDoneBody:'A tua foto de perfil foi atualizada.', acPhotoErrTitle:'Não foi possível atualizar', acPhotoErrBody:'Não foi possível atualizar a foto. Tenta de novo.', acPhotoTooBig:'A imagem é demasiado grande.' },
+        hi: { acPhoto:'फ़ोटो बदलें', acRemovePhoto:'फ़ोटो हटाएं', acPassword:'पासवर्ड बदलें', acPwTitle:'पासवर्ड बदलें', acPwBody:'अपना वर्तमान पासवर्ड दर्ज करें और एक नया चुनें।', acCurrentPh:'वर्तमान पासवर्ड', acPwDoneTitle:'पासवर्ड बदल गया', acPwDoneBody:'आपका पासवर्ड अपडेट हो गया है।', acErrCurrent:'आपका वर्तमान पासवर्ड गलत है।', acPhotoDoneTitle:'फ़ोटो अपडेट हुई', acPhotoDoneBody:'आपकी प्रोफ़ाइल फ़ोटो अपडेट हो गई है।', acPhotoErrTitle:'अपडेट नहीं हो सका', acPhotoErrBody:'फ़ोटो अपडेट नहीं हो सकी। फिर से प्रयास करें।', acPhotoTooBig:'छवि बहुत बड़ी है।' },
+    };
+    for (const _l in _ACCOUNT_I18N) { T[_l] = Object.assign(T[_l] || {}, _ACCOUNT_I18N[_l]); }
+
     function applyLang() {
         const lang = T[currentLang] || T.es;
         // Per-key fallback: chosen language → English → Spanish. This lets newly
@@ -5421,6 +5441,24 @@
     // Shows the signed-in user + their current plan. Free users get a "Choose
     // plan" pill that opens the plans view. Idempotent.
     let _profileWired = false;
+    // Paint an avatar span: the account photo (if any) as a background image,
+    // else the name's first initial. Shared by both profile chips.
+    function applyAvatarEl(el, user, name) {
+        if (!el) return;
+        const src = user && user.avatar;
+        if (src) {
+            el.textContent = '';
+            el.style.backgroundImage = 'url("' + src + '")';
+            el.style.backgroundSize = 'cover';
+            el.style.backgroundPosition = 'center';
+            el.classList.add('has-photo');
+        } else {
+            el.style.backgroundImage = '';
+            el.classList.remove('has-photo');
+            el.textContent = ((name && name[0]) || 'S').toUpperCase();
+        }
+    }
+
     function renderProfileChip() {
         const chip = document.getElementById('profile-chip');
         if (!chip) return;
@@ -5437,13 +5475,17 @@
         const nameEl = document.getElementById('profile-name');
         const planEl = document.getElementById('profile-plan');
         const emailEl = document.getElementById('profile-email');
-        if (avatar) avatar.textContent = (name[0] || 'S').toUpperCase();
+        applyAvatarEl(avatar, user, name);
         if (nameEl) nameEl.textContent = name;
         if (emailEl) emailEl.textContent = user.email || '';
         if (planEl) {
             planEl.classList.toggle('is-choose', !paid);
             planEl.textContent = paid ? (plan === 'team' ? 'Team' : 'Pro') : (tr.planChoose || 'Choose plan');
         }
+        const photoBtn = document.getElementById('profile-photo-btn');
+        if (photoBtn) photoBtn.textContent = tr.acPhoto || 'Change photo';
+        const pwBtn = document.getElementById('profile-password-btn');
+        if (pwBtn) pwBtn.textContent = tr.acPassword || 'Change password';
         const backBtn = document.getElementById('profile-back-btn');
         if (backBtn) backBtn.textContent = tr.backHome || 'Back to home';
         const plansBtn = document.getElementById('profile-plans-btn');
@@ -5472,6 +5514,8 @@
             if (menu) menu.addEventListener('click', e => e.stopPropagation());
             // "Volver a inicio" → re-open the landing over the app (mirror of the
             // landing chip's "Enter app").
+            if (photoBtn) photoBtn.addEventListener('click', () => { setOpen(false); try { auth._changeAvatar(); } catch (_) {} });
+            if (pwBtn) pwBtn.addEventListener('click', () => { setOpen(false); try { auth._changePassword(); } catch (_) {} });
             if (backBtn) backBtn.addEventListener('click', () => { setOpen(false); try { auth._showLanding(); } catch (_) {} });
             if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); try { auth.showPlans(); } catch (_) {} });
             if (resetBtn) resetBtn.addEventListener('click', () => { setOpen(false); try { auth._devReset(); } catch (_) {} });
@@ -8760,9 +8804,13 @@ ${this.buildContext()}`;
             const em = document.getElementById('landing-profile-email');
             const planBtn = document.getElementById('landing-profile-plans');
             const enterBtn = document.getElementById('landing-profile-enter');
-            if (av) av.textContent = (name[0] || 'S').toUpperCase();
+            applyAvatarEl(av, user, name);
             if (nm) nm.textContent = name;
             if (em) em.textContent = user.email || '';
+            const photoBtn = document.getElementById('landing-profile-photo');
+            if (photoBtn) photoBtn.textContent = tr.acPhoto || 'Change photo';
+            const pwBtn = document.getElementById('landing-profile-password');
+            if (pwBtn) pwBtn.textContent = tr.acPassword || 'Change password';
             if (pl) {
                 pl.classList.toggle('is-choose', !(plan === 'pro' || plan === 'team'));
                 pl.textContent = plan === 'team' ? 'Team' : plan === 'pro' ? 'Pro' : (tr.planChoose || 'Choose plan');
@@ -8970,6 +9018,10 @@ ${this.buildContext()}`;
             btn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(menu.hasAttribute('hidden')); });
             document.addEventListener('click', () => setOpen(false));
             menu.addEventListener('click', e => e.stopPropagation());
+            const photoBtn = document.getElementById('landing-profile-photo');
+            if (photoBtn) photoBtn.addEventListener('click', () => { setOpen(false); try { this._changeAvatar(); } catch (_) {} });
+            const pwBtn = document.getElementById('landing-profile-password');
+            if (pwBtn) pwBtn.addEventListener('click', () => { setOpen(false); try { this._changePassword(); } catch (_) {} });
             const enterBtn = document.getElementById('landing-profile-enter');
             if (enterBtn) enterBtn.addEventListener('click', () => { setOpen(false); this._enterApp(); });
             const plansBtn = document.getElementById('landing-profile-plans');
@@ -9209,6 +9261,130 @@ ${this.buildContext()}`;
         _pwtk(k) {
             const L = T[currentLang] || {};
             return L[k] || (T.en && T.en[k]) || (T.es && T.es[k]) || '';
+        },
+        // Persist a changed field onto the locally-stored user and re-render both
+        // profile chips (app + landing) so the UI reflects it immediately.
+        _patchLocalUser(patch) {
+            let u = {};
+            try { u = JSON.parse(localStorage.getItem(LS_USER) || '{}') || {}; } catch (_) {}
+            Object.assign(u, patch);
+            this._saveUser(u);
+            try { window.renderProfileChip && window.renderProfileChip(); } catch (_) {}
+            try { this._fillLandingProfile(); } catch (_) {}
+        },
+        // Change password while logged in: asks for the CURRENT password plus a
+        // new one (twice), POSTs to /api/auth/change-password with the bearer
+        // token. Distinct from the emailed reset flow (_forgotPassword).
+        async _changePassword() {
+            const tk = (k) => this._pwtk(k);
+            const tok = (() => { try { return localStorage.getItem(LS_TOKEN) || ''; } catch (_) { return ''; } })();
+            if (!tok) return;
+            const vals = await skDialog.prompt({
+                icon: '🔒',
+                title: tk('acPwTitle'),
+                body: tk('acPwBody'),
+                fields: [
+                    { name: 'cur', type: 'password', placeholder: tk('acCurrentPh'), autocomplete: 'current-password' },
+                    { name: 'p1', type: 'password', placeholder: tk('pwNewPh'), autocomplete: 'new-password' },
+                    { name: 'p2', type: 'password', placeholder: tk('pwConfirmPh'), autocomplete: 'new-password' },
+                ],
+                okText: tk('pwSave'),
+                cancelText: tk('pwCancel'),
+                validate: (v) => {
+                    if (!(v.cur || '').length) return tk('acErrCurrent');
+                    if ((v.p1 || '').length < 6) return tk('pwErrShort');
+                    if (v.p1 !== v.p2) return tk('pwErrMatch');
+                    return null;
+                },
+            });
+            if (!vals) return;   // cancelled
+            let resp;
+            try {
+                resp = await fetch('/api/auth/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+                    body: JSON.stringify({ current_password: vals.cur, new_password: vals.p1 }),
+                });
+            } catch (_) {
+                await skDialog.notice({ icon: '⚠️', title: tk('acPhotoErrTitle'), body: tk('pwErrGeneric'), okText: tk('mdGotIt') });
+                return;
+            }
+            if (resp.ok) {
+                await skDialog.notice({ icon: '✅', title: tk('acPwDoneTitle'), body: tk('acPwDoneBody'), okText: tk('mdGotIt') });
+            } else if (resp.status === 403) {
+                await skDialog.notice({ icon: '⚠️', title: tk('acPwTitle'), body: tk('acErrCurrent'), okText: tk('mdGotIt') });
+            } else {
+                await skDialog.notice({ icon: '⚠️', title: tk('acPhotoErrTitle'), body: tk('pwErrGeneric'), okText: tk('mdGotIt') });
+            }
+        },
+        // Change profile picture: opens the file picker, resizes the chosen image
+        // client-side to a small square JPEG (keeps the payload tiny), then POSTs
+        // it to /api/auth/avatar. The resized data: URL is stored on the account.
+        _changeAvatar() {
+            const tk = (k) => this._pwtk(k);
+            const input = document.getElementById('avatar-file-input');
+            if (!input) return;
+            // Rebind each call (avoids stacking listeners on the shared input).
+            input.onchange = async () => {
+                const file = input.files && input.files[0];
+                input.value = '';            // reset so the same file re-triggers next time
+                if (!file) return;
+                let dataUrl;
+                try {
+                    dataUrl = await this._resizeImage(file, 256);
+                } catch (_) {
+                    await skDialog.notice({ icon: '⚠️', title: tk('acPhotoErrTitle'), body: tk('acPhotoErrBody'), okText: tk('mdGotIt') });
+                    return;
+                }
+                const tok = (() => { try { return localStorage.getItem(LS_TOKEN) || ''; } catch (_) { return ''; } })();
+                if (!tok) return;
+                let resp;
+                try {
+                    resp = await fetch('/api/auth/avatar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+                        body: JSON.stringify({ avatar: dataUrl }),
+                    });
+                } catch (_) {
+                    await skDialog.notice({ icon: '⚠️', title: tk('acPhotoErrTitle'), body: tk('acPhotoErrBody'), okText: tk('mdGotIt') });
+                    return;
+                }
+                if (resp.ok) {
+                    this._patchLocalUser({ avatar: dataUrl });
+                    await skDialog.notice({ icon: '✅', title: tk('acPhotoDoneTitle'), body: tk('acPhotoDoneBody'), okText: tk('mdGotIt') });
+                } else if (resp.status === 413) {
+                    await skDialog.notice({ icon: '⚠️', title: tk('acPhotoErrTitle'), body: tk('acPhotoTooBig'), okText: tk('mdGotIt') });
+                } else {
+                    await skDialog.notice({ icon: '⚠️', title: tk('acPhotoErrTitle'), body: tk('acPhotoErrBody'), okText: tk('mdGotIt') });
+                }
+            };
+            input.click();
+        },
+        // Load an image File, center-crop to a square and scale to `size`px, then
+        // return a compressed JPEG data: URL. Runs entirely in the browser.
+        _resizeImage(file, size) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('read'));
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('decode'));
+                    img.onload = () => {
+                        try {
+                            const side = Math.min(img.width, img.height);
+                            const sx = (img.width - side) / 2;
+                            const sy = (img.height - side) / 2;
+                            const canvas = document.createElement('canvas');
+                            canvas.width = size; canvas.height = size;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+                            resolve(canvas.toDataURL('image/jpeg', 0.85));
+                        } catch (e) { reject(e); }
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
         },
         // "Forgot password?" → ask for the email, POST the reset request. We ALWAYS
         // show the same neutral "check your email" notice (never reveal whether the

@@ -6877,7 +6877,11 @@ body.onb-active { overflow: hidden; }
     width: 26px; height: 26px; border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg,#8b5cf6,#6d28d9); color: #fff; font-weight: 700; font-size: 13px;
+    overflow: hidden; flex: none;
 }
+/* When an account photo is set, it's painted as a cover background image
+   (JS sets background-image/size/position inline); nothing else to do here. */
+.landing-profile-avatar.has-photo { background-color: transparent; }
 .landing-profile-name { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .landing-profile-plan { font-size: 11px; font-weight: 700; color: #c7b6ff; background: rgba(139,92,246,0.18); padding: 2px 8px; border-radius: 999px; }
 .landing-profile-plan.is-choose { color: #f0b070; background: rgba(240,176,112,0.16); }

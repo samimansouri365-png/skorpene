@@ -179,6 +179,9 @@ def _auth_init():
             # The user's news sources (JSON array). Bound to the account so the
             # web "doesn't forget" the user's feed across devices/logins.
             "ALTER TABLE users ADD COLUMN sources TEXT",
+            # Profile picture as a data: URL (small, client-resized JPEG/PNG).
+            # Stored on the account so it follows the user across devices.
+            "ALTER TABLE users ADD COLUMN avatar TEXT",
         ):
             try:
                 conn.execute(col_sql)
@@ -721,6 +724,10 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_auth_request_password_reset()
         elif self.path == '/api/auth/reset-password':
             self.handle_auth_reset_password()
+        elif self.path == '/api/auth/change-password':
+            self.handle_auth_change_password()
+        elif self.path == '/api/auth/avatar':
+            self.handle_auth_avatar()
         else:
             self.send_error(404)
 
@@ -779,7 +786,7 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
                 token = _new_session(conn, uid)
         except sqlite3.IntegrityError:
             self._json_response(409, {'error': 'email_taken'}); return
-        self._json_response(200, {'token': token, 'user': {'email': email, 'name': name, 'plan': 'free', 'profile': None, 'sources': None, 'is_dev': _is_dev_email(email)}})
+        self._json_response(200, {'token': token, 'user': {'email': email, 'name': name, 'plan': 'free', 'profile': None, 'sources': None, 'avatar': None, 'is_dev': _is_dev_email(email)}})
 
     def handle_auth_login(self):
         data = self._read_json_body()
@@ -804,6 +811,8 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             'profile': _safe_json(row['profile']),
             # Account-bound news sources (null until the user has any saved).
             'sources': _safe_json(row['sources']),
+            # Profile picture (data: URL) or null.
+            'avatar': _row_value(row, 'avatar'),
             'is_dev': _is_dev_email(row['email']),
             # Set only while a cancellation is pending: epoch seconds the paid
             # plan stays active until. The client shows "Resume subscription".
@@ -1197,6 +1206,56 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             conn.commit()
 
         self._json_response(200, {'ok': True, 'message': 'Contraseña actualizada. Inicia sesión con tu nueva contraseña'})
+
+    def handle_auth_change_password(self):
+        """Change the signed-in user's password. Requires the CURRENT password
+        (so a stolen session token alone can't lock the owner out), then stores
+        a fresh PBKDF2 hash with a new salt. Auth'd via Bearer token."""
+        user = self._user_from_token()
+        if not user:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        data = self._read_json_body()
+        if data is None:
+            self._json_response(400, {'error': 'invalid_json'}); return
+        current = data.get('current_password') or ''
+        new = data.get('new_password') or ''
+        if len(new) < 6:
+            self._json_response(400, {'error': 'password_too_short'}); return
+        # Verify the current password against the stored hash.
+        if not hmac.compare_digest(_hash_pw(current, user['pw_salt']), user['pw_hash']):
+            self._json_response(403, {'error': 'bad_current_password'}); return
+        salt = secrets.token_hex(16)
+        pw_hash = _hash_pw(new, salt)
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute('UPDATE users SET pw_hash=?, pw_salt=? WHERE id=?',
+                         (pw_hash, salt, user['id']))
+            conn.commit()
+        self._json_response(200, {'ok': True})
+
+    def handle_auth_avatar(self):
+        """Set or clear the signed-in user's profile picture. Body: {avatar}
+        — a small client-resized data: URL, or null/'' to remove it. Capped so
+        a huge blob can't bloat the account row. Auth'd via Bearer token."""
+        user = self._user_from_token()
+        if not user:
+            self._json_response(401, {'error': 'invalid_token'}); return
+        data = self._read_json_body()
+        if data is None or not isinstance(data, dict):
+            self._json_response(400, {'error': 'invalid_json'}); return
+        avatar = data.get('avatar')
+        if avatar in (None, ''):
+            avatar = None
+        else:
+            if not isinstance(avatar, str) or not avatar.startswith('data:image/'):
+                self._json_response(400, {'error': 'invalid_image'}); return
+            # ~700 KB cap on the data: URL (client resizes to a small square, so
+            # a normal avatar is well under this; rejects oversized uploads).
+            if len(avatar) > 700000:
+                self._json_response(413, {'error': 'image_too_large'}); return
+        with _AUTH_LOCK, _auth_db() as conn:
+            conn.execute('UPDATE users SET avatar=? WHERE id=?', (avatar, user['id']))
+            conn.commit()
+        self._json_response(200, {'ok': True, 'avatar': avatar})
 
     # ── Admin (read-only user dashboard) ──
     def _admin_check(self):
