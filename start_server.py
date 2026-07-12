@@ -159,6 +159,11 @@ def _auth_init():
             ts REAL NOT NULL)''')
         conn.execute('CREATE INDEX IF NOT EXISTS idx_ai_events_user_ts '
                      'ON ai_events (user_id, ts)')
+        # Password reset tokens: one-time use, 1 hour TTL.
+        conn.execute('''CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            token TEXT PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            created REAL NOT NULL)''')
         # Billing columns. Added with try/except so re-runs on an existing DB
         # don't error — SQLite has no "ADD COLUMN IF NOT EXISTS" before 3.35.
         for col_sql in (
@@ -212,6 +217,43 @@ def _stripe_request(method, path, form=None):
         })
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.load(resp)
+
+
+def _send_password_reset_email(email, reset_token, brevo_api_key):
+    """Send password reset email via Brevo API. Returns True on success."""
+    if not brevo_api_key or not reset_token:
+        return False
+    try:
+        reset_url = f"https://www.skorpene.com/reset-password?token={reset_token}"
+        sender = {"name": "Skorpene", "email": "noreply@skorpene.com"}
+        to = [{"email": email}]
+        subject = "Restablecer tu contraseña en Skorpene"
+        html_content = f"""
+        <h2>Restablecer contraseña</h2>
+        <p>Haz clic en el enlace para cambiar tu contraseña:</p>
+        <p><a href="{reset_url}">Restablecer contraseña</a></p>
+        <p>Este enlace expira en 1 hora.</p>
+        """
+        payload = {
+            "sender": sender,
+            "to": to,
+            "subject": subject,
+            "htmlContent": html_content
+        }
+        import json
+        req = urllib.request.Request(
+            'https://api.brevo.com/v3/smtp/email',
+            data=json.dumps(payload).encode('utf-8'),
+            headers={
+                'Content-Type': 'application/json',
+                'api-key': brevo_api_key
+            }
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            return resp.status == 201
+    except Exception as e:
+        print(f"[Brevo] email send failed: {e}", file=sys.stderr)
+        return False
 
 
 def _sub_period_end(sub):
@@ -624,6 +666,10 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_subscription_cancel()
         elif self.path == '/api/subscription/resume':
             self.handle_subscription_resume()
+        elif self.path == '/api/auth/request-password-reset':
+            self.handle_auth_request_password_reset()
+        elif self.path == '/api/auth/reset-password':
+            self.handle_auth_reset_password()
         else:
             self.send_error(404)
 
@@ -1019,6 +1065,84 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
                 conn.execute('DELETE FROM sessions WHERE token=?', (token,))
                 conn.commit()
         self._json_response(200, {'ok': True})
+
+    def handle_auth_request_password_reset(self):
+        """Generate a password reset token and send it to the user's email."""
+        try:
+            body = json.loads(self.rfile.read(int(self.headers.get('Content-Length', 0))))
+        except Exception:
+            self._json_response(400, {'error': 'invalid_json'}); return
+
+        email = (body.get('email') or '').strip().lower()
+        if not email:
+            self._json_response(400, {'error': 'email_required'}); return
+
+        brevo_key = os.environ.get('BREVO_API_KEY', '').strip()
+        if not brevo_key:
+            self._json_response(500, {'error': 'email_service_unavailable'}); return
+
+        with _AUTH_LOCK, _auth_db() as conn:
+            user = conn.execute('SELECT id FROM users WHERE email=?', (email,)).fetchone()
+            if not user:
+                # Don't reveal if email exists (security).
+                self._json_response(200, {'ok': True, 'message': 'Si existe una cuenta, recibirás un email'}); return
+
+            # Generate a random 64-char token.
+            reset_token = secrets.token_urlsafe(48)
+            created = time.time()
+            conn.execute(
+                'INSERT OR REPLACE INTO password_reset_tokens (token, user_id, created) VALUES (?, ?, ?)',
+                (reset_token, user['id'], created)
+            )
+            conn.commit()
+
+        # Send email with Brevo.
+        if _send_password_reset_email(email, reset_token, brevo_key):
+            self._json_response(200, {'ok': True, 'message': 'Revisa tu email para restablecer la contraseña'})
+        else:
+            self._json_response(500, {'error': 'email_send_failed'})
+
+    def handle_auth_reset_password(self):
+        """Validate a password reset token and update the password."""
+        try:
+            body = json.loads(self.rfile.read(int(self.headers.get('Content-Length', 0))))
+        except Exception:
+            self._json_response(400, {'error': 'invalid_json'}); return
+
+        token = (body.get('token') or '').strip()
+        password = body.get('password') or ''
+        if not token or not password:
+            self._json_response(400, {'error': 'token_and_password_required'}); return
+
+        if len(password) < 6:
+            self._json_response(400, {'error': 'password_too_short'}); return
+
+        # Check token validity (not expired, exists).
+        now = time.time()
+        reset_ttl = 3600  # 1 hour.
+        with _AUTH_LOCK, _auth_db() as conn:
+            row = conn.execute(
+                'SELECT user_id, created FROM password_reset_tokens WHERE token=?',
+                (token,)
+            ).fetchone()
+            if not row or (now - row['created']) > reset_ttl:
+                self._json_response(400, {'error': 'token_invalid_or_expired'}); return
+
+            user_id = row['user_id']
+
+            # Hash the new password.
+            pw_salt = secrets.token_hex(16)
+            pw_hash = _hash_pw(password, pw_salt)
+
+            # Update password, delete token.
+            conn.execute(
+                'UPDATE users SET pw_hash=?, pw_salt=? WHERE id=?',
+                (pw_hash, pw_salt, user_id)
+            )
+            conn.execute('DELETE FROM password_reset_tokens WHERE token=?', (token,))
+            conn.commit()
+
+        self._json_response(200, {'ok': True, 'message': 'Contraseña actualizada. Inicia sesión con tu nueva contraseña'})
 
     # ── Admin (read-only user dashboard) ──
     def _admin_check(self):
