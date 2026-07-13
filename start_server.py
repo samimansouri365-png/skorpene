@@ -61,10 +61,12 @@ _PBKDF2_ROUNDS = 200_000
 # is asked to log in again). Keeps the sessions table from growing forever.
 _SESSION_TTL = 90 * 24 * 3600  # 90 days
 
-# Stripe price for the Pro plan ($9.99/mo). Recreate this id (and the secret
-# key in stripe_secret.txt) in Live mode when going to production.
-STRIPE_PRICE_PRO  = 'price_1TlnPE9mdlExjEPw31MJVnGe'
-STRIPE_PRICE_TEAM = 'price_1TlpGs9mdlExjEPwzBkE2fF3'
+# Stripe price ids for Pro/Team. Defaults are the Live mode prices; override
+# with STRIPE_PRICE_PRO / STRIPE_PRICE_TEAM env vars to point at Test mode
+# prices (Test and Live are separate Stripe data stores — a Live price id is
+# rejected by a Test secret key and vice versa).
+STRIPE_PRICE_PRO  = os.environ.get('STRIPE_PRICE_PRO', 'price_1TlnPE9mdlExjEPw31MJVnGe').strip()
+STRIPE_PRICE_TEAM = os.environ.get('STRIPE_PRICE_TEAM', 'price_1TlpGs9mdlExjEPwzBkE2fF3').strip()
 
 # The single developer/owner account that may bypass payment + hard-reset.
 # Deliberately HARD-CODED (not read from an env var) so a stray DEV_EMAILS value
