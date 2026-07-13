@@ -4959,6 +4959,24 @@
     };
     for (const _l in _ACCOUNT_I18N2) { T[_l] = Object.assign(T[_l] || {}, _ACCOUNT_I18N2[_l]); }
 
+    // Support entry (profile menu → simple notice with the contact email, 13 langs).
+    const _SUPPORT_I18N = {
+        es: { acSupport:'Soporte', acSupportTitle:'Soporte', acSupportBody:'Si necesitas ayuda o soporte, escríbenos a samimansouri365@gmail.com. Y si quieres que añadamos más funcionalidades o idiomas, contáctanos en ese mismo correo.' },
+        en: { acSupport:'Support', acSupportTitle:'Support', acSupportBody:"If you need help or support, email us at samimansouri365@gmail.com. And if you'd like us to add more features or languages, reach out to that same address." },
+        fr: { acSupport:'Support', acSupportTitle:'Support', acSupportBody:"Si tu as besoin d'aide ou d'assistance, écris-nous à samimansouri365@gmail.com. Et si tu souhaites que nous ajoutions plus de fonctionnalités ou de langues, contacte-nous à la même adresse." },
+        ru: { acSupport:'Поддержка', acSupportTitle:'Поддержка', acSupportBody:'Если вам нужна помощь или поддержка, напишите нам на samimansouri365@gmail.com. А если хотите, чтобы мы добавили больше функций или языков, пишите на тот же адрес.' },
+        zh: { acSupport:'支持', acSupportTitle:'支持', acSupportBody:'如果你需要帮助或支持，请发送邮件至 samimansouri365@gmail.com。如果你希望我们添加更多功能或语言，也请联系同一邮箱。' },
+        tr: { acSupport:'Destek', acSupportTitle:'Destek', acSupportBody:'Yardıma veya desteğe ihtiyacın olursa samimansouri365@gmail.com adresinden bize yaz. Daha fazla özellik veya dil eklememizi istersen aynı adresten ulaş.' },
+        ar: { acSupport:'الدعم', acSupportTitle:'الدعم', acSupportBody:'إذا كنت بحاجة إلى مساعدة أو دعم، راسلنا على samimansouri365@gmail.com. وإذا أردت أن نضيف المزيد من الميزات أو اللغات، تواصل معنا على العنوان نفسه.' },
+        fa: { acSupport:'پشتیبانی', acSupportTitle:'پشتیبانی', acSupportBody:'اگر به کمک یا پشتیبانی نیاز داری، به samimansouri365@gmail.com ایمیل بزن. و اگر می‌خواهی امکانات یا زبان‌های بیشتری اضافه کنیم، به همان نشانی پیام بده.' },
+        he: { acSupport:'תמיכה', acSupportTitle:'תמיכה', acSupportBody:'אם אתה זקוק לעזרה או לתמיכה, כתוב לנו לכתובת samimansouri365@gmail.com. ואם תרצה שנוסיף עוד תכונות או שפות, פנה אלינו לאותה כתובת.' },
+        nl: { acSupport:'Ondersteuning', acSupportTitle:'Ondersteuning', acSupportBody:'Heb je hulp of ondersteuning nodig, mail ons dan op samimansouri365@gmail.com. En als je wilt dat we meer functies of talen toevoegen, neem contact op via hetzelfde adres.' },
+        it: { acSupport:'Supporto', acSupportTitle:'Supporto', acSupportBody:'Se hai bisogno di aiuto o supporto, scrivici a samimansouri365@gmail.com. E se vuoi che aggiungiamo più funzionalità o lingue, contattaci allo stesso indirizzo.' },
+        pt: { acSupport:'Suporte', acSupportTitle:'Suporte', acSupportBody:'Se precisares de ajuda ou suporte, escreve-nos para samimansouri365@gmail.com. E se quiseres que adicionemos mais funcionalidades ou idiomas, contacta-nos no mesmo endereço.' },
+        hi: { acSupport:'सहायता', acSupportTitle:'सहायता', acSupportBody:'अगर आपको मदद या सहायता चाहिए, तो हमें samimansouri365@gmail.com पर ईमेल करें। और अगर आप चाहते हैं कि हम और सुविधाएँ या भाषाएँ जोड़ें, तो इसी पते पर संपर्क करें।' },
+    };
+    for (const _l in _SUPPORT_I18N) { T[_l] = Object.assign(T[_l] || {}, _SUPPORT_I18N[_l]); }
+
     function applyLang() {
         const lang = T[currentLang] || T.es;
         // Per-key fallback: chosen language → English → Spanish. This lets newly
@@ -5526,6 +5544,8 @@
         if (backBtn) backBtn.textContent = tr.backHome || 'Back to home';
         const plansBtn = document.getElementById('profile-plans-btn');
         if (plansBtn) plansBtn.style.display = paid ? 'none' : '';
+        const supportBtn = document.getElementById('profile-support-btn');
+        if (supportBtn) supportBtn.textContent = tr.acSupport || 'Support';
         const logoutBtn = document.getElementById('profile-logout-btn');
         if (logoutBtn) logoutBtn.textContent = tr.logoutLabel || 'Log out';
         // Dev-only "Reset everything" — shown only for developer accounts.
@@ -5554,6 +5574,7 @@
             if (pwBtn) pwBtn.addEventListener('click', () => { setOpen(false); try { auth._changePassword(); } catch (_) {} });
             if (backBtn) backBtn.addEventListener('click', () => { setOpen(false); try { auth._showLanding(); } catch (_) {} });
             if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); try { auth.showPlans(); } catch (_) {} });
+            if (supportBtn) supportBtn.addEventListener('click', () => { setOpen(false); try { auth._showSupport(); } catch (_) {} });
             if (resetBtn) resetBtn.addEventListener('click', () => { setOpen(false); try { auth._devReset(); } catch (_) {} });
             if (logoutBtn) logoutBtn.addEventListener('click', async () => { setOpen(false); try { await auth.logout(); } catch (_) {} location.reload(); });
         }
@@ -8888,6 +8909,8 @@ ${this.buildContext()}`;
                 planBtn.style.display = (plan === 'pro' || plan === 'team') ? 'none' : '';
                 planBtn.textContent = tr.planChoose || 'Choose plan';
             }
+            const supportBtn = document.getElementById('landing-profile-support');
+            if (supportBtn) supportBtn.textContent = tr.acSupport || 'Support';
             const logoutBtn = document.getElementById('landing-profile-logout');
             if (logoutBtn) logoutBtn.textContent = tr.logoutLabel || 'Log out';
             if (enterBtn) enterBtn.textContent = tr.enterApp || 'Enter app';
@@ -9095,6 +9118,8 @@ ${this.buildContext()}`;
             if (enterBtn) enterBtn.addEventListener('click', () => { setOpen(false); this._enterApp(); });
             const plansBtn = document.getElementById('landing-profile-plans');
             if (plansBtn) plansBtn.addEventListener('click', () => { setOpen(false); this.showPlans(); });
+            const supportBtn = document.getElementById('landing-profile-support');
+            if (supportBtn) supportBtn.addEventListener('click', () => { setOpen(false); try { this._showSupport(); } catch (_) {} });
             const resetBtn = document.getElementById('landing-profile-reset');
             if (resetBtn) resetBtn.addEventListener('click', () => { setOpen(false); try { this._devReset(); } catch (_) {} });
             const logoutBtn = document.getElementById('landing-profile-logout');
@@ -9374,6 +9399,20 @@ ${this.buildContext()}`;
             this._saveUser(u);
             try { window.renderProfileChip && window.renderProfileChip(); } catch (_) {}
             try { this._fillLandingProfile(); } catch (_) {}
+        },
+        // Support: a minimalist notice telling the user how to reach us — for
+        // help/support or to request more features or languages. The email is in
+        // the text (selectable) and also a one-tap mailto link.
+        _showSupport() {
+            const tk = (k) => this._pwtk(k);
+            const email = 'samimansouri365@gmail.com';
+            skDialog.notice({
+                icon: '💬',
+                title: tk('acSupportTitle'),
+                body: tk('acSupportBody'),
+                okText: tk('mdGotIt'),
+                link: { text: email, action: () => { try { window.location.href = 'mailto:' + email; } catch (_) {} } },
+            });
         },
         // Change password while logged in: asks for the CURRENT password plus a
         // new one (twice), POSTs to /api/auth/change-password with the bearer
