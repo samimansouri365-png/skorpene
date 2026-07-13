@@ -5788,6 +5788,35 @@ SOURCE MANAGEMENT — you CAN add and remove the user's news sources yourself:
 • NEVER claim you cannot add or remove sources — you can, via that directive. Do not mention the
   directive in normal answers, and never emit it unless the user is clearly asking for it.`;
 
+    // A compact, ACCURATE description of Skorpene itself + the signed-in user's
+    // current plan, injected into BOTH assistants' system prompts so the AI can
+    // answer "what is this app / how does it work / what plan do I have / how do
+    // I cancel" instead of claiming it knows nothing about the app. Kept in sync
+    // with the pricing cards and the server gates (Free: no map/no AI; Pro: map +
+    // 10 AI msgs/24h; Team: map + unlimited AI).
+    function _skorpeneKnowledgeForAI() {
+        const plan = currentPlan();
+        let pending = null;
+        try { pending = (JSON.parse(localStorage.getItem('geoscope_auth_user') || '{}') || {}).planUntil || null; } catch (_) {}
+        const planName = plan === 'pro' ? 'Pro' : plan === 'team' ? 'Team' : 'Free';
+        let planLine = `The signed-in user is currently on the ${planName} plan.`;
+        if ((plan === 'pro' || plan === 'team') && pending) {
+            let d = '';
+            try { d = new Date(pending * 1000).toLocaleDateString(); } catch (_) {}
+            planLine += ` Their subscription is set to cancel: the ${planName} plan stays active until ` +
+                `${d || 'the end of the paid period'} and then becomes Free, but they can resume before ` +
+                `then to keep it.`;
+        }
+        return `ABOUT SKORPENE — the app you live inside. Use this to answer any question about the app itself; never say you don't know what this app is or which plan the user has.
+Skorpene is a personal news app: the user gathers the sources THEY care about (Telegram channels, websites/RSS feeds, Reddit communities, news outlets), reads them all in one personalized Feed, and — on paid plans — sees every story geolocated on a live world map in real time, with you (the AI assistant) on hand to explain, summarize and connect the news.
+Plans:
+• Free (€0/month): add unlimited sources and read them in the personalized Feed; full interface in 13 languages. No live map and no AI assistant.
+• Pro (€9.99/month): everything in Free, plus the live map (every story geolocated in real time) and the AI assistant (up to 10 questions per rolling 24 hours), plus priority support.
+• Team (€39.99/month): everything in Pro, plus an UNLIMITED AI assistant, plus priority support.
+Billing is monthly via Stripe. From the profile menu (top-right) the user can switch plan, change their interface language, change their password, and upload/adjust a profile photo; there is also a forgot-password-by-email flow on the login screen. Paid users can cancel anytime ("Cancel subscription" / the Free card): they keep their paid plan until the end of the period already paid for, then it drops to Free, and they can resume any time before it ends. To add sources, use the Sources panel — or just ask you to add them. The live map and the AI assistant require Pro or Team.
+${planLine}`;
+    }
+
     function _aiSystemPrompt(context) {
         const lang = _aiLangName();
         const prof = _userProfileForAI();
@@ -5815,6 +5844,8 @@ sources the user cares about. You are a warm, knowledgeable, genuinely helpful a
 friend the user can ask anything. You are NOT a geopolitics-only tool; do not assume the user's interests.
 ${framing}${noSourcesNudge}
 ${AI_SOURCES_DIRECTIVE}
+
+${_skorpeneKnowledgeForAI()}
 
 HOW TO ANSWER — this matters a lot:
 • Write like a real person talking, not like a report. Warm, direct, confident. No corporate hedging.
@@ -6260,6 +6291,8 @@ ${context}`;
 the live feed of news from the sources the user themselves chose. Your job is to help them explore
 and truly understand THIS news.
 ${AI_SOURCES_DIRECTIVE}
+
+${_skorpeneKnowledgeForAI()}
 
 HOW TO ANSWER:
 • Read the items below, reason over them, connect them, and explain what they mean. When the user
@@ -9105,17 +9138,7 @@ ${this.buildContext()}`;
                     b.dataset.wired = '1';
                     b.addEventListener('click', () => {
                         const plan = b.getAttribute('data-plan') || 'free';
-                        if (this.token()) {
-                            // Logged in: NO plan card ever enters the app — the only
-                            // way into the product is Enter app on the profile. The
-                            // current plan's card is inert ("Plan en uso"); the
-                            // others just SWITCH plan and stay on the plans view.
-                            if (plan === currentPlan()) return;
-                            if (plan === 'pro' || plan === 'team') { this._startCheckout(plan); return; }
-                            // Free: switch the plan down (dev bypass for now); stay put.
-                            if (this._isDevUser()) { this._devUpgrade('free'); }
-                            return;
-                        }
+                        if (this.token()) { this._handlePlanClick(plan); return; }
                         // Logged out: any plan CTA → register. Pro/Team stash a
                         // checkout intent; Free stashes none, so after register the
                         // user lands on the landing and enters via Enter app.
@@ -9126,6 +9149,36 @@ ${this.buildContext()}`;
             });
             this._refreshPricingCtas();
         },
+        // A pricing-card click while logged in. Unifies the cards with the
+        // cancel/resume subscription state so a PAYING user can move DOWN to Free
+        // and back UP to the plan they were paying — the exact thing the separate
+        // "Cancel/Resume subscription" menu item does, now reachable from the cards:
+        //   • Free card while paying (no pending cancel) → schedule the downgrade
+        //     (cancel at period end; they keep the paid plan until it lapses).
+        //   • their current paid card while a cancel is pending → resume it.
+        //   • a DIFFERENT paid plan → Stripe checkout.
+        // Developer accounts still toggle any plan instantly (no Stripe) for testing.
+        _handlePlanClick(plan) {
+            const cur = currentPlan();
+            let pending = false;
+            try { pending = !!((JSON.parse(localStorage.getItem(LS_USER) || '{}') || {}).planUntil); } catch (_) {}
+            if (this._isDevUser()) {
+                if (plan === cur && !pending) return;   // already on it, nothing pending
+                this._devUpgrade(plan);                 // instant switch to anything, incl. free
+                return;
+            }
+            if (plan === 'free') {
+                if (cur === 'free' || pending) return;  // already free, or downgrade already scheduled
+                try { subCtl.cancel(); } catch (_) {}   // paying → "switch to Free" == cancel at period end
+                return;
+            }
+            // plan is pro/team
+            if (plan === cur) {
+                if (pending) { try { subCtl.resume(); } catch (_) {} }  // undo the pending downgrade
+                return;                                 // already on it, nothing pending → no-op
+            }
+            this._startCheckout(plan);                  // switch to a different paid plan
+        },
         // Localize each plan card's CTA, and for a logged-in user mark their
         // current plan's CTA as "Plan en uso" (label + .is-current, kept hoverable
         // but inert). Runs after landingI18n.apply() so it wins over the static
@@ -9134,10 +9187,20 @@ ${this.buildContext()}`;
             if (!this.el) return;
             const logged = !!this.token();
             const plan = currentPlan();
+            let pending = false;
+            try { pending = !!((JSON.parse(localStorage.getItem(LS_USER) || '{}') || {}).planUntil); } catch (_) {}
             const inUse = (window.__landingI18n && window.__landingI18n.get(currentLang, 'prInUse')) || 'Current plan';
+            const resumeLbl = (window.subCtl && subCtl._tk && subCtl._tk('subResume')) || 'Resume subscription';
             this.el.querySelectorAll('.lpr-cta').forEach(b => {
                 const cardPlan = b.getAttribute('data-plan') || 'free';
-                const isCurrent = logged && cardPlan === plan;
+                const isMine = logged && cardPlan === plan;
+                // Current PAID plan with a pending cancel → clickable "Resume", not inert.
+                if (isMine && pending && (plan === 'pro' || plan === 'team')) {
+                    b.classList.remove('is-current');
+                    b.textContent = resumeLbl;
+                    return;
+                }
+                const isCurrent = isMine && !pending;
                 b.classList.toggle('is-current', isCurrent);
                 if (isCurrent) { b.textContent = inUse; return; }
                 const key = cardPlan === 'pro' ? 'prProCta' : cardPlan === 'team' ? 'prTeamCta' : 'prFreeCta';
@@ -9220,15 +9283,19 @@ ${this.buildContext()}`;
                 if (!r.ok) return false;
                 const d = await r.json().catch(() => ({}));
                 if (!d || !d.plan) return false;
-                // Persist the new plan locally so gating unlocks immediately.
+                // Persist the new plan locally so gating unlocks immediately. The
+                // server also clears plan_until on a dev switch, so drop any local
+                // pending-cancel marker too, or the UI would wrongly show "Resume".
                 try {
                     const u = JSON.parse(localStorage.getItem(LS_USER) || '{}') || {};
                     u.plan = d.plan;
+                    u.planUntil = null;
                     localStorage.setItem(LS_USER, JSON.stringify(u));
                 } catch (_) {}
                 try { applyPlanGating(); } catch (_) {}      // unlock map + re-render chip
                 try { this._fillLandingProfile(); } catch (_) {}
                 try { this._refreshPricingCtas(); } catch (_) {}  // current card → "Plan en uso"
+                try { window.subCtl && subCtl.renderAll(); } catch (_) {}  // cancel/resume item
                 return true;
             } catch (_) { return false; }
         },
