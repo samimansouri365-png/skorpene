@@ -756,8 +756,45 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_admin_users()
         elif self.path == '/admin' or self.path.startswith('/admin?'):
             self.handle_admin_page()
-        else:
+        elif self._is_public_static():
             super().do_GET()
+        else:
+            # The app ships in the same directory as its source (start_server.py,
+            # telegram_*.py, *.sh, auth.db, fly.toml, .git, …). Without this gate
+            # SimpleHTTPRequestHandler would serve ALL of it — e.g. /authenticate.py
+            # leaked Telegram API creds. Only known web assets are public.
+            self.send_error(404)
+
+    # Static files that may be served to the public. Anything else — source code,
+    # shell scripts, databases, secrets, configs, dotfiles/dirs — 404s.
+    _PUBLIC_STATIC_EXTS = frozenset((
+        'html', 'htm', 'css', 'js', 'mjs', 'json', 'map',
+        'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'bmp', 'avif',
+        'woff', 'woff2', 'ttf', 'otf', 'eot',
+        'mp4', 'webm', 'ogg', 'mp3', 'wav', 'pdf',
+    ))
+    _PUBLIC_STATIC_NAMES = frozenset(('robots.txt',))
+
+    def _is_public_static(self):
+        """True only for safe static web assets (by extension / allowlisted name).
+        Blocks path traversal and any dotfile/dotdir (/.git, /.env, /.claude)."""
+        from urllib.parse import urlparse, unquote
+        path = unquote(urlparse(self.path).path)
+        parts = [p for p in path.split('/') if p not in ('', '.')]
+        if any(p == '..' or p.startswith('.') for p in parts):
+            return False
+        if path == '/' or path.endswith('/'):
+            return True   # directory → index.html (listing itself is disabled below)
+        base = parts[-1] if parts else ''
+        if base in self._PUBLIC_STATIC_NAMES:
+            return True
+        ext = base.rsplit('.', 1)[-1].lower() if '.' in base else ''
+        return ext in self._PUBLIC_STATIC_EXTS
+
+    def list_directory(self, path):
+        """Never expose a directory listing (would leak the file tree)."""
+        self.send_error(404)
+        return None
 
     # ── Auth handlers ──
     def _read_json_body(self):
