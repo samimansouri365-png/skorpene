@@ -733,6 +733,8 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             self.handle_auth_change_password()
         elif self.path == '/api/auth/avatar':
             self.handle_auth_avatar()
+        elif self.path == '/api/admin/set-plan':
+            self.handle_admin_set_plan()
         else:
             self.send_error(404)
 
@@ -1320,6 +1322,33 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             'db_path': _AUTH_DB,
             'users': users,
         })
+
+    def handle_admin_set_plan(self):
+        """Admin-only: force a user's plan by email and clear any Stripe
+        linkage (subscription/customer id, pending-cancel marker). Gated by
+        the same ADMIN_TOKEN as the read-only dashboard. For manual fixes —
+        e.g. an account upgraded via a Test-mode checkout while Live keys are
+        what's actually configured in production has no real subscription
+        behind it, so cancel/resume against Live Stripe would 404."""
+        status = self._admin_check()
+        if status == 'disabled':
+            self._json_response(503, {'error': 'admin_disabled'}); return
+        if status != 'ok':
+            self._json_response(401, {'error': 'unauthorized'}); return
+        data = self._read_json_body() or {}
+        email = (data.get('email') or '').strip().lower()
+        plan = (data.get('plan') or '').strip().lower()
+        if not email or plan not in ('free', 'pro', 'team'):
+            self._json_response(400, {'error': 'bad_request'}); return
+        with _AUTH_LOCK, _auth_db() as conn:
+            cur = conn.execute(
+                "UPDATE users SET plan=?, plan_until=NULL, stripe_subscription_id=NULL, "
+                "stripe_customer_id=NULL WHERE email=?", (plan, email))
+            conn.commit()
+            found = cur.rowcount > 0
+        if not found:
+            self._json_response(404, {'error': 'user_not_found'}); return
+        self._json_response(200, {'ok': True, 'email': email, 'plan': plan})
 
     def handle_admin_page(self):
         """Serve the self-contained admin dashboard HTML (the data itself is
