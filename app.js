@@ -9552,10 +9552,15 @@ ${this.buildContext()}`;
         // POST it, confirm, then strip the token from the URL.
         async _resetPasswordWithToken(token) {
             const tk = (k) => this._pwtk(k);
+            // Strip the reset params so a later refresh doesn't re-open this form
+            // (the boot detects `?reset=`; `lang` rides along in the email link).
+            // NOTE: the param is `reset`, not `token` — deleting `token` here was a
+            // bug that left `?reset=` in the URL, re-triggering the form on reload.
             const clearUrl = () => {
                 try {
                     const u = new URL(window.location.href);
-                    u.searchParams.delete('token');
+                    u.searchParams.delete('reset');
+                    u.searchParams.delete('lang');
                     window.history.replaceState({}, '', '/' + u.search);
                 } catch (_) {}
             };
@@ -9782,6 +9787,7 @@ ${this.buildContext()}`;
             try { auth._setMode(auth.mode); } catch (_) {}
         },
         // Resolve the initial language, in priority order:
+        //   0. ?lang= on the URL (reset email deep-link) — persisted
         //   1. saved onboarding profile lang   (explicit choice)
         //   2. a previously-picked landing lang (explicit choice)
         //   3. the browser's language          (navigator.languages)
@@ -9790,6 +9796,13 @@ ${this.buildContext()}`;
         // follow the browser so e.g. a reset link opened in a fresh context (the
         // phone mail app's in-app browser) shows the user's own language, not en.
         resolve() {
+            // 0. Explicit deep-link language (?lang= on a reset email link): wins
+            //    over everything and is persisted so it survives URL cleanup +
+            //    refresh — the reset page matches the email's language.
+            try {
+                const urlLang = new URL(window.location.href).searchParams.get('lang');
+                if (urlLang && LANDING_I18N[urlLang]) { this.save(urlLang); return urlLang; }
+            } catch (_) {}
             try {
                 const p = JSON.parse(localStorage.getItem('geoscope_profile') || 'null');
                 if (p && p.lang && LANDING_I18N[p.lang]) return p.lang;

@@ -247,9 +247,12 @@ def _send_password_reset_email(email, reset_token, brevo_api_key, lang='en'):
     if not brevo_api_key or not reset_token:
         return False
     try:
-        t = _RESET_EMAIL_I18N.get((lang or '').lower(), _RESET_EMAIL_I18N['en'])
+        lang = (lang or 'en').lower()
+        t = _RESET_EMAIL_I18N.get(lang, _RESET_EMAIL_I18N['en'])
         dir_attr = ' dir="rtl"' if t.get('rtl') else ''
-        reset_url = f"https://www.skorpene.com/?reset={reset_token}"
+        # Carry the language in the link so the reset page opens in the SAME
+        # language as this email, even in a fresh browser with no saved prefs.
+        reset_url = f"https://www.skorpene.com/?reset={reset_token}&lang={lang}"
         sender = {"name": "Skorpene", "email": "noreply@skorpene.com"}
         to = [{"email": email}]
         subject = t['subject']
