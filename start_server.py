@@ -346,6 +346,11 @@ def _hash_pw(password, salt):
                                bytes.fromhex(salt), _PBKDF2_ROUNDS).hex()
 
 
+# A throwaway salt used to spend the SAME PBKDF2 cost when an email doesn't
+# exist, so login can't be timed to enumerate which addresses are registered.
+_DUMMY_SALT = '00' * 16
+
+
 def _new_session(conn, user_id):
     token = secrets.token_urlsafe(32)
     now = time.time()
@@ -840,7 +845,12 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         password = data.get('password') or ''
         with _AUTH_LOCK, _auth_db() as conn:
             row = conn.execute('SELECT * FROM users WHERE email=?', (email,)).fetchone()
-            if not row or not hmac.compare_digest(_hash_pw(password, row['pw_salt']), row['pw_hash']):
+            if not row:
+                # Hash anyway (constant work) so a missing email is indistinguishable
+                # by timing from a wrong password — no user enumeration via login.
+                _hash_pw(password, _DUMMY_SALT)
+                self._json_response(401, {'error': 'bad_credentials'}); return
+            if not hmac.compare_digest(_hash_pw(password, row['pw_salt']), row['pw_hash']):
                 self._json_response(401, {'error': 'bad_credentials'}); return
             token = _new_session(conn, row['id'])
         self._json_response(200, {'token': token, 'user': self._user_payload(row)})
@@ -1194,9 +1204,14 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
                 # Don't reveal if email exists (security).
                 self._json_response(200, {'ok': True, 'message': 'Si existe una cuenta, recibirás un email'}); return
 
-            # Generate a random 64-char token.
+            # Generate a random 64-char token. First drop this user's previous
+            # tokens (only the newest link should work) and prune any expired
+            # ones globally (the table is keyed by the random token, so old rows
+            # would otherwise accumulate forever).
             reset_token = secrets.token_urlsafe(48)
             created = time.time()
+            conn.execute('DELETE FROM password_reset_tokens WHERE user_id=? OR created < ?',
+                         (user['id'], created - 3600))
             conn.execute(
                 'INSERT OR REPLACE INTO password_reset_tokens (token, user_id, created) VALUES (?, ?, ?)',
                 (reset_token, user['id'], created)
@@ -1241,12 +1256,16 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
             pw_salt = secrets.token_hex(16)
             pw_hash = _hash_pw(password, pw_salt)
 
-            # Update password, delete token.
+            # Update password, then invalidate ALL of this user's reset tokens
+            # (not just the one used — a second outstanding link must die too)
+            # and ALL their sessions: a reset is account recovery, so every
+            # device must re-authenticate with the new password.
             conn.execute(
                 'UPDATE users SET pw_hash=?, pw_salt=? WHERE id=?',
                 (pw_hash, pw_salt, user_id)
             )
-            conn.execute('DELETE FROM password_reset_tokens WHERE token=?', (token,))
+            conn.execute('DELETE FROM password_reset_tokens WHERE user_id=?', (user_id,))
+            conn.execute('DELETE FROM sessions WHERE user_id=?', (user_id,))
             conn.commit()
 
         self._json_response(200, {'ok': True, 'message': 'Contraseña actualizada. Inicia sesión con tu nueva contraseña'})
@@ -1273,6 +1292,11 @@ class GeoScopeHandler(SimpleHTTPRequestHandler):
         with _AUTH_LOCK, _auth_db() as conn:
             conn.execute('UPDATE users SET pw_hash=?, pw_salt=? WHERE id=?',
                          (pw_hash, salt, user['id']))
+            # Revoke every OTHER session — a changed password must log out any
+            # device that had the old one. Keep the caller's current session so
+            # the user who just changed it isn't kicked out of this tab.
+            conn.execute('DELETE FROM sessions WHERE user_id=? AND token!=?',
+                         (user['id'], self._bearer_token()))
             conn.commit()
         self._json_response(200, {'ok': True})
 
